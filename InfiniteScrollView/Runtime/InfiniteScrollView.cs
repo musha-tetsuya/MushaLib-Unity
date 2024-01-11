@@ -483,16 +483,16 @@ namespace MushaLib.InfiniteScrollView
             {
                 // viewport範囲内に要素がいくつ入るか、viewport位置を少しずらしてチェックする
                 var viewportMaxX = m_Padding.left + (m_ViewportCornerMax.x - m_ViewportCornerMin.x) + (m_PageLayout.CellSize.x - 1f);
-                int pageColumn = Mathf.FloorToInt(viewportMaxX / (m_PageRectSize.x + m_Spacing.x));
-                int localColumn = Mathf.Clamp(Mathf.FloorToInt((viewportMaxX - GetPagePosition(0, pageColumn).x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x)), 0, m_PageLayout.CellCount.x - 1);
+                int pageColumn = Mathf.CeilToInt(viewportMaxX / (m_PageRectSize.x + m_Spacing.x));
+                int localColumn = Mathf.CeilToInt((viewportMaxX - GetPagePosition(0, pageColumn).x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x));
                 m_ScrollElementLength.x = m_PageLayout.CellCount.x * pageColumn + localColumn;
             }
             if (m_ScrollRect.vertical)
             {
                 // viewport範囲内に要素がいくつ入るか、viewport位置を少しずらしてチェックする
                 var viewportMinY = -m_Padding.top - (m_ViewportCornerMax.y - m_ViewportCornerMin.y) - (m_PageLayout.CellSize.y - 1f);
-                int pageRow = Mathf.FloorToInt(-viewportMinY / (m_PageRectSize.y + m_Spacing.y));
-                int localRow = Mathf.Clamp(Mathf.FloorToInt(-(viewportMinY - GetPagePosition(pageRow, 0).y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y)), 0, m_PageLayout.CellCount.y - 1);
+                int pageRow = Mathf.CeilToInt(-viewportMinY / (m_PageRectSize.y + m_Spacing.y));
+                int localRow = Mathf.CeilToInt(-(viewportMinY - GetPagePosition(pageRow, 0).y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y));
                 m_ScrollElementLength.y = m_PageLayout.CellCount.y * pageRow + localRow;
             }
 
