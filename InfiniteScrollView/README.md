@@ -24,19 +24,19 @@ https://github.com/musha-tetsuya/MushaLib-Unity.git?path=InfiniteScrollView
 <img src="https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/6c5a183f-c26e-4401-8735-f92f1f299379" width="50%" height="50%">
 
 #### 3. InfiniteScrollViewコンポーネントのInspectorを設定します。
-| 項目 | 概要 |
-| --- | --- |
-| ElementPrefab | 要素プレハブ |
-| ElementCount | 要素数 |
-| PageLayout | ページレイアウト |
-| Spacing | ページ間スペース |
-| StartAxis | ページの配置方向 |
-| Padding | Viewport内側の余白 |
-| Margin | Viewport外側の余白 |
-| Loop | ページをループさせるかどうか |
-| SnapType | スナップタイプ |
-| SnapThrethold | スナップ開始の閾値 |
-| SnapDuration | スナップ時間 |
+| 項目          | 概要
+| ---           | ---
+| ElementPrefab | 要素プレハブ
+| ElementCount  | 要素数
+| PageLayout    | ページレイアウト
+| Spacing       | ページ間スペース
+| StartAxis     | ページの配置方向
+| Padding       | Viewport内側の余白
+| Margin        | Viewport外側の余白
+| Loop          | ページをループさせるかどうか
+| SnapType      | スナップタイプ
+| SnapThrethold | スナップ開始の閾値
+| SnapDuration  | スナップ時間
 
 #### 4. スクリプトからInfiniteScrollViewのInitializeメソッドを呼び出して下さい。
 ```csharp
@@ -64,6 +64,50 @@ https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/72f192a4-9f07-44
 
 * 設定値
 
+<table align="left">
+    <tr><th>ScrollRect</th></tr>
+    <tr><td>Horizontal = true</td></tr>
+    <tr><td>Vertical = false</td></tr>
+    <tr><td>MovementType = Elastic</td></tr>
+    <tr><td><details>
+        <summary>Content</summary>
+        &emsp;AnchorMin = (0, 0.5)<br>
+        &emsp;AnchorMax = (0, 0.5)<br>
+        &emsp;Pivot = (0.5, 0.5)
+    </details></td></tr>
+</table>
+
+<table>
+    <tr><th>InfiniteScrollView</th></tr>
+    <tr><td>ElementCount = 100</td></tr>
+    <tr><td><details>
+        <summary>PageLayout</summary>
+        &emsp;CellCount = (1, 1)<br>
+        &emsp;Spacing = (10, 10)<br>
+        &emsp;StartCorner = UpperLeft<br>
+        &emsp;StartAxis = Horizontal
+    </details></td></tr>
+    <tr><td>Spacing = (50, 50)</td></tr>
+    <tr><td>StartAxis = Horizontal</td></tr>
+    <tr><td><details>
+        <summary>Padding</summary>
+        &emsp;Left = 20<br>
+        &emsp;Right = 20<br>
+        &emsp;Top = 20<br>
+        &emsp;Bottom = 20
+    </details></td></tr>
+    <tr><td><details>
+        <summary>Margin</summary>
+        &emsp;Left = 0<br>
+        &emsp;Right = 0<br>
+        &emsp;Top = 0<br>
+        &emsp;Bottom = 0
+    </details></td></tr>
+    <tr><td>Loop = false</td></tr>
+    <tr><td>SnapType = None</td></tr>
+</table>
+
+<br clear="all">
 
 
 
