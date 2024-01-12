@@ -466,7 +466,7 @@ namespace MushaLib.InfiniteScrollView
             if (m_ScrollRect.horizontal)
             {
                 // viewport範囲内に要素がいくつ入るか、viewport位置を少しずらしてチェックする
-                float viewportMaxX = m_Padding.left + (m_ViewportCornerMax.x - m_ViewportCornerMin.x) + (m_PageLayout.CellSize.x - 1f);
+                float viewportMaxX = (m_ViewportCornerMax.x - m_ViewportCornerMin.x) + (m_PageLayout.CellSize.x - 1f);
                 float fPageColumn = viewportMaxX / (m_PageRectSize.x + m_Spacing.x);
                 int pageColumn = Mathf.FloorToInt(fPageColumn);
                 float fLocalColumn = (fPageColumn - pageColumn) * (m_PageRectSize.x + m_Spacing.x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x);
@@ -476,7 +476,7 @@ namespace MushaLib.InfiniteScrollView
             if (m_ScrollRect.vertical)
             {
                 // viewport範囲内に要素がいくつ入るか、viewport位置を少しずらしてチェックする
-                float viewportMaxY = m_Padding.top + (m_ViewportCornerMax.y - m_ViewportCornerMin.y) + (m_PageLayout.CellSize.y - 1f);
+                float viewportMaxY = (m_ViewportCornerMax.y - m_ViewportCornerMin.y) + (m_PageLayout.CellSize.y - 1f);
                 float fPageRow = viewportMaxY / (m_PageRectSize.y + m_Spacing.y);
                 int pageRow = Mathf.FloorToInt(fPageRow);
                 float fLocalRow = (fPageRow - pageRow) * (m_PageRectSize.y + m_Spacing.y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y);
