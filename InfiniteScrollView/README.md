@@ -35,7 +35,6 @@ https://github.com/musha-tetsuya/MushaLib-Unity.git?path=InfiniteScrollView
 | Margin        | Viewport外側の余白
 | Loop          | ページをループさせるかどうか
 | SnapType      | スナップタイプ
-| SnapThrethold | スナップ開始の閾値
 | SnapDuration  | スナップ時間
 
 #### 4. スクリプトからInfiniteScrollViewのInitializeメソッドを呼び出して下さい。
