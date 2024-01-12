@@ -89,13 +89,6 @@ namespace MushaLib.InfiniteScrollView
         private SnapType m_SnapType;
 
         /// <summary>
-        /// スナップ開始の閾値
-        /// </summary>
-        [SerializeField]
-        [Header("スナップ開始の閾値")]
-        private float m_SnapThreshold = 100f;
-
-        /// <summary>
         /// スナップ時間
         /// </summary>
         [SerializeField]
@@ -266,15 +259,6 @@ namespace MushaLib.InfiniteScrollView
         {
             get => m_SnapType;
             set => m_SnapType = value;
-        }
-
-        /// <summary>
-        /// スナップ開始の閾値
-        /// </summary>
-        public float SnapThrethold
-        {
-            get => m_SnapThreshold;
-            set => m_SnapThreshold = value;
         }
 
         /// <summary>
@@ -717,20 +701,6 @@ namespace MushaLib.InfiniteScrollView
         async void IEndDragHandler.OnEndDrag(PointerEventData eventData)
         {
             if (m_ElementCount <= 0 || m_SnapType == SnapType.None || eventData.button != PointerEventData.InputButton.Left)
-            {
-                return;
-            }
-
-            CancelAutoScroll();
-            m_AutoScrollCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
-
-            try
-            {
-                // ベロシティが閾値以下になるまで待機
-                var sqrThreshold = m_SnapThreshold * m_SnapThreshold;
-                await UniTask.WaitUntil(() => m_ScrollRect.velocity.sqrMagnitude <= sqrThreshold, cancellationToken: m_AutoScrollCancellationTokenSource.Token);
-            }
-            catch
             {
                 return;
             }
