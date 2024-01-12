@@ -746,11 +746,13 @@ namespace MushaLib.InfiniteScrollView
                 float contentWidth = m_ScrollRect.content.rect.width - (m_Padding.left + m_Padding.right);
 
                 // contentの座標
-                float contentPositionX = Mathf.Repeat(m_DefaultContentAnchoredPosition.x - m_ScrollRect.content.anchoredPosition.x, contentWidth + m_Spacing.x);
+                float contentPositionX = Mathf.Repeat(-(m_ScrollRect.content.anchoredPosition.x - m_DefaultContentAnchoredPosition.x), contentWidth + m_Spacing.x);
 
                 // contentの位置から現在ターゲット中の要素を割り出す
-                int pageColumn = Mathf.FloorToInt(contentPositionX / (m_PageRectSize.x + m_Spacing.x));
-                int localColumn = Mathf.FloorToInt((contentPositionX - GetPagePosition(0, pageColumn).x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x));
+                float fPageColumn = contentPositionX / (m_PageRectSize.x + m_Spacing.x);
+                int pageColumn = Mathf.FloorToInt(fPageColumn);
+                float fLocalColumn = (fPageColumn - pageColumn) * (m_PageRectSize.x + m_Spacing.x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x);
+                int localColumn = Mathf.FloorToInt(fLocalColumn);
 
                 // 場合によっては隣の要素の方が近いかもしれないので、比較する要素を決定
                 int nextPageColumn = pageColumn + 1;
@@ -811,11 +813,13 @@ namespace MushaLib.InfiniteScrollView
                 float contentHeight = m_ScrollRect.content.rect.height - (m_Padding.top + m_Padding.bottom);
 
                 // contentの座標
-                float contentPositionY = Mathf.Repeat(m_DefaultContentAnchoredPosition.y - m_ScrollRect.content.anchoredPosition.y, contentHeight + m_Spacing.y);
+                float contentPositionY = Mathf.Repeat(m_ScrollRect.content.anchoredPosition.y - m_DefaultContentAnchoredPosition.y, contentHeight + m_Spacing.y);
 
                 // contentの位置から現在ターゲット中の要素を割り出す
-                int pageRow = Mathf.FloorToInt(-contentPositionY / (m_PageRectSize.y + m_Spacing.y));
-                int localRow = Mathf.FloorToInt(-(contentPositionY - GetPagePosition(pageRow, 0).y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y));
+                float fPageRow = contentPositionY / (m_PageRectSize.y + m_Spacing.y);
+                int pageRow = Mathf.FloorToInt(fPageRow);
+                float fLocalRow = (fPageRow - pageRow) * (m_PageRectSize.y + m_Spacing.y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y);
+                int localRow = Mathf.FloorToInt(fLocalRow);
 
                 // 場合によっては隣の要素の方が近いかもしれないので、比較する要素を決定
                 int nextPageRow = pageRow + 1;
@@ -849,13 +853,13 @@ namespace MushaLib.InfiniteScrollView
                 // 隣のターゲットの方が近いなら、スナップターゲット位置は一つ隣にする
                 float nextTargetPositionY = GetElementPosition(nextPageRow, 0, nextLocalRow, 0).y;
 
-                if (Mathf.Abs(nextTargetPositionY - contentPositionY) < Mathf.Abs(targetPositionY - contentPositionY))
+                if (Mathf.Abs(nextTargetPositionY + contentPositionY) < Mathf.Abs(targetPositionY + contentPositionY))
                 {
                     targetPositionY = nextTargetPositionY;
                 }
 
                 // 現在位置からターゲットまでの移動量
-                float dy = (targetPositionY + m_Padding.top) - contentPositionY;
+                float dy = (targetPositionY + m_Padding.top) + contentPositionY;
 
                 // スナップ終了時のcontentのanchoredPositionを決定
                 endAnchoredPosition.y -= dy;
