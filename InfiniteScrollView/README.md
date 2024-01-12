@@ -58,7 +58,7 @@ public class Sample : MonoBehaviour
 https://github.com/musha-tetsuya/MushaLib-Unity/blob/1989550c5fb6266b6aa444a9373c68940eaac83e/InfiniteScrollView/Runtime/InfiniteScrollView.cs#L289-L292
 
 ## サンプル
-#### 基本
+#### 1. 基本
 
 https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/72f192a4-9f07-4411-a12b-d980b5d4e90e
 
@@ -83,7 +83,7 @@ https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/72f192a4-9f07-44
     <tr><td><details>
         <summary>PageLayout</summary>
         &emsp;CellCount = (1, 1)<br>
-        &emsp;Spacing = (10, 10)<br>
+        &emsp;Spacing = (0, 0)<br>
         &emsp;StartCorner = UpperLeft<br>
         &emsp;StartAxis = Horizontal
     </details></td></tr>
@@ -108,6 +108,59 @@ https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/72f192a4-9f07-44
 </table>
 
 <br clear="all">
+
+#### 2. ページレイアウト、無限スクロール
+
+https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/b8a2b5c0-9d7c-4493-8c77-2f7461a1c7e1
+
+* 設定値
+
+<table align="left">
+    <tr><th>ScrollRect</th></tr>
+    <tr><td>Horizontal = false</td></tr>
+    <tr><td>Vertical = true</td></tr>
+    <tr><td>MovementType = Unrestricted</td></tr>
+    <tr><td><details>
+        <summary>Content</summary>
+        &emsp;AnchorMin = (0, 1)<br>
+        &emsp;AnchorMax = (0, 1)<br>
+        &emsp;Pivot = (0, 0.5)
+    </details></td></tr>
+</table>
+
+<table>
+    <tr><th>InfiniteScrollView</th></tr>
+    <tr><td>ElementCount = 100</td></tr>
+    <tr><td><details>
+        <summary>PageLayout</summary>
+        &emsp;CellCount = (3, 2)<br>
+        &emsp;Spacing = (10, 10)<br>
+        &emsp;StartCorner = UpperLeft<br>
+        &emsp;StartAxis = Vertical
+    </details></td></tr>
+    <tr><td>Spacing = (50, 50)</td></tr>
+    <tr><td>StartAxis = Horizontal</td></tr>
+    <tr><td><details>
+        <summary>Padding</summary>
+        &emsp;Left = 20<br>
+        &emsp;Right = 20<br>
+        &emsp;Top = 20<br>
+        &emsp;Bottom = 20
+    </details></td></tr>
+    <tr><td><details>
+        <summary>Margin</summary>
+        &emsp;Left = 0<br>
+        &emsp;Right = 0<br>
+        &emsp;Top = 0<br>
+        &emsp;Bottom = 0
+    </details></td></tr>
+    <tr><td>Loop = true</td></tr>
+    <tr><td>SnapType = None</td></tr>
+</table>
+
+<br clear="all">
+
+
 
 
 
