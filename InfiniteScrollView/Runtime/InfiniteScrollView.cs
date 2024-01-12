@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
 using System;
 using System.Collections;
@@ -14,7 +14,7 @@ using UnityEngine.UI;
 namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
-    /// –³ŒÀƒXƒNƒ[ƒ‹ƒrƒ…[
+    /// ç„¡é™ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ“ãƒ¥ãƒ¼
     /// </summary>
     [RequireComponent(typeof(ScrollRect))]
     public class InfiniteScrollView : MonoBehaviour, IEventSystemHandler, IInitializePotentialDragHandler, IEndDragHandler
@@ -26,162 +26,162 @@ namespace MushaLib.InfiniteScrollView
         private ScrollRect m_ScrollRect;
 
         /// <summary>
-        /// —v‘fƒvƒŒƒnƒu
+        /// è¦ç´ ãƒ—ãƒ¬ãƒãƒ–
         /// </summary>
         [SerializeField]
-        [Header("—v‘fƒvƒŒƒnƒu")]
+        [Header("è¦ç´ ãƒ—ãƒ¬ãƒãƒ–")]
         private ScrollElement m_ElementPrefab;
 
         /// <summary>
-        /// —v‘f”
+        /// è¦ç´ æ•°
         /// </summary>
         [SerializeField]
-        [Header("—v‘f”")]
+        [Header("è¦ç´ æ•°")]
         private int m_ElementCount;
 
         /// <summary>
-        /// ƒy[ƒWƒŒƒCƒAƒEƒg
+        /// ãƒšãƒ¼ã‚¸ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
         /// </summary>
         [SerializeField]
-        [Header("ƒy[ƒWƒŒƒCƒAƒEƒg")]
+        [Header("ãƒšãƒ¼ã‚¸ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ")]
         private PageLayout m_PageLayout;
 
         /// <summary>
-        /// ƒy[ƒWŠÔƒXƒy[ƒX
+        /// ãƒšãƒ¼ã‚¸é–“ã‚¹ãƒšãƒ¼ã‚¹
         /// </summary>
         [SerializeField]
-        [Header("ƒy[ƒWŠÔƒXƒy[ƒX")]
+        [Header("ãƒšãƒ¼ã‚¸é–“ã‚¹ãƒšãƒ¼ã‚¹")]
         private Vector2 m_Spacing;
 
         /// <summary>
-        /// ƒy[ƒW‚Ì”z’u•ûŒü
+        /// ãƒšãƒ¼ã‚¸ã®é…ç½®æ–¹å‘
         /// </summary>
         [SerializeField]
-        [Header("ƒy[ƒW‚Ì”z’u•ûŒü")]
+        [Header("ãƒšãƒ¼ã‚¸ã®é…ç½®æ–¹å‘")]
         private GridLayoutGroup.Axis m_StartAxis;
 
         /// <summary>
-        /// Viewport“à‘¤‚Ì—]”’
+        /// Viewportå†…å´ã®ä½™ç™½
         /// </summary>
         [SerializeField]
-        [Header("Viewport“à‘¤‚Ì—]”’")]
+        [Header("Viewportå†…å´ã®ä½™ç™½")]
         private RectOffset m_Padding;
 
         /// <summary>
-        /// ViewportŠO‘¤‚Ì—]”’
+        /// Viewportå¤–å´ã®ä½™ç™½
         /// </summary>
         [SerializeField]
-        [Header("ViewportŠO‘¤‚Ì—]”’")]
+        [Header("Viewportå¤–å´ã®ä½™ç™½")]
         private RectOffset m_Margin;
 
         /// <summary>
-        /// ƒy[ƒW‚ğƒ‹[ƒv‚³‚¹‚é‚©‚Ç‚¤‚©
+        /// ãƒšãƒ¼ã‚¸ã‚’ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹ã‹ã©ã†ã‹
         /// </summary>
         [SerializeField]
-        [Header("ƒy[ƒW‚ğƒ‹[ƒv‚³‚¹‚é‚©‚Ç‚¤‚©")]
+        [Header("ãƒšãƒ¼ã‚¸ã‚’ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹ã‹ã©ã†ã‹")]
         private bool m_Loop;
 
         /// <summary>
-        /// ƒXƒiƒbƒvƒ^ƒCƒv
+        /// ã‚¹ãƒŠãƒƒãƒ—ã‚¿ã‚¤ãƒ—
         /// </summary>
         [SerializeField]
-        [Header("ƒXƒiƒbƒvƒ^ƒCƒv")]
+        [Header("ã‚¹ãƒŠãƒƒãƒ—ã‚¿ã‚¤ãƒ—")]
         private SnapType m_SnapType;
 
         /// <summary>
-        /// ƒXƒiƒbƒvŠÔ
+        /// ã‚¹ãƒŠãƒƒãƒ—æ™‚é–“
         /// </summary>
         [SerializeField]
-        [Header("ƒXƒiƒbƒvŠÔ")]
+        [Header("ã‚¹ãƒŠãƒƒãƒ—æ™‚é–“")]
         private float m_SnapDuration = 0.1f;
 
         /// <summary>
-        /// —v‘fƒvƒŒƒnƒu
+        /// è¦ç´ ãƒ—ãƒ¬ãƒãƒ–
         /// </summary>
         private ScrollElement m_CurrentElementPrefab;
 
         /// <summary>
-        /// ƒy[ƒW‹éŒ`ƒTƒCƒY
+        /// ãƒšãƒ¼ã‚¸çŸ©å½¢ã‚µã‚¤ã‚º
         /// </summary>
         private Vector2 m_PageRectSize;
 
         /// <summary>
-        /// c‰¡ƒy[ƒW”
+        /// ç¸¦æ¨ªãƒšãƒ¼ã‚¸æ•°
         /// </summary>
         private Vector2Int m_PageLength;
 
         /// <summary>
-        /// ƒy[ƒWƒCƒ“ƒfƒbƒNƒX‘‰Á—Ê
+        /// ãƒšãƒ¼ã‚¸ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å¢—åŠ é‡
         /// </summary>
         private Vector2Int m_PageIndexDelta;
 
         /// <summary>
-        /// Viewport‹éŒ`‚ÌÅ¬ˆÊ’u
+        /// ViewportçŸ©å½¢ã®æœ€å°ä½ç½®
         /// </summary>
         private Vector2 m_ViewportCornerMin;
 
         /// <summary>
-        /// Viewport‹éŒ`‚ÌÅ‘åˆÊ’u
+        /// ViewportçŸ©å½¢ã®æœ€å¤§ä½ç½®
         /// </summary>
         private Vector2 m_ViewportCornerMax;
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹—v‘f”z—ñ’·
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—é•·
         /// </summary>
         private Vector2Int m_ScrollElementLength;
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹—v‘f”z—ñ
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—
         /// </summary>
         private IScrollElement[,] m_ScrollElements;
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹—v‘f”z—ñ‚Ì‰¡²‚ÌƒCƒ“ƒfƒbƒNƒX‚ğŠi”[‚µ‚½”z—ñ
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—ã®æ¨ªè»¸ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ ¼ç´ã—ãŸé…åˆ—
         /// </summary>
         private int[] m_OriginalColumnIndices;
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹—v‘f”z—ñ‚Ìc²‚ÌƒCƒ“ƒfƒbƒNƒX‚ğŠi”[‚µ‚½”z—ñ
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—ã®ç¸¦è»¸ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ ¼ç´ã—ãŸé…åˆ—
         /// </summary>
         private int[] m_OriginalRowIndices;
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹—v‘f”z—ñ‚Ì‰¡²‚ÌƒCƒ“ƒfƒbƒNƒX‚ğ‹t‡‚ÉŠi”[‚µ‚½”z—ñ
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—ã®æ¨ªè»¸ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’é€†é †ã«æ ¼ç´ã—ãŸé…åˆ—
         /// </summary>
         private int[] m_ReverseColumnIndices;
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹—v‘f”z—ñ‚Ìc²‚ÌƒCƒ“ƒfƒbƒNƒX‚ğ‹t‡‚ÉŠi”[‚µ‚½”z—ñ
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—ã®ç¸¦è»¸ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’é€†é †ã«æ ¼ç´ã—ãŸé…åˆ—
         /// </summary>
         private int[] m_ReverseRowIndices;
 
         /// <summary>
-        /// content.anchoredPosition‚Ì‰Šú’l
+        /// content.anchoredPositionã®åˆæœŸå€¤
         /// </summary>
         private Vector2 m_DefaultContentAnchoredPosition;
 
         /// <summary>
-        /// content.anchoredPosition‚Ì‘O‰ñ‚Ì’l
+        /// content.anchoredPositionã®å‰å›ã®å€¤
         /// </summary>
         private Vector2 m_PrevContentAnchoredPosition;
 
         /// <summary>
-        /// Viewport‚©‚çŒ©‚½content‚Ì¶ãŠp‚ÌÀ•W
+        /// Viewportã‹ã‚‰è¦‹ãŸcontentã®å·¦ä¸Šè§’ã®åº§æ¨™
         /// </summary>
         private Vector2 m_ContentTopLeftInViewport;
 
         /// <summary>
-        /// ©“®ƒXƒNƒ[ƒ‹ˆ—‚ÌƒLƒƒƒ“ƒZƒ‹ƒg[ƒNƒ“
+        /// è‡ªå‹•ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å‡¦ç†ã®ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒˆãƒ¼ã‚¯ãƒ³
         /// </summary>
         private CancellationTokenSource m_AutoScrollCancellationTokenSource;
 
         /// <summary>
-        /// ‘ƒy[ƒW”
+        /// ç·ãƒšãƒ¼ã‚¸æ•°
         /// </summary>
         private int TotalPageLength => m_PageLength.x * m_PageLength.y;
 
         /// <summary>
-        /// —v‘fƒvƒŒƒnƒu
+        /// è¦ç´ ãƒ—ãƒ¬ãƒãƒ–
         /// </summary>
         public ScrollElement ElementPrefab
         {
@@ -190,7 +190,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// —v‘f”
+        /// è¦ç´ æ•°
         /// </summary>
         public int ElementCount
         {
@@ -199,7 +199,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒWƒŒƒCƒAƒEƒg
+        /// ãƒšãƒ¼ã‚¸ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
         /// </summary>
         public PageLayout PageLayout
         {
@@ -208,7 +208,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒWŠÔƒXƒy[ƒX
+        /// ãƒšãƒ¼ã‚¸é–“ã‚¹ãƒšãƒ¼ã‚¹
         /// </summary>
         public Vector2 Spacing
         {
@@ -217,7 +217,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒW‚Ì”z’u•ûŒü
+        /// ãƒšãƒ¼ã‚¸ã®é…ç½®æ–¹å‘
         /// </summary>
         public GridLayoutGroup.Axis StartAxis
         {
@@ -226,7 +226,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// Viewport“à‘¤‚Ì—]”’
+        /// Viewportå†…å´ã®ä½™ç™½
         /// </summary>
         public RectOffset Padding
         {
@@ -235,7 +235,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ViewportŠO‘¤‚Ì—]”’
+        /// Viewportå¤–å´ã®ä½™ç™½
         /// </summary>
         public RectOffset Margin
         {
@@ -244,7 +244,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒW‚ğƒ‹[ƒv‚³‚¹‚é‚©‚Ç‚¤‚©
+        /// ãƒšãƒ¼ã‚¸ã‚’ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹ã‹ã©ã†ã‹
         /// </summary>
         public bool Loop
         {
@@ -253,7 +253,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒXƒiƒbƒvƒ^ƒCƒv
+        /// ã‚¹ãƒŠãƒƒãƒ—ã‚¿ã‚¤ãƒ—
         /// </summary>
         public SnapType SnapType
         {
@@ -262,7 +262,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒXƒiƒbƒvŠÔ
+        /// ã‚¹ãƒŠãƒƒãƒ—æ™‚é–“
         /// </summary>
         public float SnapDuration
         {
@@ -271,7 +271,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// —v‘fXVƒCƒxƒ“ƒg
+        /// è¦ç´ æ›´æ–°æ™‚ã‚¤ãƒ™ãƒ³ãƒˆ
         /// </summary>
         public Action<IScrollElement, int> OnUpdateElement { get; set; }
 
@@ -288,12 +288,12 @@ namespace MushaLib.InfiniteScrollView
         /// </summary>
         protected virtual void Awake()
         {
-            // ƒXƒNƒ[ƒ‹ƒCƒxƒ“ƒgw“Ç
+            // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚ã‚¤ãƒ™ãƒ³ãƒˆè³¼èª­
             m_ScrollRect.onValueChanged.AddListener(OnScroll);
 
             if (m_ScrollRect.horizontalScrollbar != null)
             {
-                // ‰¡ƒXƒNƒ[ƒ‹ƒo[‘€ì
+                // æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼æ“ä½œæ™‚
                 Observable
                     .Merge(
                         m_ScrollRect.horizontalScrollbar.OnInitializePotentialDragAsObservable().Where(eventData => eventData.rawPointerPress != m_ScrollRect.horizontalScrollbar.handleRect.gameObject),
@@ -305,7 +305,7 @@ namespace MushaLib.InfiniteScrollView
 
             if (m_ScrollRect.verticalScrollbar != null)
             {
-                // cƒXƒNƒ[ƒ‹ƒo[‘€ì
+                // ç¸¦ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼æ“ä½œæ™‚
                 Observable
                     .Merge(
                         m_ScrollRect.verticalScrollbar.OnInitializePotentialDragAsObservable().Where(eventData => eventData.rawPointerPress != m_ScrollRect.verticalScrollbar.handleRect.gameObject),
@@ -317,54 +317,54 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ‰Šú‰»
+        /// åˆæœŸåŒ–
         /// </summary>
         public void Initialize()
         {
             if (m_ElementPrefab == null)
             {
-                Debug.LogError("—v‘fƒvƒŒƒnƒu‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB", this);
+                Debug.LogError("è¦ç´ ãƒ—ãƒ¬ãƒãƒ–ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚", this);
                 return;
             }
 
             if (m_ElementCount < 0)
             {
-                Debug.LogError("—v‘f”‚ª0–¢–‚Å‚·B", this);
+                Debug.LogError("è¦ç´ æ•°ãŒ0æœªæº€ã§ã™ã€‚", this);
                 return;
             }
 
             if (m_PageLayout.CellCount.x <= 0 || m_PageLayout.CellCount.y <= 0)
             {
-                Debug.LogError("ƒy[ƒW“à‚ÌƒZƒ‹”‚ª0ˆÈ‰º‚Å‚·B", this);
+                Debug.LogError("ãƒšãƒ¼ã‚¸å†…ã®ã‚»ãƒ«æ•°ãŒ0ä»¥ä¸‹ã§ã™ã€‚", this);
                 return;
             }
 
-            // ƒŠƒTƒCƒNƒ‹‰Â”\—v‘fƒvƒŒƒnƒu
+            // ãƒªã‚µã‚¤ã‚¯ãƒ«å¯èƒ½è¦ç´ ãƒ—ãƒ¬ãƒãƒ–
             Queue<IScrollElement> recyclablePrefabs = m_ScrollElements == null ? new() : new(m_ScrollElements.Cast<IScrollElement>());
 
-            // —v‘fƒvƒŒƒnƒu‚ª•ÏX‚³‚ê‚½
+            // è¦ç´ ãƒ—ãƒ¬ãƒãƒ–ãŒå¤‰æ›´ã•ã‚ŒãŸ
             if (m_ElementPrefab != m_CurrentElementPrefab)
             {
                 m_CurrentElementPrefab = m_ElementPrefab;
 
-                // Šù‘¶—v‘f‚ÌƒNƒŠƒA
+                // æ—¢å­˜è¦ç´ ã®ã‚¯ãƒªã‚¢
                 while (recyclablePrefabs.TryDequeue(out var prefabInstance))
                 {
                     Destroy(prefabInstance.RectTransform.gameObject);
                 }
             }
 
-            // ƒy[ƒWƒZƒ‹ƒTƒCƒYİ’è
+            // ãƒšãƒ¼ã‚¸ã‚»ãƒ«ã‚µã‚¤ã‚ºè¨­å®š
             m_PageLayout.CellSize = (m_CurrentElementPrefab.transform as RectTransform).rect.size * m_CurrentElementPrefab.transform.localScale;
 
-            // ƒy[ƒW‚Ìc‰¡•
+            // ãƒšãƒ¼ã‚¸ã®ç¸¦æ¨ªå¹…
             m_PageRectSize.x = (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x) * m_PageLayout.CellCount.x - m_PageLayout.Spacing.x;
             m_PageRectSize.y = (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y) * m_PageLayout.CellCount.y - m_PageLayout.Spacing.y;
 
-            // •K—vƒy[ƒW”
+            // å¿…è¦ãƒšãƒ¼ã‚¸æ•°
             m_PageLength = Vector2Int.one * Mathf.Max(Mathf.CeilToInt((float)m_ElementCount / m_PageLayout.TotalCellCount), 1);
 
-            // ƒy[ƒWƒCƒ“ƒfƒbƒNƒX•Ï‰»—Ê
+            // ãƒšãƒ¼ã‚¸ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å¤‰åŒ–é‡
             m_PageIndexDelta = Vector2Int.one;
 
             if (m_ScrollRect.horizontal && !m_ScrollRect.vertical)
@@ -388,29 +388,29 @@ namespace MushaLib.InfiniteScrollView
                 m_PageIndexDelta.x = m_PageLength.y;
             }
 
-            // AutoHideAndExpandViewport‚Ìê‡AcontentƒTƒCƒY‚ªŒˆ‚Ü‚ç‚È‚¢‚ÆviewportƒTƒCƒY‚ªæ“¾o—ˆ‚È‚¢B
-            // contentƒTƒCƒYŒˆ’èŒãALayout‚ğƒŠƒrƒ‹ƒh‚µ‚ÄviewportƒTƒCƒY‚ğŒˆ’è‚·‚éB
-            // ‚»‚Ì‚½‚ßAˆê’Ucontent‚ÌanchorMin‚ÆanchorMax‚ğ‘µ‚¦‚éB
+            // AutoHideAndExpandViewportã®å ´åˆã€contentã‚µã‚¤ã‚ºãŒæ±ºã¾ã‚‰ãªã„ã¨viewportã‚µã‚¤ã‚ºãŒå–å¾—å‡ºæ¥ãªã„ã€‚
+            // contentã‚µã‚¤ã‚ºæ±ºå®šå¾Œã€Layoutã‚’ãƒªãƒ“ãƒ«ãƒ‰ã—ã¦viewportã‚µã‚¤ã‚ºã‚’æ±ºå®šã™ã‚‹ã€‚
+            // ãã®ãŸã‚ã€ä¸€æ—¦contentã®anchorMinã¨anchorMaxã‚’æƒãˆã‚‹ã€‚
             var contentAnchorMax = m_ScrollRect.content.anchorMax;
             m_ScrollRect.content.anchorMax = m_ScrollRect.content.anchorMin;
 
-            // contentƒTƒCƒYŒˆ’è
+            // contentã‚µã‚¤ã‚ºæ±ºå®š
             m_ScrollRect.content.sizeDelta = new(
                 m_Padding.left + m_Padding.right + (m_PageRectSize.x + m_Spacing.x) * m_PageLength.x - m_Spacing.x,
                 m_Padding.top + m_Padding.bottom + (m_PageRectSize.y + m_Spacing.y) * m_PageLength.y - m_Spacing.y
             );
 
-            // Layout‚ğƒŠƒrƒ‹ƒh‚µ‚ÄviewportƒTƒCƒY‚ğŒˆ’è
+            // Layoutã‚’ãƒªãƒ“ãƒ«ãƒ‰ã—ã¦viewportã‚µã‚¤ã‚ºã‚’æ±ºå®š
             if ((m_ScrollRect.horizontalScrollbar != null && m_ScrollRect.horizontalScrollbarVisibility == ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport) ||
                 (m_ScrollRect.verticalScrollbar != null && m_ScrollRect.verticalScrollbarVisibility == ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport))
             {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(m_ScrollRect.transform as RectTransform);
             }
 
-            // content‚ÌanchorMax‚ğŒ³‚É–ß‚·
+            // contentã®anchorMaxã‚’å…ƒã«æˆ»ã™
             m_ScrollRect.content.anchorMax = contentAnchorMax;
 
-            // ƒXƒNƒ[ƒ‹•ûŒü‚É‡‚í‚¹‚Äanchor‚ğ’²®
+            // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ–¹å‘ã«åˆã‚ã›ã¦anchorã‚’èª¿æ•´
             if (m_ScrollRect.horizontal)
             {
                 m_ScrollRect.content.anchorMin = new(0f, m_ScrollRect.content.anchorMin.y);
@@ -422,15 +422,17 @@ namespace MushaLib.InfiniteScrollView
                 m_ScrollRect.content.anchorMax = new(m_ScrollRect.content.anchorMax.x, 1f);
             }
 
-            // anchor‚É‡‚í‚¹‚ÄcontentƒTƒCƒY‚ğ’²®
+            // anchorã«åˆã‚ã›ã¦contentã‚µã‚¤ã‚ºã‚’èª¿æ•´
             m_ScrollRect.content.sizeDelta -= (m_ScrollRect.content.anchorMax - m_ScrollRect.content.anchorMin) * m_ScrollRect.viewport.rect.size;
 
-            // PrevContentPosition‚ğViewport + Margin‚ÌˆÊ’u‚É‡‚í‚¹‚é
+            // PrevContentPositionã‚’Viewport + Marginã®ä½ç½®ã«åˆã‚ã›ã‚‹
             var contentAnchor = m_ScrollRect.content.anchorMin + (m_ScrollRect.content.anchorMax - m_ScrollRect.content.anchorMin) * 0.5f;
-            m_PrevContentAnchoredPosition.x = m_ScrollRect.content.rect.width * m_ScrollRect.content.pivot.x - m_ScrollRect.viewport.rect.width * contentAnchor.x - m_Margin.left;
-            m_PrevContentAnchoredPosition.y = -m_ScrollRect.content.rect.height * (1f - m_ScrollRect.content.pivot.y) + m_ScrollRect.viewport.rect.height * (1f - contentAnchor.y) + m_Margin.top;
+            m_PrevContentAnchoredPosition.x = -m_Padding.left - m_Margin.left;
+            m_PrevContentAnchoredPosition.y = m_Padding.top + m_Margin.top;
+            m_PrevContentAnchoredPosition.x += m_ScrollRect.content.rect.width * m_ScrollRect.content.pivot.x - m_ScrollRect.viewport.rect.width * contentAnchor.x;
+            m_PrevContentAnchoredPosition.y += -m_ScrollRect.content.rect.height * (1f - m_ScrollRect.content.pivot.y) + m_ScrollRect.viewport.rect.height * (1f - contentAnchor.y);
 
-            // content‚Ì‰ŠúanchoredPosition‚ğŒˆ’è
+            // contentã®åˆæœŸanchoredPositionã‚’æ±ºå®š
             m_DefaultContentAnchoredPosition = Vector2.zero;
             if (m_ScrollRect.horizontal)
             {
@@ -440,7 +442,7 @@ namespace MushaLib.InfiniteScrollView
                 }
                 else
                 {
-                    m_DefaultContentAnchoredPosition.x = m_PrevContentAnchoredPosition.x + m_Margin.left;
+                    m_DefaultContentAnchoredPosition.x = m_PrevContentAnchoredPosition.x + m_Margin.left + m_Padding.left;
                 }
             }
             if (m_ScrollRect.vertical)
@@ -451,21 +453,21 @@ namespace MushaLib.InfiniteScrollView
                 }
                 else
                 {
-                    m_DefaultContentAnchoredPosition.y = m_PrevContentAnchoredPosition.y - m_Margin.top;
+                    m_DefaultContentAnchoredPosition.y = m_PrevContentAnchoredPosition.y - m_Margin.top - m_Padding.top;
                 }
             }
 
-            // viewportæ“¾
+            // viewportå–å¾—
             var viewportCorners = new Vector3[4];
             m_ScrollRect.viewport.GetLocalCorners(viewportCorners);
             m_ViewportCornerMin = viewportCorners[0] - new Vector3(m_Margin.left, m_Margin.bottom);
             m_ViewportCornerMax = viewportCorners[2] + new Vector3(m_Margin.right, m_Margin.top);
 
-            // ScrollElement”z—ñ’·
+            // ScrollElementé…åˆ—é•·
             m_ScrollElementLength = m_PageLayout.CellCount;
             if (m_ScrollRect.horizontal)
             {
-                // viewport”ÍˆÍ“à‚É—v‘f‚ª‚¢‚­‚Â“ü‚é‚©AviewportˆÊ’u‚ğ­‚µ‚¸‚ç‚µ‚Äƒ`ƒFƒbƒN‚·‚é
+                // viewportç¯„å›²å†…ã«è¦ç´ ãŒã„ãã¤å…¥ã‚‹ã‹ã€viewportä½ç½®ã‚’å°‘ã—ãšã‚‰ã—ã¦ãƒã‚§ãƒƒã‚¯ã™ã‚‹
                 float viewportMaxX = (m_ViewportCornerMax.x - m_ViewportCornerMin.x) + (m_PageLayout.CellSize.x - 1f);
                 float fPageColumn = viewportMaxX / (m_PageRectSize.x + m_Spacing.x);
                 int pageColumn = Mathf.FloorToInt(fPageColumn);
@@ -475,7 +477,7 @@ namespace MushaLib.InfiniteScrollView
             }
             if (m_ScrollRect.vertical)
             {
-                // viewport”ÍˆÍ“à‚É—v‘f‚ª‚¢‚­‚Â“ü‚é‚©AviewportˆÊ’u‚ğ­‚µ‚¸‚ç‚µ‚Äƒ`ƒFƒbƒN‚·‚é
+                // viewportç¯„å›²å†…ã«è¦ç´ ãŒã„ãã¤å…¥ã‚‹ã‹ã€viewportä½ç½®ã‚’å°‘ã—ãšã‚‰ã—ã¦ãƒã‚§ãƒƒã‚¯ã™ã‚‹
                 float viewportMaxY = (m_ViewportCornerMax.y - m_ViewportCornerMin.y) + (m_PageLayout.CellSize.y - 1f);
                 float fPageRow = viewportMaxY / (m_PageRectSize.y + m_Spacing.y);
                 int pageRow = Mathf.FloorToInt(fPageRow);
@@ -484,7 +486,7 @@ namespace MushaLib.InfiniteScrollView
                 m_ScrollElementLength.y = pageRow* m_PageLayout.CellCount.y + localRow;
             }
 
-            // ScrollElement”z—ñ¶¬
+            // ScrollElementé…åˆ—ç”Ÿæˆ
             m_ScrollElements = new IScrollElement[m_ScrollElementLength.y, m_ScrollElementLength.x];
             m_OriginalColumnIndices = Enumerable.Range(0, m_ScrollElementLength.x).ToArray();
             m_OriginalRowIndices = Enumerable.Range(0, m_ScrollElementLength.y).ToArray();
@@ -507,8 +509,8 @@ namespace MushaLib.InfiniteScrollView
                     element.LocalPosition = GetElementPosition(element.PageRow, element.PageColumn, element.LocalRow, element.LocalColumn);
 
                     var anchoredPosition = element.LocalPosition;
-                    anchoredPosition.x += m_PageLayout.CellSize.x * element.RectTransform.pivot.x;
-                    anchoredPosition.y -= m_PageLayout.CellSize.y * element.RectTransform.pivot.y;
+                    anchoredPosition.x += m_Padding.left + m_PageLayout.CellSize.x * element.RectTransform.pivot.x;
+                    anchoredPosition.y -= m_Padding.top + m_PageLayout.CellSize.y * element.RectTransform.pivot.y;
 
                     element.RectTransform.anchorMin =
                     element.RectTransform.anchorMax = new(0f, 1f);
@@ -518,26 +520,26 @@ namespace MushaLib.InfiniteScrollView
                 }
             }
 
-            // g‚í‚È‚©‚Á‚½ƒŠƒTƒCƒNƒ‹—v‘f‚ğ”jŠü
+            // ä½¿ã‚ãªã‹ã£ãŸãƒªã‚µã‚¤ã‚¯ãƒ«è¦ç´ ã‚’ç ´æ£„
             while (recyclablePrefabs.TryDequeue(out var prefabInstance))
             {
                 Destroy(prefabInstance.RectTransform.gameObject);
             }
 
-            // content‚ÌanchoredPosition‚ğƒZƒbƒg‚·‚é‚ÆScrollRect‚ÌonValueChanged‚ª‘–‚é‚Ì‚ÅAˆê’Uenabled‚ğØ‚é
+            // contentã®anchoredPositionã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã¨ScrollRectã®onValueChangedãŒèµ°ã‚‹ã®ã§ã€ä¸€æ—¦enabledã‚’åˆ‡ã‚‹
             var prevScrollRectEnabled = m_ScrollRect.enabled;
             m_ScrollRect.enabled = false;
 
-            // PrevContentAnchoredPosition‚©‚ç(0, 0)‚Ü‚ÅƒXƒNƒ[ƒ‹‚µ‚½‚Æ‚¢‚¤‚±‚Æ‚É‚µ‚Ä—v‘f‚ğXV
+            // PrevContentAnchoredPositionã‹ã‚‰(0, 0)ã¾ã§ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã—ãŸã¨ã„ã†ã“ã¨ã«ã—ã¦è¦ç´ ã‚’æ›´æ–°
             m_ScrollRect.content.anchoredPosition = m_DefaultContentAnchoredPosition;
             OnScroll(default);
 
-            // enabled‚ğ–ß‚·
+            // enabledã‚’æˆ»ã™
             m_ScrollRect.enabled = prevScrollRectEnabled;
         }
 
         /// <summary>
-        /// ƒXƒNƒ[ƒ‹
+        /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚
         /// </summary>
         private void OnScroll(Vector2 value)
         {
@@ -546,26 +548,26 @@ namespace MushaLib.InfiniteScrollView
                 return;
             }
 
-            // ƒXƒNƒ[ƒ‹—Ê
+            // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«é‡
             Vector2 delta = m_ScrollRect.content.anchoredPosition - m_PrevContentAnchoredPosition;
             m_PrevContentAnchoredPosition = m_ScrollRect.content.anchoredPosition;
 
-            // Viewport‚©‚çŒ©‚½content‚Ì¶ãŠp‚ÌÀ•W
+            // Viewportã‹ã‚‰è¦‹ãŸcontentã®å·¦ä¸Šè§’ã®åº§æ¨™
             m_ContentTopLeftInViewport = m_ScrollRect.content.localPosition;
             m_ContentTopLeftInViewport.x -= m_ScrollRect.content.rect.width * m_ScrollRect.content.pivot.x;
             m_ContentTopLeftInViewport.y += m_ScrollRect.content.rect.height * m_ScrollRect.content.pivot.y;
 
-            // ‰¡ƒXƒNƒ[ƒ‹
+            // æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚
             if (m_ScrollRect.horizontal && !Mathf.Approximately(delta.x, 0f))
             {
-                // ƒXƒNƒ[ƒ‹‚ği‚Ü‚¹‚½H
+                // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’é€²ã¾ã›ãŸï¼Ÿ
                 int sign = delta.x < 0f ? 1 : -1;
                 int[] columnIndices = delta.x < 0f ? m_OriginalColumnIndices : m_ReverseColumnIndices;
 
                 int firstX = columnIndices.First();
                 int lastX = columnIndices.Last();
 
-                // viewport”ÍˆÍŠO‚É‚È‚Á‚½H
+                // viewportç¯„å›²å¤–ã«ãªã£ãŸï¼Ÿ
                 while (!OverlapHorizontal(m_ScrollElements[0, firstX]))
                 {
                     int moveCount = sign;
@@ -576,38 +578,38 @@ namespace MushaLib.InfiniteScrollView
                         var firstElement = m_ScrollElements[y, firstX];
                         var lastElement = m_ScrollElements[y, lastX];
 
-                        // ÅI—v‘f‚ÌŸ‚ÌˆÊ’u‚ÉˆÚ“®
+                        // æœ€çµ‚è¦ç´ ã®æ¬¡ã®ä½ç½®ã«ç§»å‹•
                         SetElementColumn(firstElement, lastElement.Column + moveCount);
 
                         while (!movePosition.HasValue)
                         {
-                            // ˆÚ“®Œã‚Ìƒ[ƒJƒ‹À•W
+                            // ç§»å‹•å¾Œã®ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™
                             var newLocalPosition = GetElementPosition(firstElement.PageRow, firstElement.PageColumn, firstElement.LocalRow, firstElement.LocalColumn);
-                            float minX = newLocalPosition.x + m_ContentTopLeftInViewport.x;
+                            float minX = m_ContentTopLeftInViewport.x + m_Padding.left + newLocalPosition.x;
                             float maxX = minX + m_PageLayout.CellSize.x;
 
-                            // ˆÚ“®‚ÌŒ‹‰Êviewport”ÍˆÍ“à‚É‚È‚è‚»‚¤H
+                            // ç§»å‹•ã®çµæœviewportç¯„å›²å†…ã«ãªã‚Šãã†ï¼Ÿ
                             if ((sign == 1 && m_ViewportCornerMin.x <= maxX) || (sign == -1 && minX <= m_ViewportCornerMax.x))
                             {
-                                // À•WˆÚ“®—ÊŒˆ’è
+                                // åº§æ¨™ç§»å‹•é‡æ±ºå®š
                                 movePosition = newLocalPosition - firstElement.LocalPosition;
                             }
                             else
                             {
-                                // ‚à‚¤ˆê‚Â—×‚ÉˆÚ“®‚µ‚Ä‚İ‚é
+                                // ã‚‚ã†ä¸€ã¤éš£ã«ç§»å‹•ã—ã¦ã¿ã‚‹
                                 moveCount += sign;
                                 SetElementColumn(firstElement, lastElement.Column + moveCount);
                             }
                         }
 
-                        // À•WˆÚ“®
+                        // åº§æ¨™ç§»å‹•
                         firstElement.LocalPosition += movePosition.Value;
                         firstElement.RectTransform.anchoredPosition += movePosition.Value;
 
-                        // ƒCƒ“ƒfƒbƒNƒXXV
+                        // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ›´æ–°
                         UpdateElementIndex(firstElement);
 
-                        // ƒXƒNƒ[ƒ‹—v‘f”z—ñ‚ğƒVƒtƒg
+                        // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—ã‚’ã‚·ãƒ•ãƒˆ
                         foreach (int x in columnIndices.SkipLast(1))
                         {
                             m_ScrollElements[y, x] = m_ScrollElements[y, x + sign];
@@ -618,17 +620,17 @@ namespace MushaLib.InfiniteScrollView
                 }
             }
 
-            // cƒXƒNƒ[ƒ‹
+            // ç¸¦ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚
             if (m_ScrollRect.vertical && !Mathf.Approximately(delta.y, 0f))
             {
-                // ƒXƒNƒ[ƒ‹‚ği‚Ü‚¹‚½H
+                // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’é€²ã¾ã›ãŸï¼Ÿ
                 int sign = delta.y > 0f ? 1 : -1;
                 int[] rowIndices = delta.y > 0f ? m_OriginalRowIndices : m_ReverseRowIndices;
 
                 int firstY = rowIndices.First();
                 int lastY = rowIndices.Last();
 
-                // viewport”ÍˆÍŠO‚É‚È‚Á‚½H
+                // viewportç¯„å›²å¤–ã«ãªã£ãŸï¼Ÿ
                 while (!OverlapVertical(m_ScrollElements[firstY, 0]))
                 {
                     int moveCount = sign;
@@ -639,38 +641,38 @@ namespace MushaLib.InfiniteScrollView
                         var firstElement = m_ScrollElements[firstY, x];
                         var lastElement = m_ScrollElements[lastY, x];
 
-                        // ÅI—v‘f‚ÌŸ‚ÌˆÊ’u‚ÉˆÚ“®
+                        // æœ€çµ‚è¦ç´ ã®æ¬¡ã®ä½ç½®ã«ç§»å‹•
                         SetElementRow(firstElement, lastElement.Row + moveCount);
 
                         while (!movePosition.HasValue)
                         {
-                            // ˆÚ“®Œã‚Ìƒ[ƒJƒ‹À•W
+                            // ç§»å‹•å¾Œã®ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™
                             var newLocalPosition = GetElementPosition(firstElement.PageRow, firstElement.PageColumn, firstElement.LocalRow, firstElement.LocalColumn);
-                            float maxY = newLocalPosition.y + m_ContentTopLeftInViewport.y;
+                            float maxY = m_ContentTopLeftInViewport.y - m_Padding.top + newLocalPosition.y;
                             float minY = maxY - m_PageLayout.CellSize.y;
 
-                            // ˆÚ“®‚ÌŒ‹‰Êviewport”ÍˆÍ“à‚É‚È‚è‚»‚¤H
+                            // ç§»å‹•ã®çµæœviewportç¯„å›²å†…ã«ãªã‚Šãã†ï¼Ÿ
                             if ((sign == 1 && minY <= m_ViewportCornerMax.y) || (sign == -1 && m_ViewportCornerMin.y <= maxY))
                             {
-                                // À•WˆÚ“®—ÊŒˆ’è
+                                // åº§æ¨™ç§»å‹•é‡æ±ºå®š
                                 movePosition = newLocalPosition - firstElement.LocalPosition;
                             }
                             else
                             {
-                                // ‚à‚¤ˆê‚Â—×‚ÉˆÚ“®‚µ‚Ä‚İ‚é
+                                // ã‚‚ã†ä¸€ã¤éš£ã«ç§»å‹•ã—ã¦ã¿ã‚‹
                                 moveCount += sign;
                                 SetElementRow(firstElement, lastElement.Row + moveCount);
                             }
                         }
 
-                        // À•WˆÚ“®
+                        // åº§æ¨™ç§»å‹•
                         firstElement.LocalPosition += movePosition.Value;
                         firstElement.RectTransform.anchoredPosition += movePosition.Value;
 
-                        // ƒCƒ“ƒfƒbƒNƒXXV
+                        // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ›´æ–°
                         UpdateElementIndex(firstElement);
 
-                        // ƒXƒNƒ[ƒ‹—v‘f”z—ñ‚ğƒVƒtƒg
+                        // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ é…åˆ—ã‚’ã‚·ãƒ•ãƒˆ
                         foreach (int y in rowIndices.SkipLast(1))
                         {
                             m_ScrollElements[y, x] = m_ScrollElements[y + sign, x];
@@ -683,7 +685,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOŠJn
+        /// ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹æ™‚
         /// </summary>
         void IInitializePotentialDragHandler.OnInitializePotentialDrag(PointerEventData eventData)
         {
@@ -696,7 +698,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOI—¹
+        /// ãƒ‰ãƒ©ãƒƒã‚°çµ‚äº†æ™‚
         /// </summary>
         async void IEndDragHandler.OnEndDrag(PointerEventData eventData)
         {
@@ -705,26 +707,26 @@ namespace MushaLib.InfiniteScrollView
                 return;
             }
 
-            // ƒXƒiƒbƒvˆ—‚ÌŠJnAI—¹‚Ìcontent‚ÌanchoredPosition
+            // ã‚¹ãƒŠãƒƒãƒ—å‡¦ç†ã®é–‹å§‹ã€çµ‚äº†æ™‚ã®contentã®anchoredPosition
             Vector2 startAnchoredPosition = m_ScrollRect.content.anchoredPosition;
             Vector2 endAnchoredPosition = startAnchoredPosition;
 
-            // ‰¡ƒXƒNƒ[ƒ‹‚·‚éê‡
+            // æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹å ´åˆ
             if (m_ScrollRect.horizontal)
             {
-                // —]”’‚ğœ‚¢‚½ƒRƒ“ƒeƒ“ƒc•
+                // ä½™ç™½ã‚’é™¤ã„ãŸã‚³ãƒ³ãƒ†ãƒ³ãƒ„å¹…
                 float contentWidth = m_ScrollRect.content.rect.width - (m_Padding.left + m_Padding.right);
 
-                // content‚ÌÀ•W
+                // contentã®åº§æ¨™
                 float contentPositionX = Mathf.Repeat(-(m_ScrollRect.content.anchoredPosition.x - m_DefaultContentAnchoredPosition.x), contentWidth + m_Spacing.x);
 
-                // content‚ÌˆÊ’u‚©‚çŒ»İƒ^[ƒQƒbƒg’†‚Ì—v‘f‚ğŠ„‚èo‚·
+                // contentã®ä½ç½®ã‹ã‚‰ç¾åœ¨ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä¸­ã®è¦ç´ ã‚’å‰²ã‚Šå‡ºã™
                 float fPageColumn = contentPositionX / (m_PageRectSize.x + m_Spacing.x);
                 int pageColumn = Mathf.FloorToInt(fPageColumn);
                 float fLocalColumn = (fPageColumn - pageColumn) * (m_PageRectSize.x + m_Spacing.x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x);
                 int localColumn = Mathf.FloorToInt(fLocalColumn);
 
-                // ê‡‚É‚æ‚Á‚Ä‚Í—×‚Ì—v‘f‚Ì•û‚ª‹ß‚¢‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅA”äŠr‚·‚é—v‘f‚ğŒˆ’è
+                // å ´åˆã«ã‚ˆã£ã¦ã¯éš£ã®è¦ç´ ã®æ–¹ãŒè¿‘ã„ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ã€æ¯”è¼ƒã™ã‚‹è¦ç´ ã‚’æ±ºå®š
                 int nextPageColumn = pageColumn + 1;
                 int nextLocalColumn = 0;
 
@@ -750,10 +752,10 @@ namespace MushaLib.InfiniteScrollView
                     localColumn = 0;
                 }
 
-                // ƒXƒiƒbƒvƒ^[ƒQƒbƒgˆÊ’uŒˆ’è
+                // ã‚¹ãƒŠãƒƒãƒ—ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®æ±ºå®š
                 float targetPositionX = GetElementPosition(0, pageColumn, 0, localColumn).x;
 
-                // —×‚Ìƒ^[ƒQƒbƒg‚Ì•û‚ª‹ß‚¢‚È‚çAƒXƒiƒbƒvƒ^[ƒQƒbƒgˆÊ’u‚Íˆê‚Â—×‚É‚·‚é
+                // éš£ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ–¹ãŒè¿‘ã„ãªã‚‰ã€ã‚¹ãƒŠãƒƒãƒ—ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã¯ä¸€ã¤éš£ã«ã™ã‚‹
                 float nextTargetPositionX = GetElementPosition(0, nextPageColumn, 0, nextLocalColumn).x;
 
                 if (Mathf.Abs(nextTargetPositionX - contentPositionX) < Mathf.Abs(targetPositionX - contentPositionX))
@@ -761,37 +763,37 @@ namespace MushaLib.InfiniteScrollView
                     targetPositionX = nextTargetPositionX;
                 }
 
-                // Œ»İˆÊ’u‚©‚çƒ^[ƒQƒbƒg‚Ü‚Å‚ÌˆÚ“®—Ê
-                float dx = (targetPositionX - m_Padding.left) - contentPositionX;
+                // ç¾åœ¨ä½ç½®ã‹ã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¾ã§ã®ç§»å‹•é‡
+                float dx = targetPositionX - contentPositionX;
 
-                // ƒXƒiƒbƒvI—¹‚Ìcontent‚ÌanchoredPosition‚ğŒˆ’è
+                // ã‚¹ãƒŠãƒƒãƒ—çµ‚äº†æ™‚ã®contentã®anchoredPositionã‚’æ±ºå®š
                 endAnchoredPosition.x -= dx;
 
                 if (m_ScrollRect.movementType != ScrollRect.MovementType.Unrestricted)
                 {
-                    // ˆÚ“®§ŒÀ
+                    // ç§»å‹•åˆ¶é™
                     float maxX = m_DefaultContentAnchoredPosition.x;
                     float minX = maxX - Mathf.Max(m_ScrollRect.content.rect.width - m_ScrollRect.viewport.rect.width, 0f);
                     endAnchoredPosition.x = Mathf.Clamp(endAnchoredPosition.x, minX, maxX);
                 }
             }
 
-            // cƒXƒNƒ[ƒ‹‚·‚éê‡
+            // ç¸¦ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹å ´åˆ
             if (m_ScrollRect.vertical)
             {
-                // —]”’‚ğœ‚¢‚½ƒRƒ“ƒeƒ“ƒc‚‚³
+                // ä½™ç™½ã‚’é™¤ã„ãŸã‚³ãƒ³ãƒ†ãƒ³ãƒ„é«˜ã•
                 float contentHeight = m_ScrollRect.content.rect.height - (m_Padding.top + m_Padding.bottom);
 
-                // content‚ÌÀ•W
+                // contentã®åº§æ¨™
                 float contentPositionY = Mathf.Repeat(m_ScrollRect.content.anchoredPosition.y - m_DefaultContentAnchoredPosition.y, contentHeight + m_Spacing.y);
 
-                // content‚ÌˆÊ’u‚©‚çŒ»İƒ^[ƒQƒbƒg’†‚Ì—v‘f‚ğŠ„‚èo‚·
+                // contentã®ä½ç½®ã‹ã‚‰ç¾åœ¨ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä¸­ã®è¦ç´ ã‚’å‰²ã‚Šå‡ºã™
                 float fPageRow = contentPositionY / (m_PageRectSize.y + m_Spacing.y);
                 int pageRow = Mathf.FloorToInt(fPageRow);
                 float fLocalRow = (fPageRow - pageRow) * (m_PageRectSize.y + m_Spacing.y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y);
                 int localRow = Mathf.FloorToInt(fLocalRow);
 
-                // ê‡‚É‚æ‚Á‚Ä‚Í—×‚Ì—v‘f‚Ì•û‚ª‹ß‚¢‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅA”äŠr‚·‚é—v‘f‚ğŒˆ’è
+                // å ´åˆã«ã‚ˆã£ã¦ã¯éš£ã®è¦ç´ ã®æ–¹ãŒè¿‘ã„ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ã€æ¯”è¼ƒã™ã‚‹è¦ç´ ã‚’æ±ºå®š
                 int nextPageRow = pageRow + 1;
                 int nextLocalRow = 0;
 
@@ -817,10 +819,10 @@ namespace MushaLib.InfiniteScrollView
                     localRow = 0;
                 }
 
-                // ƒXƒiƒbƒvƒ^[ƒQƒbƒgˆÊ’uŒˆ’è
+                // ã‚¹ãƒŠãƒƒãƒ—ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®æ±ºå®š
                 float targetPositionY = GetElementPosition(pageRow, 0, localRow, 0).y;
 
-                // —×‚Ìƒ^[ƒQƒbƒg‚Ì•û‚ª‹ß‚¢‚È‚çAƒXƒiƒbƒvƒ^[ƒQƒbƒgˆÊ’u‚Íˆê‚Â—×‚É‚·‚é
+                // éš£ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ–¹ãŒè¿‘ã„ãªã‚‰ã€ã‚¹ãƒŠãƒƒãƒ—ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã¯ä¸€ã¤éš£ã«ã™ã‚‹
                 float nextTargetPositionY = GetElementPosition(nextPageRow, 0, nextLocalRow, 0).y;
 
                 if (Mathf.Abs(nextTargetPositionY + contentPositionY) < Mathf.Abs(targetPositionY + contentPositionY))
@@ -828,27 +830,27 @@ namespace MushaLib.InfiniteScrollView
                     targetPositionY = nextTargetPositionY;
                 }
 
-                // Œ»İˆÊ’u‚©‚çƒ^[ƒQƒbƒg‚Ü‚Å‚ÌˆÚ“®—Ê
-                float dy = (targetPositionY + m_Padding.top) + contentPositionY;
+                // ç¾åœ¨ä½ç½®ã‹ã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¾ã§ã®ç§»å‹•é‡
+                float dy = targetPositionY + contentPositionY;
 
-                // ƒXƒiƒbƒvI—¹‚Ìcontent‚ÌanchoredPosition‚ğŒˆ’è
+                // ã‚¹ãƒŠãƒƒãƒ—çµ‚äº†æ™‚ã®contentã®anchoredPositionã‚’æ±ºå®š
                 endAnchoredPosition.y -= dy;
 
                 if (m_ScrollRect.movementType != ScrollRect.MovementType.Unrestricted)
                 {
-                    // ˆÚ“®§ŒÀ
+                    // ç§»å‹•åˆ¶é™
                     float minY = m_DefaultContentAnchoredPosition.y;
                     float maxY = minY + Mathf.Max(m_ScrollRect.content.rect.height - m_ScrollRect.viewport.rect.height, 0f);
                     endAnchoredPosition.y = Mathf.Clamp(endAnchoredPosition.y, minY, maxY);
                 }
             }
 
-            // ƒXƒiƒbƒvƒ^[ƒQƒbƒgˆÊ’u‚Ü‚Å™X‚ÉˆÚ“®
+            // ã‚¹ãƒŠãƒƒãƒ—ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã¾ã§å¾ã€…ã«ç§»å‹•
             await ScrollToPosition(endAnchoredPosition, m_SnapDuration);
         }
 
         /// <summary>
-        /// —v‘f‚Ì—ñ”Ô†‚ğƒZƒbƒg‚·‚é
+        /// è¦ç´ ã®åˆ—ç•ªå·ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
         /// </summary>
         private void SetElementColumn(IScrollElement element, int column)
         {
@@ -867,7 +869,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// —v‘f‚Ìs”Ô†‚ğƒZƒbƒg‚·‚é
+        /// è¦ç´ ã®è¡Œç•ªå·ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
         /// </summary>
         private void SetElementRow(IScrollElement element, int row)
         {
@@ -886,7 +888,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// —v‘f‚Ìs‚Æ—ñ‚©‚çƒCƒ“ƒfƒbƒNƒX‚ğXV
+        /// è¦ç´ ã®è¡Œã¨åˆ—ã‹ã‚‰ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ›´æ–°
         /// </summary>
         private void UpdateElementIndex(IScrollElement element)
         {
@@ -919,11 +921,11 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// —v‘f‚ªViewport•‚Ì”ÍˆÍ“à‚©‚Ç‚¤‚©
+        /// è¦ç´ ãŒViewportå¹…ã®ç¯„å›²å†…ã‹ã©ã†ã‹
         /// </summary>
         private bool OverlapHorizontal(IScrollElement element)
         {
-            float minX = m_ContentTopLeftInViewport.x + element.LocalPosition.x;
+            float minX = m_ContentTopLeftInViewport.x + m_Padding.left + element.LocalPosition.x;
             float maxX = minX + m_PageLayout.CellSize.x;
 
             return (m_ViewportCornerMin.x <= minX && minX <= m_ViewportCornerMax.x)
@@ -931,11 +933,11 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// —v‘f‚ªViewport‚‚³‚Ì”ÍˆÍ“à‚©‚Ç‚¤‚©
+        /// è¦ç´ ãŒViewporté«˜ã•ã®ç¯„å›²å†…ã‹ã©ã†ã‹
         /// </summary>
         private bool OverlapVertical(IScrollElement element)
         {
-            float maxY = m_ContentTopLeftInViewport.y + element.LocalPosition.y;
+            float maxY = m_ContentTopLeftInViewport.y - m_Padding.top + element.LocalPosition.y;
             float minY = maxY - m_PageLayout.CellSize.y;
 
             return (m_ViewportCornerMin.y <= minY && minY <= m_ViewportCornerMax.y)
@@ -943,7 +945,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èƒy[ƒW‚Ìs‚Æ—ñ‚Ì”Ô†‚ğæ“¾
+        /// æŒ‡å®šãƒšãƒ¼ã‚¸ã®è¡Œã¨åˆ—ã®ç•ªå·ã‚’å–å¾—
         /// </summary>
         private Vector2Int GetPageCoord(int pageIndex)
         {
@@ -960,18 +962,15 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒW‚Ìƒ[ƒJƒ‹À•Wæ“¾
+        /// ãƒšãƒ¼ã‚¸ã®ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™å–å¾—
         /// </summary>
         private Vector2 GetPagePosition(int pageRow, int pageColumn)
         {
-            return new(
-                x: m_Padding.left + (m_PageRectSize.x + m_Spacing.x) * pageColumn,
-                y: -m_Padding.top - (m_PageRectSize.y + m_Spacing.y) * pageRow
-            );
+            return new((m_PageRectSize.x + m_Spacing.x) * pageColumn, (m_PageRectSize.y + m_Spacing.y) * pageRow * -1f);
         }
 
         /// <summary>
-        /// —v‘f‚Ìƒ[ƒJƒ‹À•Wæ“¾
+        /// è¦ç´ ã®ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™å–å¾—
         /// </summary>
         private Vector2 GetElementPosition(int pageRow, int pageColumn, int localRow, int localColumn)
         {
@@ -979,21 +978,21 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒ[ƒJƒ‹À•W‚ğcontent‚ÌanchoredPosition‚É•ÏŠ·‚·‚é
+        /// ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™ã‚’contentã®anchoredPositionã«å¤‰æ›ã™ã‚‹
         /// </summary>
         private Vector2 LocalToAnchoredPosition(Vector2 targetPosition)
         {
-            // ƒ^[ƒQƒbƒgˆÊ’u‚ğcontentÀ•W‚Æ”äŠr‚·‚é‚½‚ß’²®
+            // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã‚’contentåº§æ¨™ã¨æ¯”è¼ƒã™ã‚‹ãŸã‚èª¿æ•´
             targetPosition.x -= m_Padding.left;
             targetPosition.y += m_Padding.top;
             targetPosition *= -1f;
 
-            // ƒXƒNƒ[ƒ‹”ÍˆÍ
+            // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ç¯„å›²
             var scrollRange = m_ScrollRect.content.rect.size;
             scrollRange.x -= (m_Padding.left + m_Padding.right) - m_Spacing.x;
             scrollRange.y -= (m_Padding.top + m_Padding.bottom) - m_Spacing.y;
 
-            // content‚ÌÀ•W
+            // contentã®åº§æ¨™
             var contentPosition = m_ScrollRect.content.anchoredPosition - m_DefaultContentAnchoredPosition;
             if (m_ScrollRect.horizontal && scrollRange.x > 0f)
             {
@@ -1004,7 +1003,7 @@ namespace MushaLib.InfiniteScrollView
                 contentPosition.y %= scrollRange.y;
             }
 
-            // ˆÚ“®—Ê
+            // ç§»å‹•é‡
             var delta = targetPosition - contentPosition;
             if (!m_ScrollRect.horizontal)
             {
@@ -1016,7 +1015,7 @@ namespace MushaLib.InfiniteScrollView
             }
             if (m_ScrollRect.movementType == ScrollRect.MovementType.Unrestricted && m_Loop)
             {
-                // —×‚Ì•û‚ª‹ß‚¢‚È‚ç‚»‚Á‚¿‚ÉˆÚ“®‚·‚é
+                // éš£ã®æ–¹ãŒè¿‘ã„ãªã‚‰ãã£ã¡ã«ç§»å‹•ã™ã‚‹
                 var nextDelta = delta;
                 if (m_ScrollRect.horizontal)
                 {
@@ -1056,7 +1055,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èƒy[ƒW‚ÌanchoredPosition‚ğæ“¾
+        /// æŒ‡å®šãƒšãƒ¼ã‚¸ã®anchoredPositionã‚’å–å¾—
         /// </summary>
         public Vector2 GetPageAnchoredPosition(int pageIndex)
         {
@@ -1066,7 +1065,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’è—v‘f‚ÌandhoredPosition‚ğæ“¾
+        /// æŒ‡å®šè¦ç´ ã®andhoredPositionã‚’å–å¾—
         /// </summary>
         public Vector2 GetElementAnchoredPosition(int elementIndex)
         {
@@ -1088,7 +1087,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èÀ•W‚ÉƒWƒƒƒ“ƒv
+        /// æŒ‡å®šåº§æ¨™ã«ã‚¸ãƒ£ãƒ³ãƒ—
         /// </summary>
         public void JumpToPosition(Vector2 targetPosition)
         {
@@ -1096,7 +1095,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èƒy[ƒW‚ÉƒWƒƒƒ“ƒv
+        /// æŒ‡å®šãƒšãƒ¼ã‚¸ã«ã‚¸ãƒ£ãƒ³ãƒ—
         /// </summary>
         public void JumpToPage(int pageIndex)
         {
@@ -1104,7 +1103,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’è—v‘f‚ÉƒWƒƒƒ“ƒv
+        /// æŒ‡å®šè¦ç´ ã«ã‚¸ãƒ£ãƒ³ãƒ—
         /// </summary>
         public void JumpToElement(int elementIndex)
         {
@@ -1112,7 +1111,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èÀ•W‚ÉƒXƒNƒ[ƒ‹
+        /// æŒ‡å®šåº§æ¨™ã«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
         /// </summary>
         public async UniTask ScrollToPosition(Vector2 targetPosition, float duration = 0.1f, CancellationToken cancellation = default)
         {
@@ -1140,7 +1139,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èƒy[ƒW‚ÉƒXƒNƒ[ƒ‹
+        /// æŒ‡å®šãƒšãƒ¼ã‚¸ã«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
         /// </summary>
         public async UniTask ScrollToPage(int pageIndex, float duration = 0.1f, CancellationToken cancellation = default)
         {
@@ -1148,7 +1147,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’è—v‘f‚ÉƒXƒNƒ[ƒ‹
+        /// æŒ‡å®šè¦ç´ ã«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
         /// </summary>
         public async UniTask ScrollToElement(int elementIndex, float duration = 0.1f, CancellationToken cancellation = default)
         {
@@ -1156,7 +1155,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ©“®ƒXƒNƒ[ƒ‹ˆ—‚ÌƒLƒƒƒ“ƒZƒ‹
+        /// è‡ªå‹•ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å‡¦ç†ã®ã‚­ãƒ£ãƒ³ã‚»ãƒ«
         /// </summary>
         private void CancelAutoScroll()
         {

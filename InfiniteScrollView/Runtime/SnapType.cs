@@ -1,26 +1,26 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
-    /// ƒXƒiƒbƒvƒ^ƒCƒv
+    /// ã‚¹ãƒŠãƒƒãƒ—ã‚¿ã‚¤ãƒ—
     /// </summary>
     public enum SnapType
     {
         /// <summary>
-        /// ‚È‚µ
+        /// ãªã—
         /// </summary>
         None,
 
         /// <summary>
-        /// ƒy[ƒW’PˆÊ
+        /// ãƒšãƒ¼ã‚¸å˜ä½
         /// </summary>
         Page,
 
         /// <summary>
-        /// —v‘f’PˆÊ
+        /// è¦ç´ å˜ä½
         /// </summary>
         Element,
     }

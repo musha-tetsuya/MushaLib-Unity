@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
-    /// ƒXƒNƒ[ƒ‹—v‘fƒCƒ“ƒ^[ƒtƒF[ƒX
+    /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
     /// </summary>
     public interface IScrollElement
     {
@@ -15,52 +15,52 @@ namespace MushaLib.InfiniteScrollView
         RectTransform RectTransform { get; }
 
         /// <summary>
-        /// Viewport“àƒ[ƒJƒ‹À•Wi¶ãŠî€j
+        /// Viewportå†…ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™ï¼ˆå·¦ä¸ŠåŸºæº–ï¼‰
         /// </summary>
         Vector2 LocalPosition { get; set; }
 
         /// <summary>
-        /// ‰½”Ô–Ú‚Ì—v‘f‚©
+        /// ä½•ç•ªç›®ã®è¦ç´ ã‹
         /// </summary>
         int Index { get; set; }
 
         /// <summary>
-        /// ‰½—ñ–Ú‚Ì—v‘f‚©
+        /// ä½•åˆ—ç›®ã®è¦ç´ ã‹
         /// </summary>
         int Column { get; set; }
 
         /// <summary>
-        /// ‰½s–Ú‚Ì—v‘f‚©
+        /// ä½•è¡Œç›®ã®è¦ç´ ã‹
         /// </summary>
         int Row { get; set; }
 
         /// <summary>
-        /// ƒy[ƒW“à‚Å‰½”Ô–Ú‚Ì—v‘f‚©
+        /// ãƒšãƒ¼ã‚¸å†…ã§ä½•ç•ªç›®ã®è¦ç´ ã‹
         /// </summary>
         int LocalIndex { get; set; }
         
         /// <summary>
-        /// ƒy[ƒW“à‚Å‰½—ñ–Ú‚Ì—v‘f‚©
+        /// ãƒšãƒ¼ã‚¸å†…ã§ä½•åˆ—ç›®ã®è¦ç´ ã‹
         /// </summary>
         int LocalColumn { get; set; }
 
         /// <summary>
-        /// ƒy[ƒW“à‚Å‰½s–Ú‚Ì—v‘f‚©
+        /// ãƒšãƒ¼ã‚¸å†…ã§ä½•è¡Œç›®ã®è¦ç´ ã‹
         /// </summary>
         int LocalRow { get; set; }
 
         /// <summary>
-        /// ‰½”Ô–Ú‚Ìƒy[ƒW‚©
+        /// ä½•ç•ªç›®ã®ãƒšãƒ¼ã‚¸ã‹
         /// </summary>
         int PageIndex { get; set; }
 
         /// <summary>
-        /// ‰½—ñ–Ú‚Ìƒy[ƒW‚©
+        /// ä½•åˆ—ç›®ã®ãƒšãƒ¼ã‚¸ã‹
         /// </summary>
         int PageColumn { get; set; }
 
         /// <summary>
-        /// ‰½s–Ú‚Ìƒy[ƒW‚©
+        /// ä½•è¡Œç›®ã®ãƒšãƒ¼ã‚¸ã‹
         /// </summary>
         int PageRow { get; set; }
     }

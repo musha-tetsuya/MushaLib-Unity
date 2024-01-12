@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
-    /// ƒXƒNƒ[ƒ‹—v‘fŠî’ê
+    /// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¦ç´ åŸºåº•
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class ScrollElement : MonoBehaviour, IScrollElement
@@ -21,52 +21,52 @@ namespace MushaLib.InfiniteScrollView
         RectTransform IScrollElement.RectTransform => m_RectTransform ?? (m_RectTransform = transform as RectTransform);
 
         /// <summary>
-        /// Viewport“àƒ[ƒJƒ‹À•Wi¶ãŠî€j
+        /// Viewportå†…ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™ï¼ˆå·¦ä¸ŠåŸºæº–ï¼‰
         /// </summary>
         Vector2 IScrollElement.LocalPosition { get; set; }
 
         /// <summary>
-        /// ‰½”Ô–Ú‚Ì—v‘f‚©
+        /// ä½•ç•ªç›®ã®è¦ç´ ã‹
         /// </summary>
         int IScrollElement.Index { get; set; }
 
         /// <summary>
-        /// ‰½—ñ–Ú‚Ì—v‘f‚©
+        /// ä½•åˆ—ç›®ã®è¦ç´ ã‹
         /// </summary>
         int IScrollElement.Column { get; set; }
 
         /// <summary>
-        /// ‰½s–Ú‚Ì—v‘f‚©
+        /// ä½•è¡Œç›®ã®è¦ç´ ã‹
         /// </summary>
         int IScrollElement.Row { get; set; }
 
         /// <summary>
-        /// ƒy[ƒW“à‚Å‰½”Ô–Ú‚Ì—v‘f‚©
+        /// ãƒšãƒ¼ã‚¸å†…ã§ä½•ç•ªç›®ã®è¦ç´ ã‹
         /// </summary>
         int IScrollElement.LocalIndex { get; set; }
 
         /// <summary>
-        /// ƒy[ƒW“à‚Å‰½—ñ–Ú‚Ì—v‘f‚©
+        /// ãƒšãƒ¼ã‚¸å†…ã§ä½•åˆ—ç›®ã®è¦ç´ ã‹
         /// </summary>
         int IScrollElement.LocalColumn { get; set; }
 
         /// <summary>
-        /// ƒy[ƒW“à‚Å‰½s–Ú‚Ì—v‘f‚©
+        /// ãƒšãƒ¼ã‚¸å†…ã§ä½•è¡Œç›®ã®è¦ç´ ã‹
         /// </summary>
         int IScrollElement.LocalRow { get; set; }
 
         /// <summary>
-        /// ‰½”Ô–Ú‚Ìƒy[ƒW‚©
+        /// ä½•ç•ªç›®ã®ãƒšãƒ¼ã‚¸ã‹
         /// </summary>
         int IScrollElement.PageIndex { get; set; }
 
         /// <summary>
-        /// ‰½—ñ–Ú‚Ìƒy[ƒW‚©
+        /// ä½•åˆ—ç›®ã®ãƒšãƒ¼ã‚¸ã‹
         /// </summary>
         int IScrollElement.PageColumn { get; set; }
 
         /// <summary>
-        /// ‰½s–Ú‚Ìƒy[ƒW‚©
+        /// ä½•è¡Œç›®ã®ãƒšãƒ¼ã‚¸ã‹
         /// </summary>
         int IScrollElement.PageRow { get; set; }
     }

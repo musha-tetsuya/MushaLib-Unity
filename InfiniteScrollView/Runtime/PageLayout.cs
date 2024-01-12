@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,43 +7,43 @@ using UnityEngine.UI;
 namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
-    /// ƒy[ƒWƒŒƒCƒAƒEƒg
+    /// ãƒšãƒ¼ã‚¸ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
     /// </summary>
     [Serializable]
     public class PageLayout
     {
         /// <summary>
-        /// ƒZƒ‹ƒTƒCƒY
+        /// ã‚»ãƒ«ã‚µã‚¤ã‚º
         /// </summary>
         [SerializeField]
         private Vector2 m_CellSize = Vector2.one * 100;
 
         /// <summary>
-        /// ƒZƒ‹”
+        /// ã‚»ãƒ«æ•°
         /// </summary>
         [SerializeField]
         private Vector2Int m_CellCount = Vector2Int.one;
 
         /// <summary>
-        /// ƒZƒ‹ŠÔƒXƒy[ƒX
+        /// ã‚»ãƒ«é–“ã‚¹ãƒšãƒ¼ã‚¹
         /// </summary>
         [SerializeField]
         private Vector2 m_Spacing;
 
         /// <summary>
-        /// ƒy[ƒW“à‚ÌÅ‰‚Ì—v‘f‚ª”z’u‚³‚ê‚éŠp
+        /// ãƒšãƒ¼ã‚¸å†…ã®æœ€åˆã®è¦ç´ ãŒé…ç½®ã•ã‚Œã‚‹è§’
         /// </summary>
         [SerializeField]
         private GridLayoutGroup.Corner m_StartCorner;
 
         /// <summary>
-        /// ƒy[ƒW“à—v‘f‚Ì”z’u•ûŒü
+        /// ãƒšãƒ¼ã‚¸å†…è¦ç´ ã®é…ç½®æ–¹å‘
         /// </summary>
         [SerializeField]
         private GridLayoutGroup.Axis m_StartAxis;
 
         /// <summary>
-        /// ƒZƒ‹ƒTƒCƒY
+        /// ã‚»ãƒ«ã‚µã‚¤ã‚º
         /// </summary>
         public Vector2 CellSize
         {
@@ -52,7 +52,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒZƒ‹”
+        /// ã‚»ãƒ«æ•°
         /// </summary>
         public Vector2Int CellCount
         {
@@ -61,12 +61,12 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ‘ƒZƒ‹”
+        /// ç·ã‚»ãƒ«æ•°
         /// </summary>
         public int TotalCellCount => m_CellCount.x * m_CellCount.y;
 
         /// <summary>
-        /// ƒZƒ‹ŠÔƒXƒy[ƒX
+        /// ã‚»ãƒ«é–“ã‚¹ãƒšãƒ¼ã‚¹
         /// </summary>
         public Vector2 Spacing
         {
@@ -75,7 +75,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒW“à‚ÌÅ‰‚Ì—v‘f‚ª”z’u‚³‚ê‚éŠp
+        /// ãƒšãƒ¼ã‚¸å†…ã®æœ€åˆã®è¦ç´ ãŒé…ç½®ã•ã‚Œã‚‹è§’
         /// </summary>
         public GridLayoutGroup.Corner StartCorner
         {
@@ -84,12 +84,12 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// ƒy[ƒW“à—v‘f‚Ì”z’u•ûŒü
+        /// ãƒšãƒ¼ã‚¸å†…è¦ç´ ã®é…ç½®æ–¹å‘
         /// </summary>
         public GridLayoutGroup.Axis StartAxis => m_StartAxis;
 
         /// <summary>
-        /// w’èƒZƒ‹‚Ìƒ[ƒJƒ‹À•W‚Ìæ“¾
+        /// æŒ‡å®šã‚»ãƒ«ã®ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™ã®å–å¾—
         /// </summary>
         public Vector2 GetCellPosition(int y, int x)
         {
@@ -114,7 +114,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èƒCƒ“ƒfƒbƒNƒXƒZƒ‹‚Ìs‚Æ—ñ‚Ì”Ô†‚ğæ“¾
+        /// æŒ‡å®šã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚»ãƒ«ã®è¡Œã¨åˆ—ã®ç•ªå·ã‚’å–å¾—
         /// </summary>
         public Vector2Int GetCellCoord(int index)
         {
@@ -136,7 +136,7 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
-        /// w’èƒZƒ‹‚Ìƒ[ƒJƒ‹ƒCƒ“ƒfƒbƒNƒX‚Ìæ“¾
+        /// æŒ‡å®šã‚»ãƒ«ã®ãƒ­ãƒ¼ã‚«ãƒ«ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®å–å¾—
         /// </summary>
         public int GetCellIndex(int y, int x)
         {
