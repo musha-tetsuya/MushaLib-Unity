@@ -56,3 +56,14 @@ public class Sample : MonoBehaviour
 
 #### 5. 要素更新時イベントにはOnUpdateElementを使います。
 https://github.com/musha-tetsuya/MushaLib-Unity/blob/1989550c5fb6266b6aa444a9373c68940eaac83e/InfiniteScrollView/Runtime/InfiniteScrollView.cs#L289-L292
+
+## サンプル
+#### 基本
+
+https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/72f192a4-9f07-4411-a12b-d980b5d4e90e
+
+* 設定値
+
+
+
+
