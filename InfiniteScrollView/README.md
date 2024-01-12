@@ -159,6 +159,57 @@ https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/b8a2b5c0-9d7c-44
 
 <br clear="all">
 
+#### 3. 縦横無限スクロール
+
+https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/8735f074-1ee2-4b9d-894f-38662e915db7
+
+* 設定値
+
+<table align="left">
+    <tr><th>ScrollRect</th></tr>
+    <tr><td>Horizontal = true</td></tr>
+    <tr><td>Vertical = true</td></tr>
+    <tr><td>MovementType = Unrestricted</td></tr>
+    <tr><td><details>
+        <summary>Content</summary>
+        &emsp;AnchorMin = (0, 1)<br>
+        &emsp;AnchorMax = (0, 1)<br>
+        &emsp;Pivot = (0, 1)
+    </details></td></tr>
+</table>
+
+<table>
+    <tr><th>InfiniteScrollView</th></tr>
+    <tr><td>ElementCount = 100</td></tr>
+    <tr><td><details>
+        <summary>PageLayout</summary>
+        &emsp;CellCount = (3, 3)<br>
+        &emsp;Spacing = (10, 10)<br>
+        &emsp;StartCorner = UpperLeft<br>
+        &emsp;StartAxis = Horizontal
+    </details></td></tr>
+    <tr><td>Spacing = (50, 50)</td></tr>
+    <tr><td>StartAxis = Horizontal</td></tr>
+    <tr><td><details>
+        <summary>Padding</summary>
+        &emsp;Left = 20<br>
+        &emsp;Right = 20<br>
+        &emsp;Top = 20<br>
+        &emsp;Bottom = 20
+    </details></td></tr>
+    <tr><td><details>
+        <summary>Margin</summary>
+        &emsp;Left = 0<br>
+        &emsp;Right = 0<br>
+        &emsp;Top = 0<br>
+        &emsp;Bottom = 0
+    </details></td></tr>
+    <tr><td>Loop = true</td></tr>
+    <tr><td>SnapType = None</td></tr>
+</table>
+
+<br clear="all">
+
 
 
 
