@@ -482,18 +482,22 @@ namespace MushaLib.InfiniteScrollView
             if (m_ScrollRect.horizontal)
             {
                 // viewport範囲内に要素がいくつ入るか、viewport位置を少しずらしてチェックする
-                var viewportMaxX = m_Padding.left + (m_ViewportCornerMax.x - m_ViewportCornerMin.x) + (m_PageLayout.CellSize.x - 1f);
-                int pageColumn = Mathf.CeilToInt(viewportMaxX / (m_PageRectSize.x + m_Spacing.x));
-                int localColumn = Mathf.CeilToInt((viewportMaxX - GetPagePosition(0, pageColumn).x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x));
-                m_ScrollElementLength.x = m_PageLayout.CellCount.x * pageColumn + localColumn;
+                float viewportMaxX = m_Padding.left + (m_ViewportCornerMax.x - m_ViewportCornerMin.x) + (m_PageLayout.CellSize.x - 1f);
+                float fPageColumn = viewportMaxX / (m_PageRectSize.x + m_Spacing.x);
+                int pageColumn = Mathf.FloorToInt(fPageColumn);
+                float fLocalColumn = (fPageColumn - pageColumn) * (m_PageRectSize.x + m_Spacing.x) / (m_PageLayout.CellSize.x + m_PageLayout.Spacing.x);
+                int localColumn = Mathf.CeilToInt(fLocalColumn);
+                m_ScrollElementLength.x = pageColumn * m_PageLayout.CellCount.x + localColumn;
             }
             if (m_ScrollRect.vertical)
             {
                 // viewport範囲内に要素がいくつ入るか、viewport位置を少しずらしてチェックする
-                var viewportMinY = -m_Padding.top - (m_ViewportCornerMax.y - m_ViewportCornerMin.y) - (m_PageLayout.CellSize.y - 1f);
-                int pageRow = Mathf.CeilToInt(-viewportMinY / (m_PageRectSize.y + m_Spacing.y));
-                int localRow = Mathf.CeilToInt(-(viewportMinY - GetPagePosition(pageRow, 0).y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y));
-                m_ScrollElementLength.y = m_PageLayout.CellCount.y * pageRow + localRow;
+                float viewportMaxY = m_Padding.top + (m_ViewportCornerMax.y - m_ViewportCornerMin.y) + (m_PageLayout.CellSize.y - 1f);
+                float fPageRow = viewportMaxY / (m_PageRectSize.y + m_Spacing.y);
+                int pageRow = Mathf.FloorToInt(fPageRow);
+                float fLocalRow = (fPageRow - pageRow) * (m_PageRectSize.y + m_Spacing.y) / (m_PageLayout.CellSize.y + m_PageLayout.Spacing.y);
+                int localRow = Mathf.CeilToInt(fLocalRow);
+                m_ScrollElementLength.y = pageRow* m_PageLayout.CellCount.y + localRow;
             }
 
             // ScrollElement配列生成
