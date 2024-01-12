@@ -983,8 +983,6 @@ namespace MushaLib.InfiniteScrollView
         private Vector2 LocalToAnchoredPosition(Vector2 targetPosition)
         {
             // ターゲット位置をcontent座標と比較するため調整
-            targetPosition.x -= m_Padding.left;
-            targetPosition.y += m_Padding.top;
             targetPosition *= -1f;
 
             // スクロール範囲
