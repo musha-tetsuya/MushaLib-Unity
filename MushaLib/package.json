@@ -1,6 +1,6 @@
 {
   "name": "com.musha.mushalib",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "displayName": "MushaLib",
   "description": "This expands various functions for game development in Unity.",
   "unity": "2022.3",
