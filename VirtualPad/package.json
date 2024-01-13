@@ -1,5 +1,5 @@
 {
-  "name": "com.mushalib.virtualpad",
+  "name": "com.musha.mushalib.virtualpad",
   "version": "1.0.0",
   "displayName": "MushaLib VirtualPad",
   "description": "Provides a virtual gamepad on the screen.\nIt allows you to control the game with touch inputs.",
