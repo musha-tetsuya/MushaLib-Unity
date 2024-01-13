@@ -37,6 +37,8 @@ https://github.com/musha-tetsuya/MushaLib-Unity.git?path=InfiniteScrollView
 | SnapType      | スナップタイプ
 | SnapDuration  | スナップ時間
 
+`ElementPrefab`には[ScrollElement](https://github.com/musha-tetsuya/MushaLib-Unity/blob/master/InfiniteScrollView/Runtime/ScrollElement.cs)を継承したコンポーネントが付与されたプレハブをセットして下さい。
+
 #### 4. スクリプトからInfiniteScrollViewのInitializeメソッドを呼び出して下さい。
 ```csharp
 using MushaLib.InfiniteScrollView;
@@ -55,6 +57,55 @@ public class Sample : MonoBehaviour
 
 #### 5. 要素更新時イベントにはOnUpdateElementを使います。
 https://github.com/musha-tetsuya/MushaLib-Unity/blob/1989550c5fb6266b6aa444a9373c68940eaac83e/InfiniteScrollView/Runtime/InfiniteScrollView.cs#L289-L292
+
+```csharp
+// SampleElement.cs
+using MushaLib.InfiniteScrollView;
+using TMPro;
+
+public class SampleElement : ScrollElement
+{
+    [SerializeField]
+    private TextMeshProUGUI nameText;
+
+    public TextMeshProUGUI NameText => nameText;
+}
+```
+
+```csharp
+// Sample.cs
+using MushaLib.InfiniteScrollView;
+
+public class Sample : MonoBehaviour
+{
+    [SerializeField]
+    private InfiniteScrollView scrollView;
+
+    [SerializeField]
+    private SampleElement elementPrefab;
+
+    private string[] elementNames =
+    {
+        "aaa",
+        "bbb",
+        "ccc",
+    };
+
+    private void Start()
+    {
+        scrollView.ElementPrefab = elementPrefab;
+
+        scrollView.ElementCount = elementNames.Length;
+
+        scrollView.OnUpdateElement = (element, index) =>
+        {
+            (element as SampleElement).NameText.text = elementNames[index];
+        };
+
+        scrollView.Initialize();
+    }
+}
+```
 
 ## サンプル
 #### 1. 基本
