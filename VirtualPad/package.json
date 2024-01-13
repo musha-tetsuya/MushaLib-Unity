@@ -2,7 +2,7 @@
   "name": "com.mushalib.virtualpad",
   "version": "1.0.0",
   "displayName": "MushaLib VirtualPad",
-  "description": "Enhanced scroll view for Unity.",
+  "description": "Provides a virtual gamepad on the screen.\nIt allows you to control the game with touch inputs.",
   "unity": "2022.3",
   "dependencies": {
     "com.unity.inputsystem": "1.6.3",
