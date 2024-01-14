@@ -1,5 +1,5 @@
 # InfiniteScrollView
-Unityのスクロールビューを拡張するパッケージです。
+Unityのスクロールビューを拡張する機能です。
 
 ## 機能
 * 大量のスクロール要素を少ないゲームオブジェクト数で実現
@@ -8,13 +8,6 @@ Unityのスクロールビューを拡張するパッケージです。
 * スナップスクロール
 * 指定要素へのジャンプ
 * 指定要素へのスクロール
-
-## 導入方法
-`Package Manager` で **Add package from git URL** を選択し、以下のURLを入力して下さい。
-```
-https://github.com/musha-tetsuya/MushaLib-Unity.git?path=InfiniteScrollView
-```
-* [Install a package from a Git URL](https://docs.unity3d.com/ja/2022.3/Manual/upm-ui-giturl.html)
 
 ## 使用方法
 #### 1. Hierarchy内に右クリックで Scroll View を配置してください。
