@@ -1,16 +1,9 @@
 # VirtualPad
-画面上に仮想ゲームパッドを提供するパッケージです。
+画面上に仮想ゲームパッドを提供する機能です。
 
 # 機能
 * ボタンを押した時、長押し成立時、リピート時、離した時にイベントを通知
 * 画面内に収まらない場合にスケール縮小
-
-# 導入方法
-`Package Manager` で **Add package from git URL** を選択し、以下のURLを入力して下さい。
-```
-https://github.com/musha-tetsuya/MushaLib-Unity.git?path=VirtualPad
-```
-* [Install a package from a Git URL](https://docs.unity3d.com/ja/2022.3/Manual/upm-ui-giturl.html)
 
 # 使用方法
 #### 1. Hierarchy内に `VirtualPad.prefab` を配置して下さい。
