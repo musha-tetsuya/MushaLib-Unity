@@ -9,14 +9,14 @@ using UnityEngine.SceneManagement;
 namespace MushaLib.SceneManagement
 {
     /// <summary>
-    /// シーン管理
+    /// ゲームの開始シーンに関連する補助機能を提供
     /// </summary>
-    public static class GameSceneManager
+    public static class GameStartSceneHelper
     {
         /// <summary>
         /// 起動シーンの名前を格納するPlayaerPrefsキー
         /// </summary>
-        private static readonly string startSceneKey = $"{typeof(GameSceneManager).FullName}.StartSceneName";
+        private static readonly string startSceneKey = $"{typeof(GameStartSceneHelper).FullName}.StartSceneName";
 
         /// <summary>
         /// 再生開始シーンの制御
