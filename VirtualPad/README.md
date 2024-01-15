@@ -7,7 +7,7 @@
 
 # 使用方法
 #### 1. Hierarchy内に `VirtualPad.prefab` を配置して下さい。
-![virtualpad_prefab](https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/d0ac53cc-dca6-4351-a248-894468a09b3e)
+![virtualpad_prefab](https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/64e8bfb0-7dea-49ef-ac73-64f85dc216db)
 
 #### 2. ボタンを押した時のイベントにはOnPress、離した時のイベントにはOnReleaseを使います。
 https://github.com/musha-tetsuya/MushaLib-Unity/blob/a58100d68f6c1bb055b856b5a0dc5830c323cee4/VirtualPad/Runtime/Scripts/VirtualPad.cs#L72-L75
