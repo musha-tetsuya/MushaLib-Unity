@@ -1,6 +1,6 @@
 # UI.ReverseMask
 逆マスクを標準機能＆ノーコードで実現します。  
-https://www.zkn0hr.com/unity-reverse-mask/
+* https://www.zkn0hr.com/unity-reverse-mask/
 
 ## 使用方法
 1. マスク側のImageのマテリアルに`ReverseMask.mat`を設定。
