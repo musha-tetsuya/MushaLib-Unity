@@ -23,7 +23,7 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// 次のステートに遷移する
         /// </summary>
-        public void PushState(IState nextState, Action onPop = null)
+        public virtual void PushState(IState nextState, Action onPop = null)
         {
             this.m_StateStack.Push((this.CurrentState, onPop));
 
@@ -34,7 +34,7 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// 現在のステートを終了させて、次のステートに遷移する
         /// </summary>
-        public void ChangeState(IState nextState) 
+        public virtual void ChangeState(IState nextState) 
         {
             this.CurrentState?.End();
             this.CurrentState = nextState;
