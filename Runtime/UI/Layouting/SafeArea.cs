@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MushaLib.UI.Layouting
 {
@@ -16,6 +15,7 @@ namespace MushaLib.UI.Layouting
     /// Canvas直下にGameObjectを作成し、このコンポーネントを付与する。
     /// </remarks>
     [ExecuteAlways]
+    [RequireComponent(typeof(RectTransform))]
     public class SafeArea : MonoBehaviour
     {
         /// <summary>
@@ -31,10 +31,12 @@ namespace MushaLib.UI.Layouting
         private RectTransform m_CanvasRectTransform;
 
         /// <summary>
-        /// CanvasScaler
+        /// Reset
         /// </summary>
-        [SerializeField]
-        private CanvasScaler m_CanvasScaler;
+        private void Reset()
+        {
+            this.m_RectTransform = this.transform as RectTransform;
+        }
 
         /// <summary>
         /// Awake
@@ -72,15 +74,15 @@ namespace MushaLib.UI.Layouting
         /// </summary>
         private void RecalcRect()
         {
-            if (this.m_RectTransform == null || this.m_CanvasRectTransform == null || this.m_CanvasScaler == null)
+            if (this.m_RectTransform == null || this.m_CanvasRectTransform == null)
             {
                 return;
             }
 
-            var scale = 1f / this.m_CanvasRectTransform.localScale.x;
+            var scale = Mathf.Max(this.m_CanvasRectTransform.rect.width / Screen.width, this.m_CanvasRectTransform.rect.height / Screen.height);
 
             this.m_RectTransform.anchoredPosition = Screen.safeArea.position * scale;
-            this.m_RectTransform.sizeDelta = new Vector2(Screen.safeArea.width * scale, Screen.safeArea.height * scale);
+            this.m_RectTransform.sizeDelta = Screen.safeArea.size * scale;
             this.m_RectTransform.anchorMin =
             this.m_RectTransform.anchorMax =
             this.m_RectTransform.pivot = Vector2.zero;
