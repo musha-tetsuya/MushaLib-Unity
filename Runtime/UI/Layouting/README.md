@@ -10,8 +10,7 @@ RectTransformのサイズをセーフエリア範囲に調整するコンポー�
 2. SafeAreaのInspectorを設定します。
    * `RectTransform`に自身のRectTransformを設定
    * `CanvasRectTransform`にはCanvasのRectTransformを設定
-   * `CanvasScaler`にはCanvasのCanvasScalerを設定
 
 ### サンプル
-https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/468997bd-ed9d-4be2-be35-858c9f502d35
+https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/f632d05f-73de-4487-aa66-d1a8026cfc94
 
