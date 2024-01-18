@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -14,9 +15,9 @@ namespace MushaLib.SceneManagement
     public static class GameStartSceneHelper
     {
         /// <summary>
-        /// 起動シーンの名前を格納するPlayaerPrefsキー
+        /// 起動シーンの名前の保存先
         /// </summary>
-        private static readonly string startSceneKey = $"{typeof(GameStartSceneHelper).FullName}.StartSceneName";
+        private static readonly string startSceneNameFilePath = $"Temp/{typeof(GameStartSceneHelper).FullName.Replace(".", "-")}-StartSceneName.txt";
 
         /// <summary>
         /// 再生開始シーンの制御
@@ -36,7 +37,7 @@ namespace MushaLib.SceneManagement
 
             // 再生開始シーンと起動シーンをクリア
             EditorSceneManager.playModeStartScene = null;
-            PlayerPrefs.DeleteKey(startSceneKey);
+            File.Delete(startSceneNameFilePath);
 
             // 再生開始時のみ処理
             if (state != PlayModeStateChange.ExitingEditMode)
@@ -70,7 +71,7 @@ namespace MushaLib.SceneManagement
             EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(initialScene.path);
 
             // 初期化シーン経由後に開くシーンとして、現在のシーンの名前を保存
-            PlayerPrefs.SetString(startSceneKey, currentScene.name);
+            File.WriteAllText(startSceneNameFilePath, currentScene.name);
 #endif
         }
 
@@ -84,9 +85,9 @@ namespace MushaLib.SceneManagement
         public static AsyncOperation LoadStartSceneAsync(string startSceneName = null)
         {
 #if UNITY_EDITOR
-            if (PlayerPrefs.HasKey(startSceneKey))
+            if (File.Exists(startSceneNameFilePath))
             {
-                var op = SceneManager.LoadSceneAsync(PlayerPrefs.GetString(startSceneKey));
+                var op = SceneManager.LoadSceneAsync(File.ReadAllText(startSceneNameFilePath));
                 if (op != null)
                 {
                     return op;
