@@ -510,7 +510,7 @@ namespace MushaLib.InfiniteScrollView
 
                     var anchoredPosition = element.LocalPosition;
                     anchoredPosition.x += m_Padding.left + m_PageLayout.CellSize.x * element.RectTransform.pivot.x;
-                    anchoredPosition.y -= m_Padding.top + m_PageLayout.CellSize.y * element.RectTransform.pivot.y;
+                    anchoredPosition.y -= m_Padding.top + m_PageLayout.CellSize.y * (1f - element.RectTransform.pivot.y);
 
                     element.RectTransform.anchorMin =
                     element.RectTransform.anchorMax = new(0f, 1f);
