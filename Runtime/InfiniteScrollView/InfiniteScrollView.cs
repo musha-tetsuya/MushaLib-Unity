@@ -1161,5 +1161,13 @@ namespace MushaLib.InfiniteScrollView
             m_AutoScrollCancellationTokenSource?.Dispose();
             m_AutoScrollCancellationTokenSource = null;
         }
+
+        /// <summary>
+        /// 指定インデックス要素を取得する
+        /// </summary>
+        public IScrollElement GetElement(int elementIndex)
+        {
+            return m_ScrollElements.Cast<IScrollElement>().FirstOrDefault(x => x.Index == elementIndex);
+        }
     }
 }
