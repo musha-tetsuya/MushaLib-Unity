@@ -26,6 +26,12 @@ namespace MushaLib.Core
         protected virtual void Awake()
         {
             Singleton<T>.Awake(this as T);
+
+            var attribute = GetType().GetAttribute<SingletonAttribute>();
+            if (attribute.Persistent)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
         }
 
         /// <summary>
