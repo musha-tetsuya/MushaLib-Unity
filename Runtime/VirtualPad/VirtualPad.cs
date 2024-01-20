@@ -3,12 +3,10 @@ using Cysharp.Threading.Tasks.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace MushaLib.VirtualPad
 {
@@ -37,16 +35,10 @@ namespace MushaLib.VirtualPad
         private RectTransform m_RightSide;
 
         /// <summary>
-        /// ボタン群
+        /// 長押し成立時間
         /// </summary>
         [SerializeField]
-        private VirtualPadButton[] m_Buttons;
-
-        /// <summary>
-        /// 入力操作の抽象化
-        /// </summary>
-        [SerializeField]
-        private InputActionProperty m_InputActionProperty;
+        private float m_HoldTime = 0.5f;
 
         /// <summary>
         /// リピート間隔
@@ -55,9 +47,9 @@ namespace MushaLib.VirtualPad
         private float m_RepeatInterval = 0.1f;
 
         /// <summary>
-        /// InputControlパスからボタンへのマップ
+        /// ボタンキャンセルトークン
         /// </summary>
-        private Dictionary<string, VirtualPadButton> m_PathToButtonMap;
+        private Dictionary<ButtonType, CancellationTokenSource> m_ButtonCancellations = new();
 
         /// <summary>
         /// ボタンを押した時のイベント
@@ -85,15 +77,6 @@ namespace MushaLib.VirtualPad
         public float RepeatInterval => this.m_RepeatInterval;
 
         /// <summary>
-        /// OnDestroy
-        /// </summary>
-        private void OnDestroy()
-        {
-            this.m_InputActionProperty.action?.Disable();
-            this.m_InputActionProperty.action?.Dispose();
-        }
-
-        /// <summary>
         /// Awake
         /// </summary>
         private void Awake()
@@ -109,12 +92,6 @@ namespace MushaLib.VirtualPad
                 .OnRectTransformDimensionsChangeAsObservable()
                 .Subscribe(_ => RecalcScale())
                 .AddTo(this.destroyCancellationToken);
-
-            // 入力操作イベントを設定
-            this.m_InputActionProperty.action.started += OnInputActionStarted;
-            this.m_InputActionProperty.action.performed += OnInputActionPerformed;
-            this.m_InputActionProperty.action.canceled += OnInputActionCanceled;
-            this.m_InputActionProperty.action.Enable();
         }
 
         /// <summary>
@@ -128,9 +105,6 @@ namespace MushaLib.VirtualPad
                 return;
             }
 #endif
-            // InputControlパスからボタンへのマップ作成
-            this.m_PathToButtonMap = this.m_Buttons.ToDictionary(x => x.control.path, x => x);
-
             // 初回スケール計算
             RecalcScale();
         }
@@ -171,50 +145,64 @@ namespace MushaLib.VirtualPad
         /// <summary>
         /// ボタンを押した瞬間
         /// </summary>
-        private void OnInputActionStarted(InputAction.CallbackContext context)
+        public async void OnInputStarted(ButtonType buttonType)
         {
-            if (this.m_PathToButtonMap.TryGetValue(context.control.path, out var button))
+            if (this.m_ButtonCancellations.TryGetValue(buttonType, out var cts))
             {
-                this.m_OnPress.OnNext((button.buttonType, ButtonPressPhase.Pressed));
+                cts.Cancel(true);
+                cts.Dispose();
             }
-        }
 
-        /// <summary>
-        /// ボタンの長押しが成立した時
-        /// </summary>
-        private void OnInputActionPerformed(InputAction.CallbackContext context)
-        {
-            if (this.m_PathToButtonMap.TryGetValue(context.control.path, out var button))
+            cts = this.m_ButtonCancellations[buttonType] = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+
+            this.m_OnPress.OnNext((buttonType, ButtonPressPhase.Pressed));
+
+            try
             {
-                this.m_OnPress.OnNext((button.buttonType, ButtonPressPhase.LongPressed));
+                // 長押し待機
+                await UniTask.Delay((int)(this.m_HoldTime * 1000), cancellationToken: cts.Token);
+            }
+            catch
+            {
+                return;
+            }
 
-                // リピートするなら
-                if (this.m_RepeatInterval > 0f)
+            this.m_OnPress.OnNext((buttonType, ButtonPressPhase.LongPressed));
+
+            while (true)
+            {
+                try
                 {
-                    var cts = CancellationTokenSource.CreateLinkedTokenSource(this.destroyCancellationToken, button.destroyCancellationToken);
-                    cts.Token.Register(cts.Dispose);
+                    if (this.m_RepeatInterval <= 0f)
+                    {
+                        // リピートONになるまで待機
+                        await UniTask.WaitUntil(() => this.m_RepeatInterval > 0f, cancellationToken: cts.Token);
+                    }
 
-                    // リピート開始
-                    UniTaskAsyncEnumerable.Interval(TimeSpan.FromSeconds(this.m_RepeatInterval))
-                        .Subscribe(_ => this.m_OnPress.OnNext((button.buttonType, ButtonPressPhase.Repeat)))
-                        .AddTo(cts.Token);
-
-                    // ボタンを離したらリピート終了
-                    this.m_OnRelease.Where(x => x == button.buttonType)
-                        .Subscribe(x => cts.Cancel())
-                        .AddTo(cts.Token);
+                    // リピート待機
+                    await UniTask.Delay((int)(this.m_RepeatInterval * 1000), cancellationToken: cts.Token);
                 }
+                catch
+                {
+                    return;
+                }
+
+                this.m_OnPress.OnNext((buttonType, ButtonPressPhase.Repeat));
             }
         }
 
         /// <summary>
         /// ボタンを離した時
         /// </summary>
-        private void OnInputActionCanceled(InputAction.CallbackContext context)
+        public void OnInputCanceled(ButtonType buttonType)
         {
-            if (this.m_PathToButtonMap.TryGetValue(context.control.path, out var button))
+            if (this.m_ButtonCancellations.TryGetValue(buttonType, out var cts))
             {
-                this.m_OnRelease.OnNext(button.buttonType);
+                cts.Cancel();
+                cts.Dispose();
+                this.m_ButtonCancellations.Remove(buttonType);
+
+                this.m_OnRelease.OnNext(buttonType);
             }
         }
     }
