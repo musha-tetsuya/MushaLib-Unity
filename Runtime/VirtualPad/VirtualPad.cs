@@ -3,10 +3,12 @@ using Cysharp.Threading.Tasks.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MushaLib.VirtualPad
 {
@@ -35,6 +37,12 @@ namespace MushaLib.VirtualPad
         private RectTransform m_RightSide;
 
         /// <summary>
+        /// ボタン群
+        /// </summary>
+        [SerializeField]
+        private VirtualPadButton[] m_Buttons;
+
+        /// <summary>
         /// 長押し成立時間
         /// </summary>
         [SerializeField]
@@ -47,9 +55,19 @@ namespace MushaLib.VirtualPad
         private float m_RepeatInterval = 0.1f;
 
         /// <summary>
+        /// 入力操作の抽象化
+        /// </summary>
+        private InputAction m_InputAction;
+
+        /// <summary>
+        /// InputControlからボタンへのマップ
+        /// </summary>
+        private Dictionary<InputControl, VirtualPadButton[]> m_ControlToButtonMap;
+
+        /// <summary>
         /// ボタンキャンセルトークン
         /// </summary>
-        private Dictionary<ButtonType, CancellationTokenSource> m_ButtonCancellations = new();
+        private Dictionary<VirtualPadButton, CancellationTokenSource> m_ButtonCancellations = new();
 
         /// <summary>
         /// ボタンを押した時のイベント
@@ -72,9 +90,14 @@ namespace MushaLib.VirtualPad
         public IObservable<ButtonType> OnRelease => this.m_OnRelease;
 
         /// <summary>
-        /// リピート間隔
+        /// OnDestroy
         /// </summary>
-        public float RepeatInterval => this.m_RepeatInterval;
+        private void OnDestroy()
+        {
+            this.m_InputAction?.Disable();
+            this.m_InputAction?.Dispose();
+            this.m_InputAction = null;
+        }
 
         /// <summary>
         /// Awake
@@ -87,6 +110,33 @@ namespace MushaLib.VirtualPad
                 return;
             }
 #endif
+            // 入力操作イベントを設定
+            this.m_InputAction = new();
+
+            var bindingPaths = new List<(string path, VirtualPadButton button)>();
+
+            foreach (var button in this.m_Buttons)
+            {
+                foreach (var controlPath in button.ControlPaths)
+                {
+                    var syntax = this.m_InputAction.AddBinding(controlPath);
+
+                    bindingPaths.Add((syntax.binding.effectivePath, button));
+                }
+            }
+
+            this.m_InputAction.started += OnInputActionStarted;
+            this.m_InputAction.canceled += OnInputActionCanceled;
+            this.m_InputAction.Enable();
+
+            // InputControlからボタンへのマップ作成
+            this.m_ControlToButtonMap = bindingPaths
+                .SelectMany(x => this.m_InputAction.controls
+                    .Where(control => InputControlPath.Matches(x.path, control))
+                    .Select(control => (control, x.button)))
+                .GroupBy(x => x.control, x => x.button)
+                .ToDictionary(x => x.Key, x => x.ToArray());
+
             // 自身のRectTransformに変更があったらスケールを再計算する
             this.m_RectTransform
                 .OnRectTransformDimensionsChangeAsObservable()
@@ -145,17 +195,17 @@ namespace MushaLib.VirtualPad
         /// <summary>
         /// ボタンを押した瞬間
         /// </summary>
-        public async void OnInputStarted(ButtonType buttonType)
+        public async void OnButtonPressed(VirtualPadButton button)
         {
-            if (this.m_ButtonCancellations.TryGetValue(buttonType, out var cts))
+            if (this.m_ButtonCancellations.TryGetValue(button, out var cts))
             {
                 cts.Cancel(true);
                 cts.Dispose();
             }
 
-            cts = this.m_ButtonCancellations[buttonType] = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+            cts = this.m_ButtonCancellations[button] = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
 
-            this.m_OnPress.OnNext((buttonType, ButtonPressPhase.Pressed));
+            this.m_OnPress.OnNext((button.ButtonType, ButtonPressPhase.Pressed));
 
             try
             {
@@ -167,7 +217,7 @@ namespace MushaLib.VirtualPad
                 return;
             }
 
-            this.m_OnPress.OnNext((buttonType, ButtonPressPhase.LongPressed));
+            this.m_OnPress.OnNext((button.ButtonType, ButtonPressPhase.LongPressed));
 
             while (true)
             {
@@ -187,22 +237,50 @@ namespace MushaLib.VirtualPad
                     return;
                 }
 
-                this.m_OnPress.OnNext((buttonType, ButtonPressPhase.Repeat));
+                this.m_OnPress.OnNext((button.ButtonType, ButtonPressPhase.Repeat));
             }
         }
 
         /// <summary>
         /// ボタンを離した時
         /// </summary>
-        public void OnInputCanceled(ButtonType buttonType)
+        public void OnButtonReleased(VirtualPadButton button)
         {
-            if (this.m_ButtonCancellations.TryGetValue(buttonType, out var cts))
+            if (this.m_ButtonCancellations.TryGetValue(button, out var cts))
             {
                 cts.Cancel();
                 cts.Dispose();
-                this.m_ButtonCancellations.Remove(buttonType);
+                this.m_ButtonCancellations.Remove(button);
 
-                this.m_OnRelease.OnNext(buttonType);
+                this.m_OnRelease.OnNext(button.ButtonType);
+            }
+        }
+
+        /// <summary>
+        /// 入力開始時
+        /// </summary>
+        private void OnInputActionStarted(InputAction.CallbackContext context)
+        {
+            if (this.m_ControlToButtonMap.TryGetValue(context.control, out var buttons))
+            {
+                foreach (var button in buttons)
+                {
+                    OnButtonPressed(button);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 入力キャンセル時
+        /// </summary>
+        private void OnInputActionCanceled(InputAction.CallbackContext context)
+        {
+            if (this.m_ControlToButtonMap.TryGetValue(context.control, out var buttons))
+            {
+                foreach (var button in buttons)
+                {
+                    OnButtonReleased(button);
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Layouts;
 using UnityEngine.UI;
 
 namespace MushaLib.VirtualPad
@@ -21,16 +22,32 @@ namespace MushaLib.VirtualPad
         private ButtonType m_ButtonType;
 
         /// <summary>
-        /// 入力開始時イベント
+        /// コントロールパス
         /// </summary>
-        [SerializeField]
-        private UnityEvent<ButtonType> m_OnInputStarted;
+        [SerializeField, InputControl]
+        private string[] m_ControlPaths;
 
         /// <summary>
-        /// 入力キャンセル時イベント
+        /// 押下時イベント
         /// </summary>
         [SerializeField]
-        private UnityEvent<ButtonType> m_OnInputCanceled;
+        private UnityEvent<VirtualPadButton> m_OnPressed;
+
+        /// <summary>
+        /// 離脱時イベント
+        /// </summary>
+        [SerializeField]
+        private UnityEvent<VirtualPadButton> m_OnReleased;
+
+        /// <summary>
+        /// ボタンタイプ
+        /// </summary>
+        public ButtonType ButtonType => this.m_ButtonType;
+
+        /// <summary>
+        /// コントロールパス
+        /// </summary>
+        public string[] ControlPaths => this.m_ControlPaths;
 
         /// <summary>
         /// OnPointerDown
@@ -42,7 +59,7 @@ namespace MushaLib.VirtualPad
 
             base.OnPointerDown(eventData);
 
-            this.m_OnInputStarted.Invoke(this.m_ButtonType);
+            this.m_OnPressed.Invoke(this);
         }
 
         /// <summary>
@@ -55,7 +72,7 @@ namespace MushaLib.VirtualPad
 
             base.OnPointerUp(eventData);
 
-            this.m_OnInputCanceled.Invoke(this.m_ButtonType);
+            this.m_OnReleased.Invoke(this);
         }
 
         /// <summary>
@@ -65,7 +82,7 @@ namespace MushaLib.VirtualPad
         {
             base.OnPointerExit(eventData);
 
-            this.m_OnInputCanceled.Invoke(this.m_ButtonType);
+            this.m_OnReleased.Invoke(this);
         }
 
 #if UNITY_EDITOR
@@ -85,8 +102,9 @@ namespace MushaLib.VirtualPad
                 serializedObject.Update();
 
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ButtonType"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnInputStarted"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnInputCanceled"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ControlPaths"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnPressed"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnReleased"));
 
                 serializedObject.ApplyModifiedProperties();
             }
