@@ -5,7 +5,7 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 
-namespace MushaLib.UI.Layouting
+namespace MushaLib.UI.Layouts
 {
     /// <summary>
     /// セーフエリア
