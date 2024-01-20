@@ -80,6 +80,11 @@ namespace MushaLib.VirtualPad
         public IObservable<ButtonType> OnRelease => this.m_OnRelease;
 
         /// <summary>
+        /// リピート間隔
+        /// </summary>
+        public float RepeatInterval => this.m_RepeatInterval;
+
+        /// <summary>
         /// OnDestroy
         /// </summary>
         private void OnDestroy()
