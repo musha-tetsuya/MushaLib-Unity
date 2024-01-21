@@ -5,7 +5,7 @@ using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace MushaLib.VirtualPad
@@ -22,32 +22,47 @@ namespace MushaLib.VirtualPad
         private ButtonType m_ButtonType;
 
         /// <summary>
-        /// コントロールパス
-        /// </summary>
-        [SerializeField, InputControl]
-        private string[] m_ControlPaths;
-
-        /// <summary>
         /// 押下時イベント
         /// </summary>
         [SerializeField]
-        private UnityEvent<VirtualPadButton> m_OnPressed;
+        private UnityEvent<ButtonType, object> m_OnPressed;
 
         /// <summary>
         /// 離脱時イベント
         /// </summary>
         [SerializeField]
-        private UnityEvent<VirtualPadButton> m_OnReleased;
+        private UnityEvent<ButtonType, object> m_OnReleased;
 
         /// <summary>
-        /// ボタンタイプ
+        /// 入力操作の抽象化
         /// </summary>
-        public ButtonType ButtonType => this.m_ButtonType;
+        [SerializeField]
+        private InputActionProperty m_InputAction;
 
         /// <summary>
-        /// コントロールパス
+        /// OnDestroy
         /// </summary>
-        public string[] ControlPaths => this.m_ControlPaths;
+        protected override void OnDestroy()
+        {
+            // 入力操作イベントを解除
+            this.m_InputAction.action?.Disable();
+            this.m_InputAction.action?.Dispose();
+
+            base.OnDestroy();
+        }
+
+        /// <summary>
+        /// Awake
+        /// </summary>
+        protected override void Awake()
+        {
+            base.Awake();
+
+            // 入力操作イベントを設定
+            this.m_InputAction.action.started += OnInputActionStarted;
+            this.m_InputAction.action.canceled += OnInputActionCanceled;
+            this.m_InputAction.action.Enable();
+        }
 
         /// <summary>
         /// OnPointerDown
@@ -59,7 +74,7 @@ namespace MushaLib.VirtualPad
 
             base.OnPointerDown(eventData);
 
-            this.m_OnPressed.Invoke(this);
+            this.m_OnPressed.Invoke(this.m_ButtonType, this);
         }
 
         /// <summary>
@@ -72,7 +87,7 @@ namespace MushaLib.VirtualPad
 
             base.OnPointerUp(eventData);
 
-            this.m_OnReleased.Invoke(this);
+            this.m_OnReleased.Invoke(this.m_ButtonType, this);
         }
 
         /// <summary>
@@ -82,7 +97,23 @@ namespace MushaLib.VirtualPad
         {
             base.OnPointerExit(eventData);
 
-            this.m_OnReleased.Invoke(this);
+            this.m_OnReleased.Invoke(this.m_ButtonType, this);
+        }
+
+        /// <summary>
+        /// InputAction入力開始時
+        /// </summary>
+        private void OnInputActionStarted(InputAction.CallbackContext context)
+        {
+            this.m_OnPressed.Invoke(this.m_ButtonType, this.m_InputAction.action);
+        }
+
+        /// <summary>
+        /// InputAction入力終了時
+        /// </summary>
+        private void OnInputActionCanceled(InputAction.CallbackContext context)
+        {
+            this.m_OnReleased.Invoke(this.m_ButtonType, this.m_InputAction.action);
         }
 
 #if UNITY_EDITOR
@@ -102,9 +133,9 @@ namespace MushaLib.VirtualPad
                 serializedObject.Update();
 
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ButtonType"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ControlPaths"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnPressed"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnReleased"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_InputAction"));
 
                 serializedObject.ApplyModifiedProperties();
             }
