@@ -54,8 +54,8 @@ public class Sample : MonoBehaviour
     }
 }
 ```
-#### 3. ControlPathを設定すればキー入力等も受け付けます。
-![virtualpad_controlpath](https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/06ccf09f-277a-453d-9431-5b6916ebe416)
+#### 3. VirtualPadButtonのInputActionを設定すればキー入力等も受け付けます。
+![virtualpad_inputaction](https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/e36b96f4-28ec-4257-9305-c888e7f1c906)
 
 # サンプル
 #### 1. ボタンを押した時、長押し成立時、リピート時、離した時にイベントを通知
