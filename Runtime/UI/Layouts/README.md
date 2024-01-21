@@ -1,4 +1,4 @@
-# UI.Layouting
+# UI.Layouts
 
 ## RectTransformScaler
 
