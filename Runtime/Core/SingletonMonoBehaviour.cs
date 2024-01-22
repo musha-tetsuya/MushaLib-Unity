@@ -39,7 +39,11 @@ namespace MushaLib.Core
         /// </summary>
         protected virtual void OnDestroy()
         {
-            Singleton<T>.OnDestroy(this as T);
+            var attribute = GetType().GetAttribute<SingletonAttribute>();
+            if (!attribute.Persistent)
+            {
+                Singleton<T>.OnDestroy(this as T);
+            }
         }
     }
 }
