@@ -55,27 +55,27 @@ namespace MushaLib.VirtualPad
         /// <summary>
         /// ボタンキャンセルトークン
         /// </summary>
-        private Dictionary<ButtonType, (CancellationTokenSource cts, List<object> factors)> m_ButtonCancellations = new();
+        private Dictionary<int, (CancellationTokenSource cts, List<object> factors)> m_ButtonCancellations = new();
 
         /// <summary>
         /// ボタンを押した時のイベント
         /// </summary>
-        private Subject<(ButtonType buttonType, ButtonPressPhase pressPhase)> m_OnPress = new();
+        private Subject<(int buttonId, ButtonPressPhase pressPhase)> m_OnPress = new();
 
         /// <summary>
         /// ボタンを離した時のイベント
         /// </summary>
-        private Subject<ButtonType> m_OnRelease = new();
+        private Subject<int> m_OnRelease = new();
 
         /// <summary>
         /// ボタンを押した時のイベントへのアクセス
         /// </summary>
-        public IObservable<(ButtonType buttonType, ButtonPressPhase pressPhase)> OnPress => this.m_OnPress;
+        public IObservable<(int buttonId, ButtonPressPhase pressPhase)> OnPress => this.m_OnPress;
 
         /// <summary>
         /// ボタンを離した時のイベントへのアクセス
         /// </summary>
-        public IObservable<ButtonType> OnRelease => this.m_OnRelease;
+        public IObservable<int> OnRelease => this.m_OnRelease;
 
         /// <summary>
         /// Awake
@@ -146,10 +146,10 @@ namespace MushaLib.VirtualPad
         /// <summary>
         /// ボタンを押した瞬間
         /// </summary>
-        public async void OnButtonPressed(ButtonType buttonType, object factor)
+        public async void OnButtonPressed(int buttonId, object factor)
         {
             // 既に押下中なら新規要因を追加
-            if (this.m_ButtonCancellations.TryGetValue(buttonType, out var cancellation))
+            if (this.m_ButtonCancellations.TryGetValue(buttonId, out var cancellation))
             {
                 cancellation.factors.Add(factor);
                 return;
@@ -157,9 +157,9 @@ namespace MushaLib.VirtualPad
 
             // キャンセルトークン作成
             cancellation = (CancellationTokenSource.CreateLinkedTokenSource(this.destroyCancellationToken), new() { factor });
-            this.m_ButtonCancellations[buttonType] = cancellation;
+            this.m_ButtonCancellations[buttonId] = cancellation;
 
-            this.m_OnPress.OnNext((buttonType, ButtonPressPhase.Pressed));
+            this.m_OnPress.OnNext((buttonId, ButtonPressPhase.Pressed));
 
             try
             {
@@ -171,7 +171,7 @@ namespace MushaLib.VirtualPad
                 return;
             }
 
-            this.m_OnPress.OnNext((buttonType, ButtonPressPhase.LongPressed));
+            this.m_OnPress.OnNext((buttonId, ButtonPressPhase.LongPressed));
 
             while (true)
             {
@@ -191,16 +191,16 @@ namespace MushaLib.VirtualPad
                     return;
                 }
 
-                this.m_OnPress.OnNext((buttonType, ButtonPressPhase.Repeat));
+                this.m_OnPress.OnNext((buttonId, ButtonPressPhase.Repeat));
             }
         }
 
         /// <summary>
         /// ボタンを離した時
         /// </summary>
-        public void OnButtonReleased(ButtonType buttonType, object factor)
+        public void OnButtonReleased(int buttonId, object factor)
         {
-            if (this.m_ButtonCancellations.TryGetValue(buttonType, out var cancellation))
+            if (this.m_ButtonCancellations.TryGetValue(buttonId, out var cancellation))
             {
                 // 要因除去
                 cancellation.factors.Remove(factor);
@@ -211,9 +211,9 @@ namespace MushaLib.VirtualPad
                     // 押下状態キャンセル
                     cancellation.cts.Cancel();
                     cancellation.cts.Dispose();
-                    this.m_ButtonCancellations.Remove(buttonType);
+                    this.m_ButtonCancellations.Remove(buttonId);
 
-                    this.m_OnRelease.OnNext(buttonType);
+                    this.m_OnRelease.OnNext(buttonId);
                 }
             }
         }

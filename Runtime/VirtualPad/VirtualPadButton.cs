@@ -16,22 +16,22 @@ namespace MushaLib.VirtualPad
     public class VirtualPadButton : Button
     {
         /// <summary>
-        /// ボタンタイプ
+        /// ボタンID
         /// </summary>
         [SerializeField]
-        private ButtonType m_ButtonType;
+        private int m_ButtonId;
 
         /// <summary>
         /// 押下時イベント
         /// </summary>
         [SerializeField]
-        private UnityEvent<ButtonType, object> m_OnPressed;
+        private UnityEvent<int, object> m_OnPressed;
 
         /// <summary>
         /// 離脱時イベント
         /// </summary>
         [SerializeField]
-        private UnityEvent<ButtonType, object> m_OnReleased;
+        private UnityEvent<int, object> m_OnReleased;
 
         /// <summary>
         /// 入力操作の抽象化
@@ -74,7 +74,7 @@ namespace MushaLib.VirtualPad
 
             base.OnPointerDown(eventData);
 
-            this.m_OnPressed.Invoke(this.m_ButtonType, this);
+            this.m_OnPressed.Invoke(this.m_ButtonId, this);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace MushaLib.VirtualPad
 
             base.OnPointerUp(eventData);
 
-            this.m_OnReleased.Invoke(this.m_ButtonType, this);
+            this.m_OnReleased.Invoke(this.m_ButtonId, this);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace MushaLib.VirtualPad
         {
             base.OnPointerExit(eventData);
 
-            this.m_OnReleased.Invoke(this.m_ButtonType, this);
+            this.m_OnReleased.Invoke(this.m_ButtonId, this);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace MushaLib.VirtualPad
         /// </summary>
         private void OnInputActionStarted(InputAction.CallbackContext context)
         {
-            this.m_OnPressed.Invoke(this.m_ButtonType, this.m_InputAction.action);
+            this.m_OnPressed.Invoke(this.m_ButtonId, this.m_InputAction.action);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace MushaLib.VirtualPad
         /// </summary>
         private void OnInputActionCanceled(InputAction.CallbackContext context)
         {
-            this.m_OnReleased.Invoke(this.m_ButtonType, this.m_InputAction.action);
+            this.m_OnReleased.Invoke(this.m_ButtonId, this.m_InputAction.action);
         }
 
 #if UNITY_EDITOR
@@ -132,7 +132,7 @@ namespace MushaLib.VirtualPad
 
                 serializedObject.Update();
 
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ButtonType"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ButtonId"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnPressed"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnReleased"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_InputAction"));

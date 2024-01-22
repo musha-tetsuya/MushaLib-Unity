@@ -339,6 +339,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 8
       objectReference: {fileID: 0}
@@ -1363,6 +1368,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 2
       objectReference: {fileID: 0}
@@ -1817,6 +1827,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ControlPath
       value: <Gamepad>/buttonSouth
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
+      propertyPath: m_ButtonId
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
@@ -2277,6 +2292,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 10
       objectReference: {fileID: 0}
@@ -2734,6 +2754,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 6
       objectReference: {fileID: 0}
@@ -3183,6 +3208,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ControlPath
       value: <Gamepad>/buttonWest
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
+      propertyPath: m_ButtonId
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
@@ -3640,6 +3670,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ControlPath
       value: <Gamepad>/leftShoulder
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
+      propertyPath: m_ButtonId
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
@@ -4110,6 +4145,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 5
       objectReference: {fileID: 0}
@@ -4572,6 +4612,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 9
       objectReference: {fileID: 0}
@@ -5029,6 +5074,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}
+      propertyPath: m_ButtonId
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
       propertyPath: m_ButtonType
       value: 11
       objectReference: {fileID: 0}
@@ -5483,6 +5533,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ControlPath
       value: <Gamepad>/select
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
+        type: 3}
+      propertyPath: m_ButtonId
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7580922203845289280, guid: d972ffd7eab62484492925672f755bd0,
         type: 3}

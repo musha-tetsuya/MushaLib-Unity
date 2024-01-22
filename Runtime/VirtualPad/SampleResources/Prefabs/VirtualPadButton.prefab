@@ -120,14 +120,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  m_VirtualPad: {fileID: 0}
-  m_ButtonType: 0
-  m_OnPointerDown:
+  m_ButtonId: 0
+  m_OnPressed:
     m_PersistentCalls:
       m_Calls: []
-  m_OnPointerUp:
+  m_OnReleased:
     m_PersistentCalls:
       m_Calls: []
-  m_OnPointerExit:
-    m_PersistentCalls:
-      m_Calls: []
+  m_InputAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Input
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: f6ad8a09-9e2f-4e4f-b67e-979460cde037
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
