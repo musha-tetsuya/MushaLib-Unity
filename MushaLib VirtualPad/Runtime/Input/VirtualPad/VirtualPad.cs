@@ -8,7 +8,7 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 
-namespace MushaLib.VirtualPad
+namespace MushaLib.Input.VirtualPad
 {
     /// <summary>
     /// 仮想パッド

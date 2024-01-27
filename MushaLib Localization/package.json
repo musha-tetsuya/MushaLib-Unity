@@ -1,0 +1,15 @@
+{
+  "name": "com.musha.mushalib.localization",
+  "version": "1.0.0",
+  "displayName": "MushaLib Localization",
+  "description": "This expands various functions for game development in Unity.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.addressables": "1.21.12",
+    "com.unity.localization": "1.4.5",
+    "com.cysharp.unitask": "2.5.0"
+  },
+  "author": {
+    "name": "Musha"
+  }
+}

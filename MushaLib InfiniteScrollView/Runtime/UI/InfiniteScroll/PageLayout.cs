@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MushaLib.InfiniteScrollView
+namespace MushaLib.UI.InfiniteScroll
 {
     /// <summary>
     /// ページレイアウト

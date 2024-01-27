@@ -1,0 +1,14 @@
+{
+  "name": "com.musha.mushalib.infinitescrollview",
+  "version": "1.0.0",
+  "displayName": "MushaLib InfiniteScrollView",
+  "description": "This expands various functions for game development in Unity.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.neuecc.unirx": "7.1.0",
+    "com.cysharp.unitask": "2.5.0"
+  },
+  "author": {
+    "name": "Musha"
+  }
+}

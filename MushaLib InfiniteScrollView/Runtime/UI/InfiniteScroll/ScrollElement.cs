@@ -2,66 +2,72 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.InfiniteScrollView
+namespace MushaLib.UI.InfiniteScroll
 {
     /// <summary>
-    /// スクロール要素インターフェース
+    /// スクロール要素基底
     /// </summary>
-    public interface IScrollElement
+    [RequireComponent(typeof(RectTransform))]
+    public class ScrollElement : MonoBehaviour, IScrollElement
     {
         /// <summary>
         /// RectTransform
         /// </summary>
-        RectTransform RectTransform { get; }
+        private RectTransform m_RectTransform;
+
+        /// <summary>
+        /// RectTransform
+        /// </summary>
+        RectTransform IScrollElement.RectTransform => m_RectTransform ?? (m_RectTransform = transform as RectTransform);
 
         /// <summary>
         /// Viewport内ローカル座標（左上基準）
         /// </summary>
-        Vector2 LocalPosition { get; set; }
+        Vector2 IScrollElement.LocalPosition { get; set; }
 
         /// <summary>
         /// 何番目の要素か
         /// </summary>
-        int Index { get; set; }
+        int IScrollElement.Index { get; set; }
 
         /// <summary>
         /// 何列目の要素か
         /// </summary>
-        int Column { get; set; }
+        int IScrollElement.Column { get; set; }
 
         /// <summary>
         /// 何行目の要素か
         /// </summary>
-        int Row { get; set; }
+        int IScrollElement.Row { get; set; }
 
         /// <summary>
         /// ページ内で何番目の要素か
         /// </summary>
-        int LocalIndex { get; set; }
-        
+        int IScrollElement.LocalIndex { get; set; }
+
         /// <summary>
         /// ページ内で何列目の要素か
         /// </summary>
-        int LocalColumn { get; set; }
+        int IScrollElement.LocalColumn { get; set; }
 
         /// <summary>
         /// ページ内で何行目の要素か
         /// </summary>
-        int LocalRow { get; set; }
+        int IScrollElement.LocalRow { get; set; }
 
         /// <summary>
         /// 何番目のページか
         /// </summary>
-        int PageIndex { get; set; }
+        int IScrollElement.PageIndex { get; set; }
 
         /// <summary>
         /// 何列目のページか
         /// </summary>
-        int PageColumn { get; set; }
+        int IScrollElement.PageColumn { get; set; }
 
         /// <summary>
         /// 何行目のページか
         /// </summary>
-        int PageRow { get; set; }
+        int IScrollElement.PageRow { get; set; }
     }
 }
