@@ -1,4 +1,6 @@
 # SceneManagement
+シーン管理に関する機能を提供します。
+* [GameStartSceneHelper](#gamestartscenehelper)
 
 ## GameStartSceneHelper
 ゲームの開始シーンに関連する補助機能の提供。  
