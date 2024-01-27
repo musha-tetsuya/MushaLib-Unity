@@ -1,4 +1,7 @@
 # StateManagement
+ステートの管理に関する機能を提供します。
+* [IState](#istate)
+* [StateManager](#statemanager)
 
 ## IState
 ステートのインターフェース
