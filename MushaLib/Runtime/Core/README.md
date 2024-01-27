@@ -1,4 +1,6 @@
 # Core
+コアとなる機能を提供します。
+* [SingletonMonoBehaviour](#singletonmonobehaviour)
 
 ## SingletonMonoBehaviour
 シングルトンパターンのMonoBehaviourを実装するための抽象クラス
