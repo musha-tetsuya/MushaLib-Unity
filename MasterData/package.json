@@ -1,0 +1,13 @@
+{
+  "name": "com.musha.mushalib.masterdata",
+  "version": "1.0.0",
+  "displayName": "MushaLib MasterData",
+  "description": "This expands various functions for game development in Unity.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "author": {
+    "name": "Musha"
+  }
+}
