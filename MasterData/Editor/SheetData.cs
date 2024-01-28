@@ -1,4 +1,5 @@
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -30,21 +31,6 @@ namespace MushaLib.MasterData.Editor
         public string description;
 
         /// <summary>
-        /// cs出力するかどうか
-        /// </summary>
-        public bool isOutputCs;
-
-        /// <summary>
-        /// json出力するかどうか
-        /// </summary>
-        public bool isOutputJson;
-
-        /// <summary>
-        /// csv出力するかどうか
-        /// </summary>
-        public bool isOutputCsv;
-
-        /// <summary>
         /// 変数情報
         /// </summary>
         public List<FieldInfo> fields;
@@ -69,6 +55,8 @@ namespace MushaLib.MasterData.Editor
         /// </summary>
         public string GetCsString(string xlsxName)
         {
+            var idType = fields[0].name.Equals("id", StringComparison.OrdinalIgnoreCase) ? fields[0].type : "int";
+
             var sb = new StringBuilder();
             sb.AppendLine($"        /// <summary>");
             foreach (var description in description.Split('\n'))
@@ -76,7 +64,7 @@ namespace MushaLib.MasterData.Editor
                 sb.AppendLine($"        /// {description}");
             }
             sb.AppendLine($"        /// </summary>");
-            sb.AppendLine($"        public partial class {name} : KG.MasterModel");
+            sb.AppendLine($"        public partial class {name} : MushaLib.MasterData.ModelBase<{idType}>");
             sb.AppendLine($"        {{");
             foreach (var fi in fields.Where(_ => !_.name.Equals("id", StringComparison.Ordinal)))
             {
@@ -90,24 +78,10 @@ namespace MushaLib.MasterData.Editor
                 sb.AppendLine($"");
             }
             sb.AppendLine($"            /// <summary>");
-            sb.AppendLine($"            /// {name}データベース");
+            sb.AppendLine($"            /// {name}テーブル");
             sb.AppendLine($"            /// <summary>");
-            sb.AppendLine($"            public partial class DB : KG.MasterDB<DB, {name}, List<{name}>>");
+            sb.AppendLine($"            public partial class Table : MushaLib.MasterData.TableBase<Table, {idType}, {name}>");
             sb.AppendLine($"            {{");
-            sb.AppendLine($"                /// <summary>");
-            sb.AppendLine($"                /// Jsonファイル名");
-            sb.AppendLine($"                /// <summary>");
-            sb.AppendLine($"                public override string jsonName => \"{name}\";");
-            sb.AppendLine($"");
-            sb.AppendLine($"                /// <summary>");
-            sb.AppendLine($"                /// Jsonパス");
-            sb.AppendLine($"                /// <summary>");
-            sb.AppendLine($"                public override string jsonPath => \"{xlsxName}/{name}\";");
-            sb.AppendLine($"");
-            sb.AppendLine($"                /// <summary>");
-            sb.AppendLine($"                /// Jsonのセット");
-            sb.AppendLine($"                /// <summary>");
-            sb.AppendLine($"                public override void SetJson(string json) => this.SetDataList(this.ToList(json));");
             sb.AppendLine($"            }}");
             sb.AppendLine($"        }}");
 

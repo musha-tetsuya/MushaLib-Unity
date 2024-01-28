@@ -9,9 +9,6 @@ namespace MushaLib.MasterData.Editor
     internal enum Header
     {
         Description = 1,    //概要
-        IsOutputCs,         //cs出力するかどうか
-        IsOutputJson,       //json出力するかどうか
-        IsOutputCsv,        //csv出力するかどうか
         DataType,           //データ型
         Summary,            //コメント
         Length
