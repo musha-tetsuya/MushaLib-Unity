@@ -2,7 +2,7 @@
   "name": "com.musha.mushalib",
   "version": "0.1.0",
   "displayName": "MushaLib",
-  "description": "This expands various functions for game development in Unity.",
+  "description": "ゲーム開発における様々な機能を提供します。",
   "unity": "2022.3",
   "dependencies": {
     "com.unity.visualscripting": "1.8.0",

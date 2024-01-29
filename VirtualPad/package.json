@@ -2,7 +2,7 @@
   "name": "com.musha.mushalib.virtualpad",
   "version": "1.0.0",
   "displayName": "MushaLib VirtualPad",
-  "description": "This expands various functions for game development in Unity.",
+  "description": "仮想ゲームパッドに関する機能を提供します。",
   "unity": "2022.3",
   "dependencies": {
     "com.unity.inputsystem": "1.6.3",
