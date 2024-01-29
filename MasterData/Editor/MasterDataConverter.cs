@@ -105,12 +105,12 @@ namespace MushaLib.MasterData.Editor
         /// Main
         /// </summary>
         /// <param name="args">
-        /// "-path": xlsxのパス or xlsxが入っているフォルダのパス
-        /// "-outputCs": csファイルの出力先（指定しない場合は出力しない）
-        /// "-outputJson": jsonファイルの出力先（指定しない場合は出力しない）
-        /// "-outputCsv": csvファイルの出力先（指定しない場合は出力しない）
+        /// "-xlsxPath": xlsxのパス or xlsxが入っているフォルダのパス
+        /// "-csOutputDirectory": csファイルの出力先（指定しない場合は出力しない）
+        /// "-jsonOutputDirectory": jsonファイルの出力先（指定しない場合は出力しない）
+        /// "-csvOutputDirectory": csvファイルの出力先（指定しない場合は出力しない）
         /// </param>
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
 #if !UNITY_EDITOR
             // カレントディレクトリのセット
@@ -120,48 +120,61 @@ namespace MushaLib.MasterData.Editor
             var xlsxList = new List<string>();
 
             // cs, json, csvの出力先フォルダ
-            string outputCsDir = null;
-            string outputJsonDir = null;
-            string outputCsvDir = null;
+            string csOutputDirectory = null;
+            string jsonOutputDirectory = null;
+            string csvOutputDirectory = null;
 
             // 引数解析
+            string currentArg = null;
+
             for (int i = 0; i < args.Length; i++)
             {
                 switch (args[i])
                 {
-                    case "-path":
+                    case "-xlsxPath":
+                    case "-csOutputDirectory":
+                    case "-jsonOutputDirectory":
+                    case "-csvOutputDirectory":
+                        currentArg = args[i];
+                        continue;
+                }
+
+                switch (currentArg)
+                {
+                    // 変換対象xlsxのパス
+                    case "-xlsxPath":
                         {
-                            if (args[i + 1].EndsWith(".xlsx"))
+                            if (args[i].EndsWith(".xlsx"))
                             {
                                 // xlsxをリストに追加
-                                xlsxList.Add(args[i + 1]);
+                                xlsxList.Add(args[i]);
                             }
-                            else if (Directory.Exists(args[i + 1]))
+                            else if (Directory.Exists(args[i]))
                             {
                                 // フォルダ内のxlsxをリストに追加
-                                xlsxList.AddRange(Directory.GetFiles(args[i + 1], "*.xlsx"));
+                                xlsxList.AddRange(Directory.GetFiles(args[i], "*.xlsx"));
                             }
                         }
                         break;
 
-                    case "-outputCs":
+                    // cs出力先
+                    case "-csOutputDirectory":
                         {
-                            // cs出力先
-                            outputCsDir = args[i + 1];
+                            csOutputDirectory = args[i];
                         }
                         break;
 
-                    case "-outputJson":
+                    // json出力先
+                    case "-jsonOutputDirectory":
                         {
-                            // json出力先
-                            outputJsonDir = args[i + 1];
+                            jsonOutputDirectory = args[i];
                         }
                         break;
 
-                    case "-outputCsv":
+                    // csv出力先
+                    case "-csvOutputDirectory":
                         {
-                            // csv出力先
-                            outputCsvDir = args[i + 1];
+                            csvOutputDirectory = args[i];
                         }
                         break;
                 }
@@ -173,7 +186,7 @@ namespace MushaLib.MasterData.Editor
             // xlsxが指定されていない
             if (xlsxList.Count == 0)
             {
-                Log("Error：コンバートするマスターデータのxlsxを指定して下さい。");
+                LogWarning("Error：コンバートするマスターデータのxlsxを指定して下さい。");
                 Console.ReadKey();
                 return;
             }
@@ -188,7 +201,7 @@ namespace MushaLib.MasterData.Editor
                 // xlsx名
                 var xlsxName = Path.GetFileNameWithoutExtension(xlsxList[i]);
 
-                // シート空抽出したシートデータリスト
+                // シートから抽出したシートデータリスト
                 var sheets = new List<SheetData>();
 
                 foreach (var worksheet in workbook.Worksheets)
@@ -204,52 +217,80 @@ namespace MushaLib.MasterData.Editor
                 }
 
                 // cs出力するなら
-                if (!string.IsNullOrEmpty(outputCsDir))
+                if (!string.IsNullOrEmpty(csOutputDirectory))
                 {
-                    string csPath = $"{outputCsDir}/{xlsxName}.cs";
-                    Log($"cs出力：{csPath}");
+                    string outputDirectory = csOutputDirectory;
+
+                    if (!outputDirectory.EndsWith(xlsxName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        outputDirectory += $"/{xlsxName}";
+                    }
+
+                    if (!Directory.Exists(outputDirectory))
+                    {
+                        Directory.CreateDirectory(outputDirectory);
+                    }
 
                     // cs出力
-                    var sb = new StringBuilder();
-                    sb.AppendLine($"//これはMasterDataConverterで自動生成されたファイルです。直接編集しないで下さい。");
-                    sb.AppendLine($"");
-                    sb.AppendLine($"namespace MasterData");
-                    sb.AppendLine($"{{");
-                    sb.AppendLine($"    namespace {xlsxName}");
-                    sb.AppendLine($"    {{");
-                    sb.AppendLine(sheets.Select(_ => _.GetCsString(xlsxName)).Aggregate((a, b) => $"{a}\n\n{b}"));
-                    sb.AppendLine($"    }}");
-                    sb.AppendLine($"}}");
+                    foreach (var sheet in sheets)
+                    {
+                        string outputPath = $"{outputDirectory}/{sheet.name}.cs";
+                        Log($"cs出力：{outputPath}");
 
-                    // UTF-8 BOM無 LF
-                    File.WriteAllText(csPath, sb.ToString().Replace("\r", null), Encoding.UTF8);
+                        // UTF-8 BOM無 LF
+                        File.WriteAllText(outputPath, sheet.GetCsString(xlsxName).Replace("\r", null), Encoding.UTF8);
+                    }
                 }
 
                 // json出力するなら
-                if (!string.IsNullOrEmpty(outputJsonDir))
+                if (!string.IsNullOrEmpty(jsonOutputDirectory))
                 {
+                    string outputDirectory = jsonOutputDirectory;
+
+                    if (!outputDirectory.EndsWith(xlsxName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        outputDirectory += $"/{xlsxName}";
+                    }
+
+                    if (!Directory.Exists(outputDirectory))
+                    {
+                        Directory.CreateDirectory(outputDirectory);
+                    }
+
                     // json出力
                     foreach (var sheet in sheets)
                     {
-                        string jsonPath = $"{outputJsonDir}/{xlsxName}_{sheet.name}.json";
-                        Log($"json出力：{jsonPath}");
+                        string outputPath = $"{outputDirectory}/{sheet.name}.json";
+                        Log($"json出力：{outputPath}");
 
                         // UTF-8 BOM無 LF
-                        File.WriteAllText(jsonPath, sheet.GetJArray().ToString().Replace("\r", null), Encoding.UTF8);
+                        File.WriteAllText(outputPath, sheet.GetJArray().ToString().Replace("\r", null), Encoding.UTF8);
                     }
                 }
 
                 // csv出力するなら
-                if (!string.IsNullOrEmpty(outputCsvDir))
+                if (!string.IsNullOrEmpty(csvOutputDirectory))
                 {
+                    string outputDirectory = csvOutputDirectory;
+
+                    if (!outputDirectory.EndsWith(xlsxName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        outputDirectory += $"/{xlsxName}";
+                    }
+
+                    if (!Directory.Exists(outputDirectory))
+                    {
+                        Directory.CreateDirectory(outputDirectory);
+                    }
+
                     // csv出力
                     foreach (var sheet in sheets)
                     {
-                        string csvPath = $"{outputCsvDir}/{xlsxName}_{sheet.name}.csv";
-                        Log($"csv出力：{csvPath}");
+                        string outputPath = $"{outputDirectory}/{sheet.name}.csv";
+                        Log($"csv出力：{outputPath}");
 
                         // UTF-8 BOM無 LF
-                        File.WriteAllText(csvPath, sheet.GetCsvString().Replace("\r", null), Encoding.UTF8);
+                        File.WriteAllText(outputPath, sheet.GetCsvString().Replace("\r", null), Encoding.UTF8);
                     }
                 }
             }
@@ -263,7 +304,7 @@ namespace MushaLib.MasterData.Editor
         private static bool TryParseToSheetData(IXLWorksheet sheet, out SheetData result)
         {
             // アルファベット文字から始まっていないシートはスキップ
-            if (!char.IsLetter(sheet.Name, 0))
+            if (!char.IsLetter(sheet.Name[0]))
             {
                 result = null;
                 return false;
@@ -292,7 +333,7 @@ namespace MushaLib.MasterData.Editor
                     if (i > 100)
                     {
                         // Startが見つからなかった
-                        Log($"\"{result.name}\" does not have \"Start\".");
+                        LogWarning($"\"{result.name}\" does not have \"Start\".");
                         return false;
                     }
                 }
@@ -310,7 +351,7 @@ namespace MushaLib.MasterData.Editor
                     if (i > 100)
                     {
                         // Endが見つからなかった
-                        Log($"\"{result.name}\" does not have \"End\".");
+                        LogWarning($"\"{result.name}\" does not have \"End\".");
                         return false;
                     }
                 }
@@ -334,8 +375,8 @@ namespace MushaLib.MasterData.Editor
                 // 変数名取得
                 fi.name = sheet.Cell(result.startY, x).GetString();
 
-                // 変数名が空 or 「-」から始まる列はスキップ
-                if (string.IsNullOrEmpty(fi.name) || fi.name.StartsWith("-"))
+                // 変数名が空 or アルファベット以外から始まる列はスキップ
+                if (string.IsNullOrEmpty(fi.name) || !char.IsLetter(fi.name[0]))
                 {
                     continue;
                 }
@@ -381,6 +422,19 @@ namespace MushaLib.MasterData.Editor
 #endif
         }
 
+        /// <summary>
+        /// 警告ログ出力
+        /// </summary>
+        private static void LogWarning(string message)
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning(message);
+#else
+            Console.WriteLine(message);
+#endif
+        }
+
+
 #if UNITY_EDITOR
         /// <summary>
         /// EditorWindowを開く
@@ -392,24 +446,24 @@ namespace MushaLib.MasterData.Editor
         }
 
         /// <summary>
-        /// コンバート対象のパス
+        /// 変換対象xlsxのパス
         /// </summary>
-        private string path;
+        private string xlsxPath;
 
         /// <summary>
         /// cs出力先
         /// </summary>
-        private string outputCsDir;
+        private string csOutputDirectory;
 
         /// <summary>
         /// json出力先
         /// </summary>
-        private string outputJsonDir;
+        private string jsonOutputDirectory;
 
         /// <summary>
         /// csv出力先
         /// </summary>
-        private string outputCsvDir;
+        private string csvOutputDirectory;
 
         /// <summary>
         /// OnGUI
@@ -418,18 +472,18 @@ namespace MushaLib.MasterData.Editor
         {
             GUILayout.BeginHorizontal();
             {
-                path = EditorGUILayout.TextField("コンバート対象", path, GUILayout.Height(38));
+                xlsxPath = EditorGUILayout.TextField("変換対象xlsx", xlsxPath, GUILayout.Height(38));
 
                 GUILayout.BeginVertical(GUILayout.Width(100));
                 {
                     if (GUILayout.Button("Select File"))
                     {
-                        path = EditorUtility.OpenFilePanel("Select MasterData File", "", "xlsx");
+                        xlsxPath = EditorUtility.OpenFilePanel("Select MasterData File", "", "xlsx");
                     }
 
                     if (GUILayout.Button("Select Folder"))
                     {
-                        path = EditorUtility.OpenFolderPanel("Select MasterData Folder", "", "");
+                        xlsxPath = EditorUtility.OpenFolderPanel("Select MasterData Folder", "", "");
                     }
                 }
                 GUILayout.EndVertical();
@@ -438,62 +492,66 @@ namespace MushaLib.MasterData.Editor
 
             GUILayout.BeginHorizontal();
             {
-                outputCsDir = EditorGUILayout.TextField("cs出力先", outputCsDir);
+                csOutputDirectory = EditorGUILayout.TextField("cs出力先", csOutputDirectory);
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                 {
-                    outputCsDir = EditorUtility.OpenFolderPanel("cs出力先の選択", "", "");
+                    csOutputDirectory = EditorUtility.SaveFolderPanel("cs出力先の選択", "", "");
                 }
             }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
-                outputJsonDir = EditorGUILayout.TextField("json出力先", outputJsonDir);
+                jsonOutputDirectory = EditorGUILayout.TextField("json出力先", jsonOutputDirectory);
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                 {
-                    outputJsonDir = EditorUtility.OpenFolderPanel("json出力先の選択", "", "");
+                    jsonOutputDirectory = EditorUtility.SaveFolderPanel("json出力先の選択", "", "");
                 }
             }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
-                outputCsvDir = EditorGUILayout.TextField("csv出力先", outputCsvDir);
+                csvOutputDirectory = EditorGUILayout.TextField("csv出力先", csvOutputDirectory);
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                 {
-                    outputCsvDir = EditorUtility.OpenFolderPanel("csv出力先の選択", "", "");
+                    csvOutputDirectory = EditorUtility.SaveFolderPanel("csv出力先の選択", "", "");
                 }
             }
             GUILayout.EndHorizontal();
 
-            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(path) || string.IsNullOrEmpty(outputCsDir + outputJsonDir + outputCsvDir));
+            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(xlsxPath) || string.IsNullOrEmpty(csOutputDirectory + jsonOutputDirectory + csvOutputDirectory));
             {
                 if (GUILayout.Button("Convert"))
                 {
                     List<string> args = new();
-                    args.Add("-path");
-                    args.Add(path);
+                    args.Add("-xlsxPath");
+                    args.Add(xlsxPath);
 
-                    if (!string.IsNullOrEmpty(outputCsDir))
+                    if (!string.IsNullOrEmpty(csOutputDirectory))
                     {
-                        args.Add("-outputCs");
-                        args.Add(outputCsDir);
+                        args.Add("-csOutputDirectory");
+                        args.Add(csOutputDirectory);
                     }
-                    if (!string.IsNullOrEmpty(outputJsonDir))
+                    if (!string.IsNullOrEmpty(jsonOutputDirectory))
                     {
-                        args.Add("-outputJson");
-                        args.Add(outputJsonDir);
+                        args.Add("-jsonOutputDirectory");
+                        args.Add(jsonOutputDirectory);
                     }
-                    if (!string.IsNullOrEmpty(outputCsvDir))
+                    if (!string.IsNullOrEmpty(csvOutputDirectory))
                     {
-                        args.Add("-outputCsv");
-                        args.Add(outputCsvDir);
+                        args.Add("-csvOutputDirectory");
+                        args.Add(csvOutputDirectory);
                     }
+
+                    EditorUtility.DisplayProgressBar("Convert MasterData", xlsxPath, 0.5f);
 
                     Main(args.ToArray());
+
+                    EditorUtility.ClearProgressBar();
 
                     AssetDatabase.Refresh();
                 }

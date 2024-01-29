@@ -57,32 +57,39 @@ namespace MushaLib.MasterData.Editor
             var idType = fields[0].name.Equals("id", StringComparison.OrdinalIgnoreCase) ? fields[0].type : "int";
 
             var sb = new StringBuilder();
-            sb.AppendLine($"        /// <summary>");
+            sb.AppendLine($"// これはMasterDataConverterで自動生成されたファイルです。直接編集しないで下さい。");
+            sb.AppendLine($"using System.Collections;");
+            sb.AppendLine($"using System.Collections.Generic;");
+            sb.AppendLine($"");
+            sb.AppendLine($"namespace MasterData.{xlsxName}");
+            sb.AppendLine($"{{");
+            sb.AppendLine($"    /// <summary>");
             foreach (var description in description.Split('\n'))
             {
-                sb.AppendLine($"        /// {description}");
+                sb.AppendLine($"    /// {description}");
             }
-            sb.AppendLine($"        /// </summary>");
-            sb.AppendLine($"        public partial class {name} : MushaLib.MasterData.ModelBase<{idType}>");
-            sb.AppendLine($"        {{");
+            sb.AppendLine($"    /// </summary>");
+            sb.AppendLine($"    public partial class {name} : MushaLib.MasterData.ModelBase<{idType}>");
+            sb.AppendLine($"    {{");
             foreach (var fi in fields.Where(_ => !_.name.Equals("id", StringComparison.Ordinal)))
             {
-                sb.AppendLine($"            /// <summary>");
+                sb.AppendLine($"        /// <summary>");
                 foreach (var summary in fi.summary.Split('\n'))
                 {
-                    sb.AppendLine($"            /// {summary}");
+                    sb.AppendLine($"        /// {summary}");
                 }
-                sb.AppendLine($"            /// </summary>");
-                sb.AppendLine($"            public {fi.type} {fi.name};");
+                sb.AppendLine($"        /// </summary>");
+                sb.AppendLine($"        public {fi.type} {fi.name};");
                 sb.AppendLine($"");
             }
-            sb.AppendLine($"            /// <summary>");
-            sb.AppendLine($"            /// {name}テーブル");
-            sb.AppendLine($"            /// <summary>");
-            sb.AppendLine($"            public partial class Table : MushaLib.MasterData.TableBase<Table, {idType}, {name}>");
-            sb.AppendLine($"            {{");
-            sb.AppendLine($"            }}");
+            sb.AppendLine($"        /// <summary>");
+            sb.AppendLine($"        /// {name}テーブル");
+            sb.AppendLine($"        /// <summary>");
+            sb.AppendLine($"        public partial class Table : MushaLib.MasterData.TableBase<Table, {idType}, {name}>");
+            sb.AppendLine($"        {{");
             sb.AppendLine($"        }}");
+            sb.AppendLine($"    }}");
+            sb.AppendLine($"}}");
 
             return sb.ToString();
         }
