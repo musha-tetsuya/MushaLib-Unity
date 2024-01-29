@@ -110,6 +110,14 @@ namespace MushaLib.Localization.Components
         /// <summary>
         /// 文字列構築処理の登録
         /// </summary>
+        public void SetStringBuilder(LocalizedString localizedString, CancellationToken cancellationToken = default)
+        {
+            SetStringBuilder(new[] { localizedString }, cancellationToken);
+        }
+
+        /// <summary>
+        /// 文字列構築処理の登録
+        /// </summary>
         public void SetStringBuilder(IEnumerable<LocalizedString> localizedStrings, CancellationToken cancellationToken = default)
         {
             foreach (var x in localizedStrings)
