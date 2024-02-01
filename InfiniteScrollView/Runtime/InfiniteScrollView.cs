@@ -181,11 +181,6 @@ namespace MushaLib.InfiniteScrollView
         private int TotalPageLength => m_PageLength.x * m_PageLength.y;
 
         /// <summary>
-        /// スクロール要素群
-        /// </summary>
-        public IEnumerable<IScrollElement> ScrollElements { get; private set; }
-
-        /// <summary>
         /// 要素プレハブ
         /// </summary>
         public ScrollElement ElementPrefab
@@ -276,9 +271,14 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
+        /// スクロール要素群
+        /// </summary>
+        public IEnumerable<IScrollElement> ScrollElements { get; private set; }
+
+        /// <summary>
         /// 要素更新時イベント
         /// </summary>
-        public Action<IScrollElement, int> OnUpdateElement { get; set; }
+        public event Action<IScrollElement, int> OnUpdateElement;
 
         /// <summary>
         /// Reset
