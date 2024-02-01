@@ -181,6 +181,11 @@ namespace MushaLib.InfiniteScrollView
         private int TotalPageLength => m_PageLength.x * m_PageLength.y;
 
         /// <summary>
+        /// スクロール要素群
+        /// </summary>
+        public IEnumerable<IScrollElement> ScrollElements { get; private set; }
+
+        /// <summary>
         /// 要素プレハブ
         /// </summary>
         public ScrollElement ElementPrefab
@@ -340,7 +345,7 @@ namespace MushaLib.InfiniteScrollView
             }
 
             // リサイクル可能要素プレハブ
-            Queue<IScrollElement> recyclablePrefabs = m_ScrollElements == null ? new() : new(m_ScrollElements.Cast<IScrollElement>());
+            Queue<IScrollElement> recyclablePrefabs = ScrollElements == null ? new() : new(ScrollElements);
 
             // 要素プレハブが変更された
             if (m_ElementPrefab != m_CurrentElementPrefab)
@@ -519,6 +524,8 @@ namespace MushaLib.InfiniteScrollView
                     UpdateElementIndex(element);
                 }
             }
+
+            ScrollElements = m_ScrollElements.Cast<IScrollElement>();
 
             // 使わなかったリサイクル要素を破棄
             while (recyclablePrefabs.TryDequeue(out var prefabInstance))
@@ -1160,14 +1167,6 @@ namespace MushaLib.InfiniteScrollView
             m_AutoScrollCancellationTokenSource?.Cancel();
             m_AutoScrollCancellationTokenSource?.Dispose();
             m_AutoScrollCancellationTokenSource = null;
-        }
-
-        /// <summary>
-        /// 指定インデックス要素を取得する
-        /// </summary>
-        public IScrollElement GetElement(int elementIndex)
-        {
-            return m_ScrollElements.Cast<IScrollElement>().FirstOrDefault(x => x.Index == elementIndex);
         }
     }
 }
