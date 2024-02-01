@@ -56,6 +56,21 @@ namespace MushaLib.UI.Layouts
                 .AddTo(this.destroyCancellationToken);
         }
 
+        /// <summary>
+        /// Start
+        /// </summary>
+        private void Start()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+#endif
+            // 初回矩形計算
+            RecalcRect();
+        }
+
 #if UNITY_EDITOR
         /// <summary>
         /// Update
