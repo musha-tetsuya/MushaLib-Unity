@@ -8,7 +8,7 @@ namespace MushaLib.MasterData
     /// <summary>
     /// マスターデータテーブル基底
     /// </summary>
-    public abstract class TableBase<TInstance, TKey, TValue> : Dictionary<TKey, TValue>
+    public abstract class TableBase<TInstance, TKey, TValue> : Dictionary<TKey, TValue>, ITableBase
         where TInstance : TableBase<TInstance, TKey, TValue>, new()
         where TValue : ModelBase<TKey>
     {
