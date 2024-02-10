@@ -289,6 +289,14 @@ namespace MushaLib.InfiniteScrollView
         }
 
         /// <summary>
+        /// OnDestroy
+        /// </summary>
+        protected virtual void OnDestroy()
+        {
+            CancelAutoScroll();
+        }
+
+        /// <summary>
         /// Awake
         /// </summary>
         protected virtual void Awake()

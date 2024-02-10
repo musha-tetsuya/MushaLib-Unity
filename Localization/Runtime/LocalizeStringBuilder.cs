@@ -57,6 +57,10 @@ namespace MushaLib.Localization
         private void OnDestroy()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnSelectedLocaleChanged;
+
+            m_BuildCancellation?.Cancel();
+            m_BuildCancellation?.Dispose();
+            m_BuildCancellation = null;
         }
 
         /// <summary>

@@ -78,6 +78,20 @@ namespace MushaLib.VirtualPad
         public IObservable<int> OnRelease => this.m_OnRelease;
 
         /// <summary>
+        /// OnDestroy
+        /// </summary>
+        private void OnDestroy()
+        {
+            foreach (var cancellation in this.m_ButtonCancellations.Values)
+            {
+                cancellation.cts.Cancel();
+                cancellation.cts.Dispose();
+            }
+
+            this.m_ButtonCancellations.Clear();
+        }
+
+        /// <summary>
         /// Awake
         /// </summary>
         private void Awake()
