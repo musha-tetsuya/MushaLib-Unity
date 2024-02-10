@@ -1,0 +1,13 @@
+{
+  "name": "com.musha.mushalib.editor.masterdataconverter",
+  "version": "1.0.0",
+  "displayName": "MushaLib Editor MasterDataConverter",
+  "description": "マスターデータを変換する機能を提供します。",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "author": {
+    "name": "Musha"
+  }
+}
