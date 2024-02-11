@@ -8,21 +8,21 @@ using UnityEngine;
 namespace MushaLib.DQ.UI.MessageWindow.Events
 {
     /// <summary>
-    /// メッセージウィンドウ入力待ちイベント
+    /// メッセージウィンドウクリック待ちイベント
     /// </summary>
-    public class WaitInputEvent : IEvent
+    public class WaitClickEvent : IEvent
     {
         /// <summary>
-        /// 入力監視
+        /// 追加入力監視
         /// </summary>
-        private IObservable<Unit> m_InputObservable;
+        private IObservable<Unit> m_AdditionalObservable;
 
         /// <summary>
         /// construct
         /// </summary>
-        public WaitInputEvent(IObservable<Unit> inputObservable)
+        public WaitClickEvent(IObservable<Unit> additionalObservable = null)
         {
-            m_InputObservable = inputObservable;
+            m_AdditionalObservable = additionalObservable;
         }
 
         /// <summary>
@@ -33,7 +33,14 @@ namespace MushaLib.DQ.UI.MessageWindow.Events
             messageWindow.Arrow.gameObject.SetActive(true);
             messageWindow.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
 
-            await m_InputObservable.ToUniTask(true, cancellationToken);
+            if (m_AdditionalObservable == null)
+            {
+                await messageWindow.OnClick.ToUniTask(true, cancellationToken);
+            }
+            else
+            {
+                await messageWindow.OnClick.Merge(m_AdditionalObservable).ToUniTask(true, cancellationToken);
+            }
 
             messageWindow.Arrow.gameObject.SetActive(false);
         }
