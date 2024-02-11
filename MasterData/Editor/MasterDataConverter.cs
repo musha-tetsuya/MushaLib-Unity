@@ -439,7 +439,7 @@ namespace MushaLib.MasterData.Editor
         /// <summary>
         /// EditorWindowを開く
         /// </summary>
-        [MenuItem("MushaLib/MasterDataConverter")]
+        [MenuItem("MushaLib/MasterData/MasterDataConverter")]
         private static void OpenWindow()
         {
             GetWindow<MasterDataConverter>();
