@@ -45,6 +45,12 @@ namespace MushaLib.DQ.UI.MessageWindow
         private float m_ScrollDuration = 0.1f;
 
         /// <summary>
+        /// 矢印
+        /// </summary>
+        [SerializeField]
+        private Arrow m_Arrow;
+
+        /// <summary>
         /// 言語切り替え中かどうか
         /// </summary>
         private bool m_IsChangingLocale;
@@ -87,6 +93,11 @@ namespace MushaLib.DQ.UI.MessageWindow
             get => m_Interval;
             set => m_Interval = value;
         }
+
+        /// <summary>
+        /// 矢印
+        /// </summary>
+        public Arrow Arrow => m_Arrow;
 
         /// <summary>
         /// クリック時
