@@ -575,22 +575,22 @@ PrefabInstance:
     - target: {fileID: 2081895345656722647, guid: d30bca3325f1a574e9031021079bd8b5,
         type: 3}
       propertyPath: m_Padding.m_Top
-      value: 12
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2081895345656722647, guid: d30bca3325f1a574e9031021079bd8b5,
         type: 3}
       propertyPath: m_Padding.m_Left
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2081895345656722647, guid: d30bca3325f1a574e9031021079bd8b5,
         type: 3}
       propertyPath: m_Padding.m_Right
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2081895345656722647, guid: d30bca3325f1a574e9031021079bd8b5,
         type: 3}
       propertyPath: m_Padding.m_Bottom
-      value: 12
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2081895345656722647, guid: d30bca3325f1a574e9031021079bd8b5,
         type: 3}
