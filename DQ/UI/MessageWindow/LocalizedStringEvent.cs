@@ -15,7 +15,7 @@ namespace MushaLib.DQ.UI.MessageWindow
         /// <summary>
         /// ローカライズ文字列
         /// </summary>
-        private LocalizedString m_LocalizedString;
+        protected LocalizedString m_LocalizedString;
 
         /// <summary>
         /// construct
