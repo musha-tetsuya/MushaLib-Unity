@@ -203,7 +203,7 @@ namespace MushaLib.DQ.UI.MessageWindow
         /// <summary>
         /// イベント実行
         /// </summary>
-        public async UniTask RunEvent(IEvent messageEvent, CancellationToken cancellationToken)
+        public async UniTask RunEvent(IEvent messageEvent, CancellationToken cancellationToken = default)
         {
             await RunEvent(new[] { messageEvent }, cancellationToken);
         }
@@ -211,7 +211,7 @@ namespace MushaLib.DQ.UI.MessageWindow
         /// <summary>
         /// イベント実行
         /// </summary>
-        public async UniTask RunEvent(IEnumerable<IEvent> messageEvents, CancellationToken cancellationToken)
+        public async UniTask RunEvent(IEnumerable<IEvent> messageEvents, CancellationToken cancellationToken = default)
         {
             // 言語切り替え中？
             if (m_IsChangingLocale)
