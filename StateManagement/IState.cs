@@ -7,12 +7,12 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// ステートインターフェース
     /// </summary>
-    public interface IState
+    public interface IState<T>
     {
         /// <summary>
         /// ステート開始時に呼ばれる
         /// </summary>
-        void Start();
+        void Start(StateManager<T> stateManager);
 
         /// <summary>
         /// ステート終了時に呼ばれる
