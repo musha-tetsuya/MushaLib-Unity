@@ -72,14 +72,6 @@ namespace MushaLib.Localization
         }
 
         /// <summary>
-        /// Start
-        /// </summary>
-        private void Start()
-        {
-            Build().Forget();
-        }
-
-        /// <summary>
         /// 言語変更時
         /// </summary>
         private void OnSelectedLocaleChanged(Locale locale)

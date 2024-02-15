@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
 namespace MushaLib.DQ.UI
@@ -14,10 +15,10 @@ namespace MushaLib.DQ.UI
     public class SelectableText : ScrollElement
     {
         /// <summary>
-        /// テキスト
+        /// 文字列構築機能
         /// </summary>
         [SerializeField]
-        private TextMeshProUGUI m_Text;
+        private LocalizeStringEvent m_LocalizeStringEvent;
 
         /// <summary>
         /// 文字列構築機能
@@ -37,7 +38,7 @@ namespace MushaLib.DQ.UI
         [SerializeField]
         private Arrow m_Arrow;
 
-        public TextMeshProUGUI Text => m_Text;
+        public LocalizeStringEvent LocalizeStringEvent => m_LocalizeStringEvent;
 
         public LocalizeStringBuilder LocalizeStringBuilder => m_LocalizeStringBuilder;
         
