@@ -19,6 +19,11 @@ namespace MushaLib.DQ.UI
         private GridLayoutGroup m_GridLayoutGroup;
 
         /// <summary>
+        /// GridLayoutGroup
+        /// </summary>
+        public GridLayoutGroup GridLayoutGroup => m_GridLayoutGroup;
+
+        /// <summary>
         /// 現在のインデックス
         /// </summary>
         public int CurrentIndex { get; protected set; }
