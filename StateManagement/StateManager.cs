@@ -41,7 +41,8 @@ namespace MushaLib.StateManagement
             this.m_StateStack.Push((this.CurrentState, onPop));
 
             this.CurrentState = nextState;
-            this.CurrentState?.Start(this);
+            this.CurrentState?.PreStart(this);
+            this.CurrentState?.Start();
         }
 
         /// <summary>
@@ -51,7 +52,8 @@ namespace MushaLib.StateManagement
         {
             this.CurrentState?.End();
             this.CurrentState = nextState;
-            this.CurrentState?.Start(this);
+            this.CurrentState?.PreStart(this);
+            this.CurrentState?.Start();
         }
 
         /// <summary>

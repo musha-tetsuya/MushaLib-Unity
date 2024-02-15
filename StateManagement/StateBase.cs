@@ -15,11 +15,18 @@ namespace MushaLib.StateManagement
         public StateManager<T> StateManager { get; private set; }
 
         /// <summary>
-        /// ステート開始時
+        /// ステート開始時Start前
         /// </summary>
-        public virtual void Start(StateManager<T> stateManager)
+        public virtual void PreStart(StateManager<T> stateManager)
         {
             StateManager = stateManager;
+        }
+
+        /// <summary>
+        /// ステート開始時
+        /// </summary>
+        public virtual void Start()
+        {
         }
 
         /// <summary>
