@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -16, y: -16}
+  m_SizeDelta: {x: -16, y: -8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4384012629891608852
 MonoBehaviour:
@@ -58,8 +58,8 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 1
-  m_CellSize: {x: 32, y: 8}
-  m_Spacing: {x: 0, y: 8}
+  m_CellSize: {x: 32, y: 16}
+  m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1001 &6572467848424278547
@@ -294,7 +294,7 @@ PrefabInstance:
     - target: {fileID: 2050108802605245321, guid: 50aa81f338bcfce408d1b2de591e2a82,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 40
+      value: 48
       objectReference: {fileID: 0}
     - target: {fileID: 2050108802605245321, guid: 50aa81f338bcfce408d1b2de591e2a82,
         type: 3}
