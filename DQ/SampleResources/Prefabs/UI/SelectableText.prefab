@@ -123,8 +123,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u3042\u3044\u3046\u3048\u304A"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: fe476b9ff60bc5742a2c6ead23d90421, type: 2}
-  m_sharedMaterial: {fileID: -4950351520334752561, guid: fe476b9ff60bc5742a2c6ead23d90421,
+  m_fontAsset: {fileID: 11400000, guid: 67dd227a123c98c4794d3a04234dca37, type: 2}
+  m_sharedMaterial: {fileID: -1891821396782689102, guid: 67dd227a123c98c4794d3a04234dca37,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
