@@ -13,16 +13,27 @@ namespace MushaLib.DQ.UI.MessageWindow
     public class WaitClickEvent : IEvent
     {
         /// <summary>
+        /// 矢印の表示制御を自動で行うかどうか
+        /// </summary>
+        public bool AutoArrow { get; set; } = true;
+
+        /// <summary>
         /// 実行
         /// </summary>
         public virtual async UniTask Run(MessageWindow messageWindow, System.Threading.CancellationToken cancellationToken)
         {
-            messageWindow.Arrow.gameObject.SetActive(true);
-            messageWindow.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+            if (AutoArrow)
+            {
+                messageWindow.Arrow.gameObject.SetActive(true);
+                messageWindow.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+            }
 
             await GetOnClickObservable(messageWindow).ToUniTask(true, cancellationToken);
 
-            messageWindow.Arrow.gameObject.SetActive(false);
+            if (AutoArrow)
+            {
+                messageWindow.Arrow.gameObject.SetActive(false);
+            }
         }
 
         /// <summary>
