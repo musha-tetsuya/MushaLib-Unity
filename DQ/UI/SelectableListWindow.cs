@@ -38,12 +38,8 @@ namespace MushaLib.DQ.UI
         /// </summary>
         protected virtual void Start()
         {
-            for (int i = 0; i < m_GridLayoutGroup.transform.childCount; i++)
-            {
-                var element = m_GridLayoutGroup.transform.GetChild(i).GetComponent<SelectableText>();
-
-                element.Arrow.SetAnimationType(i == CurrentIndex ? Arrow.AnimationType.Blink : Arrow.AnimationType.Hide);
-            };
+            var element = m_GridLayoutGroup.transform.GetChild(CurrentIndex).GetComponent<SelectableText>();
+            element.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
         }
 
         /// <summary>
