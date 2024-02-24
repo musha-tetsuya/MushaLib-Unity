@@ -309,16 +309,22 @@ namespace MushaLib.DQ.UI.MessageWindow
                 });
 
             int index = 0;
+            int lineCount = m_Text.textInfo.lineCount;
 
             while (index < message.Length)
             {
-                m_Text.text += message[index];
+                var textInfo = m_Text.GetTextInfo(m_Text.text + message[index]);
 
                 index++;
 
                 if (m_Interval > 0f)
                 {
                     await UniTask.Delay((int)(m_Interval * 1000), cancellationToken: cancellationToken);
+                }
+                else if (textInfo.lineCount > lineCount)
+                {
+                    lineCount = textInfo.lineCount;
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(m_Text.rectTransform);
                 }
 
                 if (isScrolling)
