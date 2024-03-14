@@ -1,5 +1,8 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace MushaLib
@@ -27,12 +30,37 @@ namespace MushaLib
         private RectTransform m_CanvasRectTransform;
 
         /// <summary>
+        /// 再計算のトリガーとなるRectTransform
+        /// </summary>
+        [SerializeField]
+        private RectTransform m_TriggeredRectTransform;
+
+        /// <summary>
+        /// Awake
+        /// </summary>
+        private void Awake()
+        {
+            if (Application.isPlaying)
+            {
+                if (this.m_TriggeredRectTransform != null)
+                {
+                    // トリガーのRectTransformに変更があったらセーフエリア矩形を再計算する
+                    this.m_TriggeredRectTransform
+                        .OnRectTransformDimensionsChangeAsObservable()
+                        .Subscribe(_ => RecalcRect())
+                        .AddTo(this.destroyCancellationToken);
+                }
+            }    
+        }
+
+        /// <summary>
         /// Start
         /// </summary>
         private void Start()
         {
             if (Application.isPlaying)
             {
+                // 初回矩形計算
                 RecalcRect();
             }
         }
