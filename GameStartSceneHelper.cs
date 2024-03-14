@@ -7,7 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace MushaLib.SceneManagement
+namespace MushaLib
 {
     /// <summary>
     /// ゲームの開始シーンに関連する補助機能を提供

@@ -1,5 +1,4 @@
-using MushaLib.Localization;
-using MushaLib.UI.InfiniteScrollView;
+using MushaLib.InfiniteScrollView;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

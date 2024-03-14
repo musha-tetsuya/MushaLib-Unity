@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace MushaLib.UI.InfiniteScrollView
+namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
     /// 無限スクロールビュー

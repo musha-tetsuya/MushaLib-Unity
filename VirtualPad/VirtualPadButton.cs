@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-namespace MushaLib.Input.VirtualPad
+namespace MushaLib.VirtualPad
 {
     /// <summary>
     /// 仮想パッドボタン

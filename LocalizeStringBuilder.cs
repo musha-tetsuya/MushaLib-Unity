@@ -9,7 +9,7 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Events;
 using UnityEngine.Localization.Settings;
 
-namespace MushaLib.Localization
+namespace MushaLib
 {
     /// <summary>
     /// ローカライズ文字列構築機能

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace MushaLib.Core
+namespace MushaLib
 {
     /// <summary>
     /// シングルトンのMonoBehaviourを実装する抽象クラス

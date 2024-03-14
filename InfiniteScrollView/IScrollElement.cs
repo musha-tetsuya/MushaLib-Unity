@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.UI.InfiniteScrollView
+namespace MushaLib.InfiniteScrollView
 {
     /// <summary>
     /// スクロール要素インターフェース

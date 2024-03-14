@@ -2,26 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.UI.InfiniteScrollView
+namespace MushaLib.VirtualPad
 {
     /// <summary>
-    /// スナップタイプ
+    /// ボタン押下フェーズ
     /// </summary>
-    public enum SnapType
+    public enum ButtonPressPhase
     {
         /// <summary>
-        /// なし
+        /// 押した瞬間
         /// </summary>
-        None,
+        Pressed,
 
         /// <summary>
-        /// ページ単位
+        /// 長押し成立時
         /// </summary>
-        Page,
+        LongPressed,
 
         /// <summary>
-        /// 要素単位
+        /// リピート時
         /// </summary>
-        Element,
+        Repeat,
     }
 }
