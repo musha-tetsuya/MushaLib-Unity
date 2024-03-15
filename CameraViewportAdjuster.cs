@@ -31,16 +31,16 @@ namespace MushaLib
         private Vector2 m_ScreenSize = Vector2.one;
 
         /// <summary>
+        /// アンカー
+        /// </summary>
+        [SerializeField]
+        private Vector2 m_Anchor = Vector2.one * 0.5f;
+
+        /// <summary>
         /// セーフエリア内に収めるかどうか
         /// </summary>
         [SerializeField]
         private bool m_FitInSafeArea;
-
-        /// <summary>
-        /// アンカー
-        /// </summary>
-        [SerializeField, Range(0f, 1f)]
-        private float m_Anchor = 0.5f;
 
         /// <summary>
         /// 再計算のトリガーとなるRectTransform
@@ -125,8 +125,8 @@ namespace MushaLib
             var scaledScreenSize = m_ScreenSize * scale;
 
             var rect = m_TargetCamera.rect;
-            rect.x = (safeArea.x + (safeArea.width - scaledScreenSize.x) * m_Anchor) / screenWidth;
-            rect.y = (safeArea.y + (safeArea.height - scaledScreenSize.y) * m_Anchor) / screenHeight;
+            rect.x = (safeArea.x + (safeArea.width - scaledScreenSize.x) * m_Anchor.x) / screenWidth;
+            rect.y = (safeArea.y + (safeArea.height - scaledScreenSize.y) * m_Anchor.y) / screenHeight;
             rect.width = scaledScreenSize.x / screenWidth;
             rect.height = scaledScreenSize.y / screenHeight;
             m_TargetCamera.rect = rect;

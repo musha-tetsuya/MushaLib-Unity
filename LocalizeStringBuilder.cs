@@ -14,6 +14,12 @@ namespace MushaLib
     /// <summary>
     /// ローカライズ文字列構築機能
     /// </summary>
+    /// <remarks>
+    /// 使用方法：
+    /// 1. UpdateStringにTextMeshProUGUI.textを設定
+    /// 2. Addメソッドで文字列やLocalizedStringを追加
+    /// 3. Buildメソッドでテキストを構築
+    /// </remarks>
     public class LocalizeStringBuilder : MonoBehaviour
     {
         /// <summary>
