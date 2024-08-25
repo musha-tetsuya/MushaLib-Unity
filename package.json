@@ -2,12 +2,15 @@
   "name": "com.musha.mushalib",
   "version": "0.1.0",
   "displayName": "MushaLib",
-  "description": "ゲーム開発における様々な機能を提供します。",
+  "description": "\u30b2\u30fc\u30e0\u958b\u767a\u306b\u304a\u3051\u308b\u69d8\u3005\u306a\u6a5f\u80fd\u3092\u63d0\u4f9b\u3057\u307e\u3059\u3002",
   "unity": "2022.3",
   "dependencies": {
-    "com.unity.visualscripting": "1.8.0",
+    "com.unity.inputsystem": "1.6.3",
     "com.unity.localization": "1.4.5",
+    "com.unity.render-pipelines.universal": "14.0.11",
     "com.unity.addressables": "1.21.12",
+    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.visualscripting": "1.8.0",
     "com.neuecc.unirx": "7.1.0",
     "com.cysharp.unitask": "2.5.0"
   },

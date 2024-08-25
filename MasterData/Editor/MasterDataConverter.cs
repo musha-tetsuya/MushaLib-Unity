@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
@@ -305,6 +306,13 @@ namespace MushaLib.MasterData.Editor
         {
             // アルファベット文字から始まっていないシートはスキップ
             if (!char.IsLetter(sheet.Name[0]))
+            {
+                result = null;
+                return false;
+            }
+
+            // アルファベット、数字、アンダーバー以外の文字が入っているシートはスキップ
+            if (!Regex.IsMatch(sheet.Name, @"^[a-zA-Z0-9_]+$"))
             {
                 result = null;
                 return false;
