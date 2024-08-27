@@ -82,12 +82,12 @@ namespace MushaLib.SceneManagement
         /// 使用方法：
         /// ゲームの初期化画面（スプラッシュ画面等）の終了後に呼び、開始画面（タイトル画面等）に遷移させるときに使う
         /// </remarks>
-        public static AsyncOperation LoadStartSceneAsync(string startSceneName = null)
+        public static AsyncOperation LoadStartSceneAsync(string startSceneName = null, LoadSceneMode mode = LoadSceneMode.Single)
         {
 #if UNITY_EDITOR
             if (File.Exists(startSceneNameFilePath))
             {
-                var op = SceneManager.LoadSceneAsync(File.ReadAllText(startSceneNameFilePath));
+                var op = SceneManager.LoadSceneAsync(File.ReadAllText(startSceneNameFilePath), mode);
                 if (op != null)
                 {
                     return op;
@@ -96,7 +96,7 @@ namespace MushaLib.SceneManagement
 #endif
             if (!string.IsNullOrEmpty(startSceneName))
             {
-                var op = SceneManager.LoadSceneAsync(startSceneName);
+                var op = SceneManager.LoadSceneAsync(startSceneName, mode);
                 if (op != null)
                 {
                     return op;
@@ -108,7 +108,7 @@ namespace MushaLib.SceneManagement
                 // BuildSettingsの番号が最も若いシーンに遷移
                 if (i != SceneManager.GetActiveScene().buildIndex)
                 {
-                    var op = SceneManager.LoadSceneAsync(i);
+                    var op = SceneManager.LoadSceneAsync(i, mode);
                     return op;
                 }
             }
