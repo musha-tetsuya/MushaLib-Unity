@@ -76,40 +76,22 @@ namespace MushaLib.SceneManagement
         }
 
         /// <summary>
-        /// 起動シーンを読み込む
+        /// 起動シーン名の取得
         /// </summary>
-        /// <remarks>
-        /// 使用方法：
-        /// ゲームの初期化画面（スプラッシュ画面等）の終了後に呼び、開始画面（タイトル画面等）に遷移させるときに使う
-        /// </remarks>
-        public static AsyncOperation LoadStartSceneAsync(string startSceneName = null, LoadSceneMode mode = LoadSceneMode.Single)
+        public static string GetStartSceneName()
         {
 #if UNITY_EDITOR
             if (File.Exists(startSceneNameFilePath))
             {
-                var op = SceneManager.LoadSceneAsync(File.ReadAllText(startSceneNameFilePath), mode);
-                if (op != null)
-                {
-                    return op;
-                }
+                return File.ReadAllText(startSceneNameFilePath);
             }
 #endif
-            if (!string.IsNullOrEmpty(startSceneName))
-            {
-                var op = SceneManager.LoadSceneAsync(startSceneName, mode);
-                if (op != null)
-                {
-                    return op;
-                }
-            }
-
             for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
             {
                 // BuildSettingsの番号が最も若いシーンに遷移
                 if (i != SceneManager.GetActiveScene().buildIndex)
                 {
-                    var op = SceneManager.LoadSceneAsync(i, mode);
-                    return op;
+                    return Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
                 }
             }
 
