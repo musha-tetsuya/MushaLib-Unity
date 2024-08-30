@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UnityEditor;
 using UnityEngine;
 
 namespace MushaLib.UI
@@ -54,9 +55,12 @@ namespace MushaLib.UI
             // グローバルスケールを毎フレーム監視
             UniTaskAsyncEnumerable
                 .EveryUpdate()
+#if UNITY_EDITOR
+                .Where(_ => EditorApplication.isPlaying)
+#endif
                 .Subscribe(_ =>
                 {
-                    m_CanvasScale.Value = m_RectTransform.parent.lossyScale;
+                    UpdateCanvasScale();
                 })
                 .AddTo(m_Disposable);
 
@@ -82,6 +86,27 @@ namespace MushaLib.UI
         {
             m_Disposable?.Dispose();
             m_Disposable = null;
+        }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Update
+        /// </summary>
+        private void Update()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                UpdateCanvasScale();
+            }
+        }
+#endif
+
+        /// <summary>
+        /// キャンバススケールの更新
+        /// </summary>
+        private void UpdateCanvasScale()
+        {
+            m_CanvasScale.Value = m_RectTransform.parent.lossyScale;
         }
 
         /// <summary>

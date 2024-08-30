@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UnityEditor;
 using UnityEngine;
 
 namespace MushaLib.UI
@@ -9,90 +10,71 @@ namespace MushaLib.UI
     /// <summary>
     /// スクリーン監視
     /// </summary>
-    public class ScreenObserver
+    public static class ScreenObserver
     {
         /// <summary>
-        /// インスタンス
+        /// スクリーン情報
         /// </summary>
-        private static ScreenObserver m_Instance;
-
-        /// <summary>
-        /// インスタンス
-        /// </summary>
-        private static ScreenObserver Instance => m_Instance ?? (m_Instance = new ScreenObserver());
+        private static ReactiveProperty<ScreenInfo> m_ScreenInfo;
 
         /// <summary>
         /// スクリーン情報
         /// </summary>
-        public static IReadOnlyReactiveProperty<ScreenInfo> ScreenInfo => Instance.m_ScreenInfo;
+        public static IReadOnlyReactiveProperty<ScreenInfo> ScreenInfo => m_ScreenInfo;
 
         /// <summary>
         /// 幅
         /// </summary>
-        public static IReadOnlyReactiveProperty<int> Width => Instance.m_Width;
+        public static IReadOnlyReactiveProperty<int> Width { get; private set; }
 
         /// <summary>
         /// 高さ
         /// </summary>
-        public static IReadOnlyReactiveProperty<int> Height => Instance.m_Height;
+        public static IReadOnlyReactiveProperty<int> Height { get; private set; }
 
         /// <summary>
         /// セーフエリア
         /// </summary>
-        public static IReadOnlyReactiveProperty<Rect> SafeArea => Instance.m_SafeArea;
+        public static IReadOnlyReactiveProperty<Rect> SafeArea { get; private set; }
 
         /// <summary>
-        /// Disposable
+        /// static construct
         /// </summary>
-        private CompositeDisposable m_Disposable;
-
-        /// <summary>
-        /// スクリーン情報
-        /// </summary>
-        private ReactiveProperty<ScreenInfo> m_ScreenInfo;
-
-        /// <summary>
-        /// 幅
-        /// </summary>
-        private ReadOnlyReactiveProperty<int> m_Width;
-
-        /// <summary>
-        /// 高さ
-        /// </summary>
-        private ReadOnlyReactiveProperty<int> m_Height;
-
-        /// <summary>
-        /// セーフエリア
-        /// </summary>
-        private ReadOnlyReactiveProperty<Rect> m_SafeArea;
-
-        /// <summary>
-        /// construct
-        /// </summary>
-        private ScreenObserver()
+        static ScreenObserver()
         {
-            m_Disposable = new CompositeDisposable();
-            m_ScreenInfo = new ReactiveProperty<UI.ScreenInfo>(UI.ScreenInfo.GetCurrent()).AddTo(m_Disposable);
-            m_Width = m_ScreenInfo.Select(x => x.Width).ToReadOnlyReactiveProperty().AddTo(m_Disposable);
-            m_Height = m_ScreenInfo.Select(x => x.Height).ToReadOnlyReactiveProperty().AddTo(m_Disposable);
-            m_SafeArea = m_ScreenInfo.Select(x => x.SafeArea).ToReadOnlyReactiveProperty().AddTo(m_Disposable);
+            m_ScreenInfo = new ReactiveProperty<UI.ScreenInfo>(UI.ScreenInfo.GetCurrent());
+            Width = m_ScreenInfo.Select(x => x.Width).ToReadOnlyReactiveProperty();
+            Height = m_ScreenInfo.Select(x => x.Height).ToReadOnlyReactiveProperty();
+            SafeArea = m_ScreenInfo.Select(x => x.SafeArea).ToReadOnlyReactiveProperty();
 
             // 毎フレームスクリーン情報の更新
             UniTaskAsyncEnumerable
                 .EveryUpdate()
+#if UNITY_EDITOR
+                .Where(_ => EditorApplication.isPlaying)
+#endif
                 .Subscribe(_ =>
                 {
-                    m_ScreenInfo.Value = UI.ScreenInfo.GetCurrent();
-                })
-                .AddTo(m_Disposable);
+                    UpdateScreenInfo();
+                });
+
+#if UNITY_EDITOR
+            EditorApplication.update += () =>
+            {
+                if (!EditorApplication.isPlaying)
+                {
+                    UpdateScreenInfo();
+                }
+            };
+#endif
         }
 
         /// <summary>
-        /// destruct
+        /// スクリーン情報の更新
         /// </summary>
-        ~ScreenObserver()
+        private static void UpdateScreenInfo()
         {
-            m_Disposable.Dispose();
+            m_ScreenInfo.Value = UI.ScreenInfo.GetCurrent();
         }
     }
 }
