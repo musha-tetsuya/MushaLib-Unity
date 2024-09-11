@@ -1,4 +1,4 @@
-# UI.ReverseMask
+# ReverseMask
 逆マスクを標準機能＆ノーコードで実現します。  
 * https://www.zkn0hr.com/unity-reverse-mask/
 
