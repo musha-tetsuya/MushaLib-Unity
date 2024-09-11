@@ -1,4 +1,4 @@
-﻿# MushaLib
+﻿# MushaLib-Unity
 
 Unityでのゲーム開発における様々な機能を提供します。
 
