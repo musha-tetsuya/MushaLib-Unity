@@ -7,13 +7,6 @@ Unityのスクロールビューを拡張する機能です。
 * 指定要素へのジャンプ
 * 指定要素へのスクロール
 
-## 導入方法
-`Package Manager` で **Add package from git URL** を選択し、以下のURLを入力して下さい。
-```
-https://github.com/musha-tetsuya/MushaLib-Unity.git?path=InfiniteScrollView
-```
-* [Install a package from a Git URL](https://docs.unity3d.com/ja/2022.3/Manual/upm-ui-giturl.html)
-
 ## 使用方法
 #### 1. Hierarchy内に右クリックで Scroll View を配置してください。
 <img src="https://github.com/musha-tetsuya/MushaLib-Unity/assets/26340083/1ef09270-ee2f-450c-9976-d66c0b766630" width="50%" height="50%">
@@ -39,7 +32,7 @@ https://github.com/musha-tetsuya/MushaLib-Unity.git?path=InfiniteScrollView
 
 #### 4. スクリプトからInfiniteScrollViewのInitializeメソッドを呼び出して下さい。
 ```csharp
-using MushaLib.UI.InfiniteScroll;
+using MushaLib.UI.InfiniteScrollView;
 
 public class Sample : MonoBehaviour
 {
@@ -58,7 +51,7 @@ https://github.com/musha-tetsuya/MushaLib-Unity/blob/1989550c5fb6266b6aa444a9373
 
 ```csharp
 // SampleElement.cs
-using MushaLib.UI.InfiniteScroll;
+using MushaLib.UI.InfiniteScrollView;
 using TMPro;
 
 public class SampleElement : ScrollElement
@@ -72,7 +65,7 @@ public class SampleElement : ScrollElement
 
 ```csharp
 // Sample.cs
-using MushaLib.UI.InfiniteScroll;
+using MushaLib.UI.InfiniteScrollView;
 
 public class Sample : MonoBehaviour
 {
