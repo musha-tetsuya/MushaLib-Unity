@@ -20,7 +20,7 @@ https://github.com/musha-tetsuya/MushaLib-Unity/blob/a58100d68f6c1bb055b856b5a0d
 ```csharp
 // Sample.cs
 using Cysharp.Threading.Tasks;
-using MushaLib.Input.VirtualPad;
+using MushaLib.UI.VirtualPad;
 using UniRx;
 
 public class Sample : MonoBehaviour
