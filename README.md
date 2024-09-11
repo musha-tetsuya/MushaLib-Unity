@@ -1,5 +1,7 @@
 ﻿# MushaLib
 
+Unityでのゲーム開発における様々な機能を提供します。
+
 ## 導入方法
 `Package Manager` で **Add package from git URL** を選択し、以下のURLを入力して下さい。
 ```
