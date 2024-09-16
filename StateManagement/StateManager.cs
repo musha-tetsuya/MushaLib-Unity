@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace MushaLib.StateManagement
@@ -8,7 +9,7 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// ステート管理
     /// </summary>
-    public class StateManager
+    public class StateManager : IDisposable
     {
         /// <summary>
         /// 現在のステート
@@ -16,9 +17,37 @@ namespace MushaLib.StateManagement
         public StateBase CurrentState { get; private set; }
 
         /// <summary>
+        /// CancellationToken
+        /// </summary>
+        public CancellationToken CancellationToken => this.m_CancellationTokenSource.Token;
+
+        /// <summary>
+        /// CancellationTokenSource
+        /// </summary>
+        private CancellationTokenSource m_CancellationTokenSource;
+
+        /// <summary>
         /// ステートのスタック
         /// </summary>
         private Stack<(StateBase state, Action onPop)> m_StateStack = new();
+
+        /// <summary>
+        /// construct
+        /// </summary>
+        public StateManager(CancellationToken cancellation = default)
+        {
+            this.m_CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public virtual void Dispose()
+        {
+            this.m_CancellationTokenSource?.Cancel();
+            this.m_CancellationTokenSource?.Dispose();
+            this.m_CancellationTokenSource = null;
+        }
 
         /// <summary>
         /// 次のステートに遷移する
@@ -71,7 +100,8 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// construct
         /// </summary>
-        public StateManager(T value)
+        public StateManager(T value, CancellationToken cancellation = default)
+            : base(cancellation)
         {
             Value = value;
         }
