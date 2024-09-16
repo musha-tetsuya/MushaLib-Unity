@@ -68,6 +68,7 @@ namespace MushaLib.StateManagement
         {
             this.CurrentState?.End();
             this.CurrentState = nextState;
+            this.CurrentState?.SetStateManager(this);
             this.CurrentState?.Start();
         }
 
