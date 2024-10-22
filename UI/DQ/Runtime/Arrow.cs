@@ -14,8 +14,8 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public enum AnimationType
         {
-            Show,
             Hide,
+            Show,
             Blink
         }
 
@@ -29,6 +29,20 @@ namespace MushaLib.UI.DQ
         /// </summary>
         [SerializeField]
         private Animator m_Animator;
+
+        /// <summary>
+        /// 初期アニメーションタイプ
+        /// </summary>
+        [SerializeField]
+        private AnimationType m_InitialAnimationType = AnimationType.Hide;
+
+        /// <summary>
+        /// Awake
+        /// </summary>
+        private void Awake()
+        {
+            m_Animator.SetInteger(AnimationHash_AnimationType, (int)m_InitialAnimationType);
+        }
 
         /// <summary>
         /// アニメーションタイプ切り替え

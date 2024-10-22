@@ -111,6 +111,8 @@ namespace MushaLib.UI.DQ
         {
             LocalizationSettings.SelectedLocaleChanged -= OnSelectedLocaleChanged;
 
+            onClick.Dispose();
+
             m_LocaleCancellation?.Cancel();
             m_LocaleCancellation?.Dispose();
             m_LocaleCancellation = null;

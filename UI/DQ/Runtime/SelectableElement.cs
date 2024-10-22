@@ -6,9 +6,9 @@ using UnityEngine.UI;
 namespace MushaLib.UI.DQ
 {
     /// <summary>
-    /// 選択可能テキスト
+    /// 選択可能要素
     /// </summary>
-    public class SelectableText : MonoBehaviour
+    public class SelectableElement : MonoBehaviour
     {
         /// <summary>
         /// ボタン

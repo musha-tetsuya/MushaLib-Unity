@@ -87,6 +87,8 @@ namespace MushaLib.UI.VirtualPad
             }
 
             this.m_ButtonCancellations.Clear();
+            this.m_OnPress.Dispose();
+            this.m_OnRelease.Dispose();
         }
 
         /// <summary>
