@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MushaLib.UI.DQ
 {
@@ -15,10 +16,19 @@ namespace MushaLib.UI.DQ
     /// </summary>
     public class SelectableListPresenter<TSelectableList> : IDisposable where TSelectableList : ISelectableList
     {
+        public enum ButtonType
+        {
+            Up,
+            Down,
+            Left,
+            Right,
+            Submit,
+        }
+
         /// <summary>
         /// 選択可能リストのビュー
         /// </summary>
-        protected TSelectableList View { get; }
+        private TSelectableList m_View;
 
         /// <summary>
         /// CancellationTokenSource
@@ -28,7 +38,12 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 選択中インデックス
         /// </summary>
-        protected int CurrentIndex { get; private set; }
+        private int m_CurrentIndex;
+
+        /// <summary>
+        /// インデックス変化量
+        /// </summary>
+        private Vector2Int m_IndexDelta;
 
         /// <summary>
         /// 選択決定時
@@ -45,8 +60,19 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public SelectableListPresenter(TSelectableList view)
         {
-            View = view;
-            CurrentIndex = -1;
+            m_View = view;
+            m_CurrentIndex = -1;
+
+            if (view.Axis == GridLayoutGroup.Axis.Horizontal)
+            {
+                m_IndexDelta.x = 1;
+                m_IndexDelta.y = view.CellCount.x;
+            }
+            else
+            {
+                m_IndexDelta.x = view.CellCount.y;
+                m_IndexDelta.y = 1;
+            }
         }
 
         /// <summary>
@@ -70,7 +96,7 @@ namespace MushaLib.UI.DQ
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            foreach (var x in View.GetElements().Select((element, i) => (element, i)))
+            foreach (var x in m_View.GetElements().Select((element, i) => (element, i)))
             {
                 var (element, i) = x;
 
@@ -91,9 +117,9 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 要素クリック時
         /// </summary>
-        protected void OnClickElement(int index)
+        private void OnClickElement(int index)
         {
-            if (index != CurrentIndex)
+            if (index != m_CurrentIndex)
             {
                 // 選択インデックスを変更
                 SetCurrentIndex(index);
@@ -108,20 +134,20 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 選択インデックスの変更
         /// </summary>
-        protected void SetCurrentIndex(int index)
+        private void SetCurrentIndex(int index)
         {
-            index = (int)Mathf.Repeat(index, View.Count);
+            index = (int)Mathf.Repeat(index, m_View.Count);
 
-            if (index != CurrentIndex)
+            if (index != m_CurrentIndex)
             {
                 // 選択中要素の矢印を非表示に
-                View.GetElement(CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+                m_View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
 
                 // インデックス変更
-                CurrentIndex = index;
+                m_CurrentIndex = index;
 
                 // 新しく選択した要素の矢印を点滅表示
-                View.GetElement(CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+                m_View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
             }
         }
 
@@ -130,14 +156,14 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Select()
         {
-            var element = View.GetElement(CurrentIndex);
+            var element = m_View.GetElement(m_CurrentIndex);
             if (element != null)
             {
                 // 選択中要素の矢印の点滅を解除
                 element.Arrow.SetAnimationType(Arrow.AnimationType.Show);
 
                 // リストに触れなくする
-                View.SetInteractable(false);
+                m_View.SetInteractable(false);
             }
         }
 
@@ -146,14 +172,56 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Deselect()
         {
-            var element = View.GetElement(CurrentIndex);
+            var element = m_View.GetElement(m_CurrentIndex);
             if (element != null)
             {
                 // 選択中要素の矢印を点滅表示
                 element.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
 
                 // リストに触れるようにする
-                View.SetInteractable(true);
+                m_View.SetInteractable(true);
+            }
+        }
+
+        /// <summary>
+        /// パッド操作時
+        /// </summary>
+        public void OnPadPressed(ButtonType buttonType)
+        {
+            int x, y;
+
+            if (m_View.Axis == GridLayoutGroup.Axis.Horizontal)
+            {
+                x = m_CurrentIndex % m_IndexDelta.y;
+                y = m_CurrentIndex / m_IndexDelta.x;
+            }
+            else
+            {
+                x = m_CurrentIndex / m_IndexDelta.y;
+                y = m_CurrentIndex % m_IndexDelta.x;
+            }
+
+            switch (buttonType)
+            {
+                case ButtonType.Up:
+                    SetCurrentIndex(m_IndexDelta.x * x + m_IndexDelta.y * (int)Mathf.Repeat(y - 1, m_View.CellCount.y));
+                    break;
+
+                case ButtonType.Down:
+                    SetCurrentIndex(m_IndexDelta.x * x + m_IndexDelta.y * (int)Mathf.Repeat(y + 1, m_View.CellCount.y));
+                    break;
+
+                case ButtonType.Left:
+                    SetCurrentIndex(m_IndexDelta.x * (int)Mathf.Repeat(x - 1, m_View.CellCount.x) + m_IndexDelta.y * y);
+                    break;
+
+                case ButtonType.Right:
+                    SetCurrentIndex(m_IndexDelta.x * (int)Mathf.Repeat(x + 1, m_View.CellCount.x) + m_IndexDelta.y * y);
+                    break;
+
+                case ButtonType.Submit:
+                    m_OnSelected.OnNext(m_CurrentIndex);
+                    break;
             }
         }
     }

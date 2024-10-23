@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MushaLib.UI.DQ
 {
@@ -23,9 +23,16 @@ namespace MushaLib.UI.DQ
         private Transform m_Content;
 
         /// <summary>
-        /// 要素クリック時
+        /// セル数
         /// </summary>
-        private Subject<int> m_OnClickElement = new Subject<int>();
+        [SerializeField]
+        private Vector2Int m_CellCount = Vector2Int.one;
+
+        /// <summary>
+        /// 軸
+        /// </summary>
+        [SerializeField]
+        private GridLayoutGroup.Axis m_Axis;
 
         /// <summary>
         /// 要素数
@@ -33,12 +40,18 @@ namespace MushaLib.UI.DQ
         public int Count => m_Content.childCount;
 
         /// <summary>
-        /// OnDestroy
+        /// セル数
         /// </summary>
-        private void OnDestroy()
+        public Vector2Int CellCount
         {
-            m_OnClickElement.Dispose();
+            get => m_CellCount;
+            set => m_CellCount = value;
         }
+
+        /// <summary>
+        /// 軸
+        /// </summary>
+        public GridLayoutGroup.Axis Axis => m_Axis;
 
         /// <summary>
         /// 要素取得

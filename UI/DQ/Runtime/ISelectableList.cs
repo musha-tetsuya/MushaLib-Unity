@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MushaLib.UI.DQ
 {
@@ -13,6 +14,16 @@ namespace MushaLib.UI.DQ
         /// 要素数
         /// </summary>
         public int Count { get; }
+
+        /// <summary>
+        /// セル数
+        /// </summary>
+        public Vector2Int CellCount { get; set; }
+
+        /// <summary>
+        /// 軸
+        /// </summary>
+        public GridLayoutGroup.Axis Axis { get; }
 
         /// <summary>
         /// 要素取得
@@ -28,5 +39,6 @@ namespace MushaLib.UI.DQ
         /// 全要素操作の一括変更
         /// </summary>
         public void SetInteractable(bool interactable);
+
     }
 }
