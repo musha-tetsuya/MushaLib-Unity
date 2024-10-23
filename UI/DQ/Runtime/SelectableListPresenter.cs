@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UniRx;
 using UnityEngine;
@@ -12,12 +13,12 @@ namespace MushaLib.UI.DQ
     /// <summary>
     /// 選択可能リスト制御
     /// </summary>
-    public class SelectableListPresenter : IDisposable
+    public class SelectableListPresenter<TSelectableList> : IDisposable where TSelectableList : ISelectableList
     {
         /// <summary>
         /// 選択可能リストのビュー
         /// </summary>
-        private readonly SelectableList m_View;
+        private readonly TSelectableList m_View;
 
         /// <summary>
         /// CancellationTokenSource
@@ -42,7 +43,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// construct
         /// </summary>
-        public SelectableListPresenter(SelectableList view)
+        public SelectableListPresenter(TSelectableList view)
         {
             m_View = view;
             m_CurrentIndex = -1;
@@ -69,10 +70,19 @@ namespace MushaLib.UI.DQ
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            // 要素クリック時
-            m_View.OnClickElementObservable
-                .Subscribe(OnClickElement)
-                .AddTo(m_CancellationTokenSource.Token);
+            foreach (var x in m_View.GetElements().Select((element, i) => (element, i)))
+            {
+                var (element, i) = x;
+
+                // 要素クリック時
+                element.Button
+                    .OnClickAsObservable()
+                    .Subscribe(_ =>
+                    {
+                        OnClickElement(i);
+                    })
+                    .AddTo(m_CancellationTokenSource.Token);
+            }
 
             // 開始時インデックスをセット
             SetCurrentIndex(index);
@@ -100,7 +110,7 @@ namespace MushaLib.UI.DQ
         /// </summary>
         private void SetCurrentIndex(int index)
         {
-            index = (int)Mathf.Repeat(index, m_View.Content.childCount);
+            index = (int)Mathf.Repeat(index, m_View.Count);
 
             if (index != m_CurrentIndex)
             {
@@ -127,7 +137,7 @@ namespace MushaLib.UI.DQ
                 element.Arrow.SetAnimationType(Arrow.AnimationType.Show);
 
                 // リストに触れなくする
-                m_View.CanvasGroup.interactable = false;
+                m_View.SetInteractable(false);
             }
         }
 
@@ -143,7 +153,7 @@ namespace MushaLib.UI.DQ
                 element.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
 
                 // リストに触れるようにする
-                m_View.CanvasGroup.interactable = true;
+                m_View.SetInteractable(true);
             }
         }
     }

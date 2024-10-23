@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
@@ -9,7 +8,7 @@ namespace MushaLib.UI.DQ
     /// <summary>
     /// 選択可能リスト
     /// </summary>
-    public class SelectableList : MonoBehaviour
+    public class SelectableList : MonoBehaviour, ISelectableList
     {
         /// <summary>
         /// CanvasGroup
@@ -29,19 +28,9 @@ namespace MushaLib.UI.DQ
         private Subject<int> m_OnClickElement = new Subject<int>();
 
         /// <summary>
-        /// CanvasGroup
+        /// 要素数
         /// </summary>
-        public CanvasGroup CanvasGroup => m_CanvasGroup;
-
-        /// <summary>
-        /// コンテンツ
-        /// </summary>
-        public Transform Content => m_Content;
-
-        /// <summary>
-        /// 要素クリック時
-        /// </summary>
-        public IObservable<int> OnClickElementObservable => m_OnClickElement;
+        public int Count => m_Content.childCount;
 
         /// <summary>
         /// OnDestroy
@@ -52,19 +41,11 @@ namespace MushaLib.UI.DQ
         }
 
         /// <summary>
-        /// 要素クリック時
-        /// </summary>
-        public void OnClickElement(SelectableElement element)
-        {
-            m_OnClickElement.OnNext(element.transform.GetSiblingIndex());
-        }
-
-        /// <summary>
         /// 要素取得
         /// </summary>
         public SelectableElement GetElement(int index)
         {
-            if (0 <= index && index < m_Content.childCount)
+            if (0 <= index && index < Count)
             {
                 return m_Content.GetChild(index).GetComponent<SelectableElement>();
             }
@@ -72,6 +53,22 @@ namespace MushaLib.UI.DQ
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// 全要素取得
+        /// </summary>
+        public IEnumerable<SelectableElement> GetElements()
+        {
+            return m_Content.GetComponentsInChildren<SelectableElement>();
+        }
+
+        /// <summary>
+        /// 全要素操作の一括変更
+        /// </summary>
+        public void SetInteractable(bool interactable)
+        {
+            m_CanvasGroup.interactable = interactable;
         }
     }
 }
