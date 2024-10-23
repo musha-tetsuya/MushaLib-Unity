@@ -42,11 +42,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// セル数
         /// </summary>
-        public Vector2Int CellCount
-        {
-            get => m_CellCount;
-            set => m_CellCount = value;
-        }
+        public Vector2Int CellCount => m_CellCount;
 
         /// <summary>
         /// 軸
