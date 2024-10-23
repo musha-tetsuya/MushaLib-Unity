@@ -16,15 +16,6 @@ namespace MushaLib.UI.DQ
     /// </summary>
     public class SelectableListPresenter<TSelectableList> : IDisposable where TSelectableList : ISelectableList
     {
-        public enum ButtonType
-        {
-            Up,
-            Down,
-            Left,
-            Right,
-            Submit,
-        }
-
         /// <summary>
         /// 選択可能リストのビュー
         /// </summary>
@@ -186,7 +177,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// パッド操作時
         /// </summary>
-        public void OnPadPressed(ButtonType buttonType)
+        public void OnPadPressed(SelectableListButtonType buttonType)
         {
             int x, y;
 
@@ -203,23 +194,23 @@ namespace MushaLib.UI.DQ
 
             switch (buttonType)
             {
-                case ButtonType.Up:
+                case SelectableListButtonType.Up:
                     SetCurrentIndex(m_IndexDelta.x * x + m_IndexDelta.y * (int)Mathf.Repeat(y - 1, m_View.CellCount.y));
                     break;
 
-                case ButtonType.Down:
+                case SelectableListButtonType.Down:
                     SetCurrentIndex(m_IndexDelta.x * x + m_IndexDelta.y * (int)Mathf.Repeat(y + 1, m_View.CellCount.y));
                     break;
 
-                case ButtonType.Left:
+                case SelectableListButtonType.Left:
                     SetCurrentIndex(m_IndexDelta.x * (int)Mathf.Repeat(x - 1, m_View.CellCount.x) + m_IndexDelta.y * y);
                     break;
 
-                case ButtonType.Right:
+                case SelectableListButtonType.Right:
                     SetCurrentIndex(m_IndexDelta.x * (int)Mathf.Repeat(x + 1, m_View.CellCount.x) + m_IndexDelta.y * y);
                     break;
 
-                case ButtonType.Submit:
+                case SelectableListButtonType.Submit:
                     m_OnSelected.OnNext(m_CurrentIndex);
                     break;
             }
