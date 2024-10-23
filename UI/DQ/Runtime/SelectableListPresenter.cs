@@ -108,7 +108,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 選択インデックスの変更
         /// </summary>
-        private void SetCurrentIndex(int index)
+        protected void SetCurrentIndex(int index)
         {
             index = (int)Mathf.Repeat(index, View.Count);
 
