@@ -53,17 +53,6 @@ namespace MushaLib.UI.DQ
         {
             m_View = view;
             m_CurrentIndex = -1;
-
-            if (view.Axis == GridLayoutGroup.Axis.Horizontal)
-            {
-                m_IndexDelta.x = 1;
-                m_IndexDelta.y = view.CellCount.x;
-            }
-            else
-            {
-                m_IndexDelta.x = view.CellCount.y;
-                m_IndexDelta.y = 1;
-            }
         }
 
         /// <summary>
@@ -87,11 +76,23 @@ namespace MushaLib.UI.DQ
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
+            // インデックス変化量の計算
+            if (m_View.Axis == GridLayoutGroup.Axis.Horizontal)
+            {
+                m_IndexDelta.x = 1;
+                m_IndexDelta.y = Mathf.Max(m_View.CellCount.x, 1);
+            }
+            else
+            {
+                m_IndexDelta.x = Mathf.Max(m_View.CellCount.y, 1);
+                m_IndexDelta.y = 1;
+            }
+
+            // 要素クリック時
             foreach (var x in m_View.GetElements().Select((element, i) => (element, i)))
             {
                 var (element, i) = x;
 
-                // 要素クリック時
                 element.Button
                     .OnClickAsObservable()
                     .Subscribe(_ =>
@@ -129,16 +130,31 @@ namespace MushaLib.UI.DQ
         {
             index = (int)Mathf.Repeat(index, m_View.Count);
 
-            if (index != m_CurrentIndex)
+            var diff = index - m_CurrentIndex;
+            if (diff != 0)
             {
                 // 選択中要素の矢印を非表示に
-                m_View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+                var oldElement = m_View.GetElement(m_CurrentIndex);
+                if (oldElement != null)
+                {
+                    oldElement.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+                }
 
                 // インデックス変更
                 m_CurrentIndex = index;
 
                 // 新しく選択した要素の矢印を点滅表示
-                m_View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+                var newElement = m_View.GetElement(m_CurrentIndex);
+                if (newElement != null)
+                {
+                    newElement.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+
+                    // 非表示状態なら意味が無いので次の要素に変更
+                    if (!newElement.gameObject.activeInHierarchy)
+                    {
+                        SetCurrentIndex(m_CurrentIndex + diff);
+                    }
+                }
             }
         }
 
@@ -179,6 +195,11 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void OnPadPressed(SelectableListButtonType buttonType)
         {
+            if (m_CurrentIndex < 0)
+            {
+                return;
+            }
+
             int x, y;
 
             if (m_View.Axis == GridLayoutGroup.Axis.Horizontal)

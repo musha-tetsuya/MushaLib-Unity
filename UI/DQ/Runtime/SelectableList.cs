@@ -73,7 +73,7 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public IEnumerable<SelectableElement> GetElements()
         {
-            return m_Content.GetComponentsInChildren<SelectableElement>();
+            return m_Content.GetComponentsInChildren<SelectableElement>(true);
         }
 
         /// <summary>
