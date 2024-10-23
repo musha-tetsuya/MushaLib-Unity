@@ -6,6 +6,7 @@ namespace MushaLib.UI.DQ
 {
     public enum SelectableListButtonType
     {
+        None,
         Up,
         Down,
         Left,
