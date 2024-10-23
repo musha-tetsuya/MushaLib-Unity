@@ -28,7 +28,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 選択中インデックス
         /// </summary>
-        private int m_CurrentIndex;
+        protected int CurrentIndex { get; private set; }
 
         /// <summary>
         /// 選択決定時
@@ -46,7 +46,7 @@ namespace MushaLib.UI.DQ
         public SelectableListPresenter(TSelectableList view)
         {
             View = view;
-            m_CurrentIndex = -1;
+            CurrentIndex = -1;
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace MushaLib.UI.DQ
         /// </summary>
         private void OnClickElement(int index)
         {
-            if (index != m_CurrentIndex)
+            if (index != CurrentIndex)
             {
                 // 選択インデックスを変更
                 SetCurrentIndex(index);
@@ -112,16 +112,16 @@ namespace MushaLib.UI.DQ
         {
             index = (int)Mathf.Repeat(index, View.Count);
 
-            if (index != m_CurrentIndex)
+            if (index != CurrentIndex)
             {
                 // 選択中要素の矢印を非表示に
-                View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+                View.GetElement(CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
 
                 // インデックス変更
-                m_CurrentIndex = index;
+                CurrentIndex = index;
 
                 // 新しく選択した要素の矢印を点滅表示
-                View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+                View.GetElement(CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
             }
         }
 
@@ -130,7 +130,7 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Select()
         {
-            var element = View.GetElement(m_CurrentIndex);
+            var element = View.GetElement(CurrentIndex);
             if (element != null)
             {
                 // 選択中要素の矢印の点滅を解除
@@ -146,7 +146,7 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Deselect()
         {
-            var element = View.GetElement(m_CurrentIndex);
+            var element = View.GetElement(CurrentIndex);
             if (element != null)
             {
                 // 選択中要素の矢印を点滅表示
