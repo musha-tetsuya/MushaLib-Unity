@@ -18,7 +18,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 選択可能リストのビュー
         /// </summary>
-        private readonly TSelectableList m_View;
+        protected TSelectableList View { get; }
 
         /// <summary>
         /// CancellationTokenSource
@@ -45,7 +45,7 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public SelectableListPresenter(TSelectableList view)
         {
-            m_View = view;
+            View = view;
             m_CurrentIndex = -1;
         }
 
@@ -70,7 +70,7 @@ namespace MushaLib.UI.DQ
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            foreach (var x in m_View.GetElements().Select((element, i) => (element, i)))
+            foreach (var x in View.GetElements().Select((element, i) => (element, i)))
             {
                 var (element, i) = x;
 
@@ -110,18 +110,18 @@ namespace MushaLib.UI.DQ
         /// </summary>
         private void SetCurrentIndex(int index)
         {
-            index = (int)Mathf.Repeat(index, m_View.Count);
+            index = (int)Mathf.Repeat(index, View.Count);
 
             if (index != m_CurrentIndex)
             {
                 // 選択中要素の矢印を非表示に
-                m_View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+                View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
 
                 // インデックス変更
                 m_CurrentIndex = index;
 
                 // 新しく選択した要素の矢印を点滅表示
-                m_View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+                View.GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
             }
         }
 
@@ -130,14 +130,14 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Select()
         {
-            var element = m_View.GetElement(m_CurrentIndex);
+            var element = View.GetElement(m_CurrentIndex);
             if (element != null)
             {
                 // 選択中要素の矢印の点滅を解除
                 element.Arrow.SetAnimationType(Arrow.AnimationType.Show);
 
                 // リストに触れなくする
-                m_View.SetInteractable(false);
+                View.SetInteractable(false);
             }
         }
 
@@ -146,14 +146,14 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Deselect()
         {
-            var element = m_View.GetElement(m_CurrentIndex);
+            var element = View.GetElement(m_CurrentIndex);
             if (element != null)
             {
                 // 選択中要素の矢印を点滅表示
                 element.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
 
                 // リストに触れるようにする
-                m_View.SetInteractable(true);
+                View.SetInteractable(true);
             }
         }
     }
