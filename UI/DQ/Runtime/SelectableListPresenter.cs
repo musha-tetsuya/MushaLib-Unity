@@ -91,7 +91,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 要素クリック時
         /// </summary>
-        private void OnClickElement(int index)
+        protected void OnClickElement(int index)
         {
             if (index != CurrentIndex)
             {
