@@ -1,5 +1,9 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,19 +12,13 @@ namespace MushaLib.UI.DQ
     /// <summary>
     /// 選択可能リスト
     /// </summary>
-    public class SelectableList : MonoBehaviour, ISelectableList
+    public class SelectableList : MonoBehaviour
     {
         /// <summary>
         /// CanvasGroup
         /// </summary>
         [SerializeField]
         private CanvasGroup m_CanvasGroup;
-
-        /// <summary>
-        /// コンテンツ
-        /// </summary>
-        [SerializeField]
-        private Transform m_Content;
 
         /// <summary>
         /// セル数
@@ -32,31 +30,159 @@ namespace MushaLib.UI.DQ
         /// 軸
         /// </summary>
         [SerializeField]
-        private GridLayoutGroup.Axis m_Axis;
+        private GridLayoutGroup.Axis m_StartAxis;
 
         /// <summary>
-        /// 要素数
+        /// クリック処理キャンセル
         /// </summary>
-        public int Count => m_Content.childCount;
+        private CompositeDisposable m_OnClickDisposable;
 
         /// <summary>
-        /// セル数
+        /// パッド処理キャンセル
         /// </summary>
-        public Vector2Int CellCount => m_CellCount;
+        private IDisposable m_PadDisposable;
 
         /// <summary>
-        /// 軸
+        /// 要素選択決定時
         /// </summary>
-        public GridLayoutGroup.Axis Axis => m_Axis;
+        private Subject<SelectableElement> m_OnSelected = new();
+
+        /// <summary>
+        /// 要素リスト
+        /// </summary>
+        private SelectableElement[] m_Elements = Array.Empty<SelectableElement>();
+
+        /// <summary>
+        /// 現在選択中のインデックス
+        /// </summary>
+        private int m_CurrentIndex;
+
+        /// <summary>
+        /// 要素選択決定時
+        /// </summary>
+        public IObservable<SelectableElement> OnSelected => m_OnSelected;
+
+        /// <summary>
+        /// OnDestroy
+        /// </summary>
+        private void OnDestroy()
+        {
+            m_OnClickDisposable?.Dispose();
+            m_OnClickDisposable = null;
+
+            m_PadDisposable?.Dispose();
+            m_PadDisposable = null;
+
+            m_OnSelected.Dispose();
+        }
+
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        public void Initialize(int startIndex = 0, IObservable<SelectableListButtonType> onPress = null)
+        {
+            m_Elements = GetComponentsInChildren<SelectableElement>();
+
+            // LayoutGroupが付いているなら、LayoutGroupの設定に合わせてセル数と軸を決める
+            if (TryGetComponent<LayoutGroup>(out var layoutGroup))
+            {
+                if (layoutGroup is GridLayoutGroup gridLayoutGroup)
+                {
+                    if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.Flexible)
+                    {
+                        var rectTransform = transform as RectTransform;
+
+                        if (gridLayoutGroup.startAxis == GridLayoutGroup.Axis.Horizontal)
+                        {
+                            m_CellCount.x = 1;
+
+                            var remainWidth = rectTransform.rect.width - (gridLayoutGroup.padding.left + gridLayoutGroup.cellSize.x + gridLayoutGroup.padding.right);
+                            if (remainWidth > 0f)
+                            {
+                                m_CellCount.x += (int)(remainWidth / (gridLayoutGroup.cellSize.x + gridLayoutGroup.spacing.x));
+                            }
+
+                            m_CellCount.x = Mathf.Min(m_Elements.Length, m_CellCount.x);
+                            m_CellCount.y = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.x);
+                        }
+                        else
+                        {
+                            m_CellCount.y = 1;
+
+                            var remainHeight = rectTransform.rect.height - (gridLayoutGroup.padding.top + gridLayoutGroup.cellSize.y + gridLayoutGroup.padding.bottom);
+                            if (remainHeight > 0f)
+                            {
+                                m_CellCount.y += (int)(remainHeight / (gridLayoutGroup.cellSize.y + gridLayoutGroup.spacing.y));
+                            }
+
+                            m_CellCount.y = Mathf.Min(m_Elements.Length, m_CellCount.y);
+                            m_CellCount.x = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.y);
+                        }
+                    }
+                    else if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.FixedColumnCount)
+                    {
+                        m_CellCount.x = Mathf.Min(m_Elements.Length, gridLayoutGroup.constraintCount);
+                        m_CellCount.y = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.x);
+                    }
+                    else if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.FixedRowCount)
+                    {
+                        m_CellCount.y = Mathf.Min(m_Elements.Length, gridLayoutGroup.constraintCount);
+                        m_CellCount.x = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.y);
+                    }
+
+                    m_StartAxis = gridLayoutGroup.startAxis;
+                }
+                else if (layoutGroup is HorizontalLayoutGroup)
+                {
+                    m_CellCount.x = m_Elements.Length;
+                    m_CellCount.y = 1;
+
+                    m_StartAxis = GridLayoutGroup.Axis.Horizontal;
+                }
+                else if (layoutGroup is VerticalLayoutGroup)
+                {
+                    m_CellCount.x = 1;
+                    m_CellCount.y = m_Elements.Length;
+
+                    m_StartAxis = GridLayoutGroup.Axis.Vertical;
+                }
+            }
+            else
+            {
+                m_CellCount.x = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.x, 1));
+                m_CellCount.y = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.y, 1));
+            }
+
+            // 要素クリック時処理の登録
+            m_OnClickDisposable?.Dispose();
+            m_OnClickDisposable = new CompositeDisposable();
+
+            for (int i = 0; i < m_Elements.Length; i++)
+            {
+                int index = i;
+
+                m_Elements[i].Button
+                    .OnClickAsObservable()
+                    .Subscribe(_ => OnClickElement(index))
+                    .AddTo(m_OnClickDisposable);
+            }
+
+            // パッド操作の購読
+            m_PadDisposable?.Dispose();
+            m_PadDisposable = onPress?.Subscribe(OnPadPressed);
+
+            // 初期要素を選択状態に
+            SetCurrentIndex(startIndex, true);
+        }
 
         /// <summary>
         /// 要素取得
         /// </summary>
-        public SelectableElement GetElement(int index)
+        private SelectableElement GetElement(int index)
         {
-            if (0 <= index && index < Count)
+            if (0 <= index && index < m_Elements.Length)
             {
-                return m_Content.GetChild(index).GetComponent<SelectableElement>();
+                return m_Elements[index];
             }
             else
             {
@@ -65,19 +191,196 @@ namespace MushaLib.UI.DQ
         }
 
         /// <summary>
-        /// 全要素取得
+        /// 選択インデックスの変更
         /// </summary>
-        public IEnumerable<SelectableElement> GetElements()
+        private void SetCurrentIndex(int index, bool force = false)
         {
-            return m_Content.GetComponentsInChildren<SelectableElement>(true);
+            index = (int)Mathf.Repeat(index, m_Elements.Length);
+
+            if (index != m_CurrentIndex || force)
+            {
+                // 選択中要素の矢印を非表示に
+                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+
+                // インデックス変更
+                m_CurrentIndex = index;
+
+                // 新しく選択した要素の矢印を点滅表示
+                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+            }
         }
 
         /// <summary>
-        /// 全要素操作の一括変更
+        /// 選択インデックスの移動
         /// </summary>
-        public void SetInteractable(bool interactable)
+        private void MoveCurrentIndex(int moveX, int moveY)
         {
-            m_CanvasGroup.interactable = interactable;
+            var pos = Vector2Int.zero;
+            var delta = Vector2Int.zero;
+
+            if (m_StartAxis == GridLayoutGroup.Axis.Horizontal)
+            {
+                if (m_CellCount.x > 0)
+                {
+                    pos.x = m_CurrentIndex % m_CellCount.x;
+                    pos.y = m_CurrentIndex / m_CellCount.x;
+
+                    delta.x = 1;
+                    delta.y = m_CellCount.x;
+                }
+            }
+            else
+            {
+                if (m_CellCount.y > 0)
+                {
+                    pos.x = m_CurrentIndex / m_CellCount.y;
+                    pos.y = m_CurrentIndex % m_CellCount.y;
+
+                    delta.x = m_CellCount.y;
+                    delta.y = 1;
+                }
+            }
+
+            while (true)
+            {
+                pos.x = (int)Mathf.Repeat(pos.x + moveX, m_CellCount.x);
+                pos.y = (int)Mathf.Repeat(pos.y + moveY, m_CellCount.y);
+
+                var nextIndex = pos.x * delta.x + pos.y * delta.y;
+                if (nextIndex == m_CurrentIndex)
+                {
+                    break;
+                }
+
+                var nextElement = GetElement(nextIndex);
+                if (nextElement != null && nextElement.gameObject.activeInHierarchy)
+                {
+                    SetCurrentIndex(nextIndex);
+                    break;
+                }
+            }
         }
+
+        /// <summary>
+        /// クリック時
+        /// </summary>
+        private void OnClickElement(int index)
+        {
+            if (index != m_CurrentIndex)
+            {
+                // 選択インデックスを変更
+                SetCurrentIndex(index);
+            }
+            else
+            {
+                // 選択決定を通知
+                m_OnSelected.OnNext(GetElement(index));
+            }
+        }
+
+        /// <summary>
+        /// パッド操作時
+        /// </summary>
+        private void OnPadPressed(SelectableListButtonType buttonType)
+        {
+            switch (buttonType)
+            {
+                case SelectableListButtonType.Up:
+                    MoveCurrentIndex(0, -1);
+                    break;
+
+                case SelectableListButtonType.Down:
+                    MoveCurrentIndex(0, 1);
+                    break;
+
+                case SelectableListButtonType.Left:
+                    MoveCurrentIndex(-1, 0);
+                    break;
+
+                case SelectableListButtonType.Right:
+                    MoveCurrentIndex(1, 0);
+                    break;
+
+                case SelectableListButtonType.Submit:
+                    m_OnSelected.OnNext(GetElement(m_CurrentIndex));
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 選択決定
+        /// </summary>
+        public void Select()
+        {
+            var element = GetElement(m_CurrentIndex);
+            if (element != null)
+            {
+                // 選択中要素の矢印の点滅を解除
+                element.Arrow.SetAnimationType(Arrow.AnimationType.Show);
+
+                // リストに触れなくする
+                m_CanvasGroup.interactable = false;
+            }
+        }
+
+        /// <summary>
+        /// 選択解除
+        /// </summary>
+        public void Deselect()
+        {
+            var element = GetElement(m_CurrentIndex);
+            if (element != null)
+            {
+                // 選択中要素の矢印を点滅表示
+                element.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+
+                // リストに触れるようにする
+                m_CanvasGroup.interactable = true;
+            }
+        }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// カスタムインスペクター
+        /// </summary>
+        [CustomEditor(typeof(SelectableList))]
+        private class CustomInspector : Editor
+        {
+            /// <summary>
+            /// LayoutGroup
+            /// </summary>
+            private LayoutGroup m_LayoutGroup;
+
+            /// <summary>
+            /// OnEnable
+            /// </summary>
+            private void OnEnable()
+            {
+                m_LayoutGroup = (target as SelectableList).GetComponent<LayoutGroup>();
+            }
+
+            /// <summary>
+            /// OnInspectorGUI
+            /// </summary>
+            public override void OnInspectorGUI()
+            {
+                serializedObject.Update();
+
+                EditorGUI.BeginDisabledGroup(true);
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
+                EditorGUI.EndDisabledGroup();
+
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_CanvasGroup"));
+
+                if (m_LayoutGroup == null)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("m_CellCount"));
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("m_StartAxis"));
+                }
+
+                serializedObject.ApplyModifiedProperties();
+            }
+        }
+#endif
     }
 }
