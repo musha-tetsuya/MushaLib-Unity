@@ -21,6 +21,12 @@ namespace MushaLib.UI.DQ
         private CanvasGroup m_CanvasGroup;
 
         /// <summary>
+        /// コンテンツ
+        /// </summary>
+        [SerializeField]
+        private RectTransform m_Content;
+
+        /// <summary>
         /// セル数
         /// </summary>
         [SerializeField]
@@ -58,6 +64,11 @@ namespace MushaLib.UI.DQ
         private int m_CurrentIndex;
 
         /// <summary>
+        /// コンテンツ
+        /// </summary>
+        public RectTransform Content => m_Content;
+
+        /// <summary>
         /// 要素選択決定時
         /// </summary>
         public IObservable<SelectableElement> OnSelected => m_OnSelected;
@@ -81,22 +92,26 @@ namespace MushaLib.UI.DQ
         /// </summary>
         public void Initialize(int startIndex = 0, IObservable<SelectableListButtonType> onPress = null)
         {
-            m_Elements = GetComponentsInChildren<SelectableElement>();
+            if (m_Content == null)
+            {
+                Debug.LogError($"{GetType()}: m_Content is null.");
+                return;
+            }
+
+            m_Elements = m_Content.GetComponentsInChildren<SelectableElement>();
 
             // LayoutGroupが付いているなら、LayoutGroupの設定に合わせてセル数と軸を決める
-            if (TryGetComponent<LayoutGroup>(out var layoutGroup))
+            if (m_Content.TryGetComponent<LayoutGroup>(out var layoutGroup))
             {
                 if (layoutGroup is GridLayoutGroup gridLayoutGroup)
                 {
                     if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.Flexible)
                     {
-                        var rectTransform = transform as RectTransform;
-
                         if (gridLayoutGroup.startAxis == GridLayoutGroup.Axis.Horizontal)
                         {
                             m_CellCount.x = 1;
 
-                            var remainWidth = rectTransform.rect.width - (gridLayoutGroup.padding.left + gridLayoutGroup.cellSize.x + gridLayoutGroup.padding.right);
+                            var remainWidth = m_Content.rect.width - (gridLayoutGroup.padding.left + gridLayoutGroup.cellSize.x + gridLayoutGroup.padding.right);
                             if (remainWidth > 0f)
                             {
                                 m_CellCount.x += (int)(remainWidth / (gridLayoutGroup.cellSize.x + gridLayoutGroup.spacing.x));
@@ -109,7 +124,7 @@ namespace MushaLib.UI.DQ
                         {
                             m_CellCount.y = 1;
 
-                            var remainHeight = rectTransform.rect.height - (gridLayoutGroup.padding.top + gridLayoutGroup.cellSize.y + gridLayoutGroup.padding.bottom);
+                            var remainHeight = m_Content.rect.height - (gridLayoutGroup.padding.top + gridLayoutGroup.cellSize.y + gridLayoutGroup.padding.bottom);
                             if (remainHeight > 0f)
                             {
                                 m_CellCount.y += (int)(remainHeight / (gridLayoutGroup.cellSize.y + gridLayoutGroup.spacing.y));
@@ -356,7 +371,10 @@ namespace MushaLib.UI.DQ
             /// </summary>
             private void OnEnable()
             {
-                m_LayoutGroup = (target as SelectableListView).GetComponent<LayoutGroup>();
+                if (target is SelectableListView selectableListView && selectableListView.Content != null)
+                {
+                    m_LayoutGroup = selectableListView.Content.GetComponent<LayoutGroup>();
+                }
             }
 
             /// <summary>
@@ -371,6 +389,7 @@ namespace MushaLib.UI.DQ
                 EditorGUI.EndDisabledGroup();
 
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_CanvasGroup"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Content"));
 
                 if (m_LayoutGroup == null)
                 {
