@@ -343,7 +343,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// カスタムインスペクター
         /// </summary>
-        [CustomEditor(typeof(SelectableList))]
+        [CustomEditor(typeof(SelectableList), true)]
         private class CustomInspector : Editor
         {
             /// <summary>
