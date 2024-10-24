@@ -362,18 +362,28 @@ namespace MushaLib.UI.DQ
         private class CustomInspector : Editor
         {
             /// <summary>
+            /// ターゲット
+            /// </summary>
+            private SelectableListView m_Target;
+
+            /// <summary>
             /// LayoutGroup
             /// </summary>
             private LayoutGroup m_LayoutGroup;
+
+            /// <summary>
+            /// ターゲット
+            /// </summary>
+            private SelectableListView Target => m_Target ??= target as SelectableListView;
 
             /// <summary>
             /// OnEnable
             /// </summary>
             private void OnEnable()
             {
-                if (target is SelectableListView selectableListView && selectableListView.Content != null)
+                if (Target.Content != null)
                 {
-                    m_LayoutGroup = selectableListView.Content.GetComponent<LayoutGroup>();
+                    m_LayoutGroup = Target.Content.GetComponent<LayoutGroup>();
                 }
             }
 
@@ -382,6 +392,8 @@ namespace MushaLib.UI.DQ
             /// </summary>
             public override void OnInspectorGUI()
             {
+                var content = Target.Content;
+
                 serializedObject.Update();
 
                 EditorGUI.BeginDisabledGroup(true);
@@ -398,6 +410,18 @@ namespace MushaLib.UI.DQ
                 }
 
                 serializedObject.ApplyModifiedProperties();
+
+                if (Target.Content != content)
+                {
+                    if (Target.Content != null)
+                    { 
+                        m_LayoutGroup = Target.Content.GetComponent<LayoutGroup>();
+                    }
+                    else
+                    {
+                        m_LayoutGroup = null;
+                    }
+                }
             }
         }
 #endif
