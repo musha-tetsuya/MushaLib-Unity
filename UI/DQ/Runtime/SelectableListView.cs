@@ -12,7 +12,7 @@ namespace MushaLib.UI.DQ
     /// <summary>
     /// 選択可能リスト
     /// </summary>
-    public class SelectableList : MonoBehaviour
+    public class SelectableListView : MonoBehaviour
     {
         /// <summary>
         /// CanvasGroup
@@ -343,7 +343,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// カスタムインスペクター
         /// </summary>
-        [CustomEditor(typeof(SelectableList), true)]
+        [CustomEditor(typeof(SelectableListView), true)]
         private class CustomInspector : Editor
         {
             /// <summary>
@@ -356,7 +356,7 @@ namespace MushaLib.UI.DQ
             /// </summary>
             private void OnEnable()
             {
-                m_LayoutGroup = (target as SelectableList).GetComponent<LayoutGroup>();
+                m_LayoutGroup = (target as SelectableListView).GetComponent<LayoutGroup>();
             }
 
             /// <summary>
