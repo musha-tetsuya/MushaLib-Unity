@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -16,28 +17,39 @@ namespace MushaLib.UI.VirtualPad
     public class VirtualPadButton : Button
     {
         /// <summary>
-        /// ボタンID
+        /// イベントタイプ
         /// </summary>
-        [SerializeField]
-        private int m_ButtonId;
-
-        /// <summary>
-        /// 押下時イベント
-        /// </summary>
-        [SerializeField]
-        private UnityEvent<int, object> m_OnPressed;
-
-        /// <summary>
-        /// 離脱時イベント
-        /// </summary>
-        [SerializeField]
-        private UnityEvent<int, object> m_OnReleased;
+        public enum EventType
+        {
+            PointerEvent,
+            InputAction,
+        }
 
         /// <summary>
         /// 入力操作の抽象化
         /// </summary>
         [SerializeField]
         private InputActionProperty m_InputAction;
+
+        /// <summary>
+        /// 押下時
+        /// </summary>
+        private Subject<EventType> m_OnPressed = new();
+
+        /// <summary>
+        /// 離脱時
+        /// </summary>
+        private Subject<EventType> m_OnReleased = new();
+
+        /// <summary>
+        /// 押下時
+        /// </summary>
+        public IObservable<EventType> OnPressed => m_OnPressed;
+
+        /// <summary>
+        /// 離脱時
+        /// </summary>
+        public IObservable<EventType> OnReleased => m_OnReleased;
 
         /// <summary>
         /// OnDestroy
@@ -47,6 +59,9 @@ namespace MushaLib.UI.VirtualPad
             // 入力操作イベントを解除
             this.m_InputAction.action?.Disable();
             this.m_InputAction.action?.Dispose();
+
+            this.m_OnPressed.Dispose();
+            this.m_OnReleased.Dispose();
 
             base.OnDestroy();
         }
@@ -74,7 +89,7 @@ namespace MushaLib.UI.VirtualPad
 
             base.OnPointerDown(eventData);
 
-            this.m_OnPressed.Invoke(this.m_ButtonId, this);
+            this.m_OnPressed.OnNext(EventType.PointerEvent);
         }
 
         /// <summary>
@@ -87,7 +102,7 @@ namespace MushaLib.UI.VirtualPad
 
             base.OnPointerUp(eventData);
 
-            this.m_OnReleased.Invoke(this.m_ButtonId, this);
+            this.m_OnReleased.OnNext(EventType.PointerEvent);
         }
 
         /// <summary>
@@ -97,7 +112,7 @@ namespace MushaLib.UI.VirtualPad
         {
             base.OnPointerExit(eventData);
 
-            this.m_OnReleased.Invoke(this.m_ButtonId, this);
+            this.m_OnReleased.OnNext(EventType.PointerEvent);
         }
 
         /// <summary>
@@ -105,7 +120,7 @@ namespace MushaLib.UI.VirtualPad
         /// </summary>
         private void OnInputActionStarted(InputAction.CallbackContext context)
         {
-            this.m_OnPressed.Invoke(this.m_ButtonId, this.m_InputAction.action);
+            this.m_OnPressed.OnNext(EventType.InputAction);
         }
 
         /// <summary>
@@ -113,7 +128,7 @@ namespace MushaLib.UI.VirtualPad
         /// </summary>
         private void OnInputActionCanceled(InputAction.CallbackContext context)
         {
-            this.m_OnReleased.Invoke(this.m_ButtonId, this.m_InputAction.action);
+            this.m_OnReleased.OnNext(EventType.InputAction);
         }
 
 #if UNITY_EDITOR
@@ -132,9 +147,6 @@ namespace MushaLib.UI.VirtualPad
 
                 serializedObject.Update();
 
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_ButtonId"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnPressed"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_OnReleased"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_InputAction"));
 
                 serializedObject.ApplyModifiedProperties();

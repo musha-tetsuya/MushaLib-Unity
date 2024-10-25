@@ -53,7 +53,7 @@ namespace MushaLib.UI.VirtualPad
         /// <summary>
         /// ボタンキャンセルトークン
         /// </summary>
-        private Dictionary<int, (CancellationTokenSource cts, List<object> factors)> m_ButtonCancellations = new();
+        private Dictionary<int, (CancellationTokenSource cts, List<VirtualPadButton.EventType> eventTypes)> m_ButtonCancellations = new();
 
         /// <summary>
         /// ボタンを押した時のイベント
@@ -92,6 +92,26 @@ namespace MushaLib.UI.VirtualPad
         }
 
         /// <summary>
+        /// Awake
+        /// </summary>
+        private void Awake()
+        {
+            // ボタンイベントの購読
+            for (int i = 0; i < this.m_Buttons.Length; i++)
+            {
+                int buttonId = i;
+
+                this.m_Buttons[i].OnPressed
+                    .Subscribe(buttonEventType => OnButtonPressed(buttonId, buttonEventType))
+                    .AddTo(this.destroyCancellationToken);
+
+                this.m_Buttons[i].OnReleased
+                    .Subscribe(buttonEventType => OnButtonReleased(buttonId, buttonEventType))
+                    .AddTo(this.destroyCancellationToken);
+            }
+        }
+
+        /// <summary>
         /// 自身のRectTransformに変更があったらスケールを再計算する
         /// </summary>
         private void OnRectTransformDimensionsChange()
@@ -114,17 +134,17 @@ namespace MushaLib.UI.VirtualPad
         /// <summary>
         /// ボタンを押した瞬間
         /// </summary>
-        public void OnButtonPressed(int buttonId, object factor)
+        private void OnButtonPressed(int buttonId, VirtualPadButton.EventType eventType)
         {
             // 既に押下中なら新規要因を追加
             if (this.m_ButtonCancellations.TryGetValue(buttonId, out var cancellation))
             {
-                cancellation.factors.Add(factor);
+                cancellation.eventTypes.Add(eventType);
                 return;
             }
 
             // キャンセルトークン作成
-            cancellation = (CancellationTokenSource.CreateLinkedTokenSource(this.destroyCancellationToken), new() { factor });
+            cancellation = (CancellationTokenSource.CreateLinkedTokenSource(this.destroyCancellationToken), new() { eventType });
             this.m_ButtonCancellations[buttonId] = cancellation;
 
             this.m_OnPress.OnNext((buttonId, ButtonPressPhase.Pressed));
@@ -169,15 +189,15 @@ namespace MushaLib.UI.VirtualPad
         /// <summary>
         /// ボタンを離した時
         /// </summary>
-        public void OnButtonReleased(int buttonId, object factor)
+        private void OnButtonReleased(int buttonId, VirtualPadButton.EventType eventType)
         {
             if (this.m_ButtonCancellations.TryGetValue(buttonId, out var cancellation))
             {
                 // 要因除去
-                cancellation.factors.Remove(factor);
+                cancellation.eventTypes.Remove(eventType);
 
                 // 全要因が無くなった
-                if (cancellation.factors.Count == 0)
+                if (cancellation.eventTypes.Count == 0)
                 {
                     // 押下状態キャンセル
                     cancellation.cts.Cancel();

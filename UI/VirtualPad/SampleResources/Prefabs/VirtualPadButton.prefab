@@ -120,13 +120,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  m_ButtonId: 0
-  m_OnPressed:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnReleased:
-    m_PersistentCalls:
-      m_Calls: []
   m_InputAction:
     m_UseReference: 0
     m_Action:
