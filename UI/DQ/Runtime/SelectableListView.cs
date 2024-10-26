@@ -184,7 +184,7 @@ namespace MushaLib.UI.DQ
 
             // パッド操作の購読
             m_PadDisposable?.Dispose();
-            m_PadDisposable = onPress?.Subscribe(OnPadPressed);
+            m_PadDisposable = onPress?.Where(x => m_CanvasGroup.interactable).Subscribe(OnPadPressed);
 
             // 初期要素を選択状態に
             SetCurrentIndex(startIndex, true);
