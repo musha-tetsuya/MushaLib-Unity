@@ -98,11 +98,11 @@ namespace MushaLib.UI.DQ
                 return;
             }
 
-            m_Elements = m_Content.GetComponentsInChildren<SelectableElement>();
-
             // LayoutGroupが付いているなら、LayoutGroupの設定に合わせてセル数と軸を決める
             if (m_Content.TryGetComponent<LayoutGroup>(out var layoutGroup))
             {
+                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>();
+
                 if (layoutGroup is GridLayoutGroup gridLayoutGroup)
                 {
                     if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.Flexible)
@@ -164,6 +164,8 @@ namespace MushaLib.UI.DQ
             }
             else
             {
+                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>(true);
+
                 m_CellCount.x = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.x, 1));
                 m_CellCount.y = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.y, 1));
             }
