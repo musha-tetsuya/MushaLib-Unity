@@ -175,7 +175,7 @@ namespace MushaLib.UI
         /// カスタムインスペクター
         /// </summary>
         [CustomEditor(typeof(CameraViewportAdjuster))]
-        private class CustomInspector : Editor
+        private class CameraViewportAdjusterInspector : Editor
         {
             /// <summary>
             /// ターゲット

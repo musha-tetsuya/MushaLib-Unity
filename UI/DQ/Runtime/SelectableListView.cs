@@ -360,8 +360,8 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// カスタムインスペクター
         /// </summary>
-        [CustomEditor(typeof(SelectableListView))]
-        protected class CustomInspector : Editor
+        [CustomEditor(typeof(SelectableListView), true)]
+        protected class SelectableListViewInspector : Editor
         {
             /// <summary>
             /// ターゲット
