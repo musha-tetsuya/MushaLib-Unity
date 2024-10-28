@@ -360,8 +360,8 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// カスタムインスペクター
         /// </summary>
-        [CustomEditor(typeof(SelectableListView), true)]
-        private class CustomInspector : Editor
+        [CustomEditor(typeof(SelectableListView))]
+        protected class CustomInspector : Editor
         {
             /// <summary>
             /// ターゲット
@@ -381,7 +381,7 @@ namespace MushaLib.UI.DQ
             /// <summary>
             /// OnEnable
             /// </summary>
-            private void OnEnable()
+            protected virtual void OnEnable()
             {
                 if (Target.Content != null)
                 {
