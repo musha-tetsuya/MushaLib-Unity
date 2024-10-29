@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace MushaLib.UI.DQ.MessageWindowEvents
+namespace MushaLib.UI.DQ.MessageWindow.Events
 {
     /// <summary>
     /// メッセージウィンドウ文字列イベント基底
@@ -19,11 +19,11 @@ namespace MushaLib.UI.DQ.MessageWindowEvents
         /// <summary>
         /// 実行
         /// </summary>
-        public virtual async UniTask Run(MessageWindow messageWindow, CancellationToken cancellationToken)
+        public virtual async UniTask Run(MessageWindowView view, CancellationToken cancellationToken)
         {
             var message = await GetString(cancellationToken);
 
-            await messageWindow.ShowMessage(message, cancellationToken);
+            await view.ShowMessage(message, cancellationToken);
         }
     }
 }

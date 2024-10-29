@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
-using MushaLib.UI.DQ.MessageWindowEvents;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,12 +12,12 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
-namespace MushaLib.UI.DQ
+namespace MushaLib.UI.DQ.MessageWindow
 {
     /// <summary>
     /// メッセージウィンドウ
     /// </summary>
-    public class MessageWindow : MonoBehaviour
+    public class MessageWindowView : MonoBehaviour
     {
         /// <summary>
         /// テキスト表示範囲
@@ -63,12 +62,12 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 未完了イベント
         /// </summary>
-        private List<IMessageWindowEvent> m_UncompletedEvents = new();
+        private List<Events.IMessageWindowEvent> m_UncompletedEvents = new();
 
         /// <summary>
         /// 完了済文字列イベント
         /// </summary>
-        private List<IStringEvent> m_CompletedStringEvents = new();
+        private List<Events.IStringEvent> m_CompletedStringEvents = new();
 
         /// <summary>
         /// クリック時
@@ -208,7 +207,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// イベント実行
         /// </summary>
-        public async UniTask RunEvent(IMessageWindowEvent messageEvent, CancellationToken cancellationToken = default)
+        public async UniTask RunEvent(Events.IMessageWindowEvent messageEvent, CancellationToken cancellationToken = default)
         {
             await RunEvent(new[] { messageEvent }, cancellationToken);
         }
@@ -216,7 +215,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// イベント実行
         /// </summary>
-        public async UniTask RunEvent(IEnumerable<IMessageWindowEvent> messageEvents, CancellationToken cancellationToken = default)
+        public async UniTask RunEvent(IEnumerable<Events.IMessageWindowEvent> messageEvents, CancellationToken cancellationToken = default)
         {
             // 言語切り替え中？
             if (m_IsChangingLocale)
@@ -264,7 +263,7 @@ namespace MushaLib.UI.DQ
                     throw ex;
                 }
 
-                if (m_UncompletedEvents[0] is IStringEvent stringEvent)
+                if (m_UncompletedEvents[0] is Events.IStringEvent stringEvent)
                 {
                     // 完了した文字列イベントをリストに登録
                     m_CompletedStringEvents.Add(stringEvent);

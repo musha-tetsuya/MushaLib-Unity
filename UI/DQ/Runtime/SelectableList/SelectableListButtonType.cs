@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.UI.DQ
+namespace MushaLib.UI.DQ.SelectableList
 {
-    public enum SelectableListButtonType
+    /// <summary>
+    /// 選択可能リストボタンタイプ
+    /// </summary>
+    public enum ButtonType
     {
         None,
         Up,

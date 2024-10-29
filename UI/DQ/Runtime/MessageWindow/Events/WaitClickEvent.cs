@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
-namespace MushaLib.UI.DQ.MessageWindowEvents
+namespace MushaLib.UI.DQ.MessageWindow.Events
 {
     /// <summary>
     /// メッセージウィンドウクリック待ちイベント
@@ -20,28 +20,28 @@ namespace MushaLib.UI.DQ.MessageWindowEvents
         /// <summary>
         /// 実行
         /// </summary>
-        public virtual async UniTask Run(MessageWindow messageWindow, System.Threading.CancellationToken cancellationToken)
+        public virtual async UniTask Run(MessageWindowView view, System.Threading.CancellationToken cancellationToken)
         {
             if (AutoArrow)
             {
-                messageWindow.Arrow.gameObject.SetActive(true);
-                messageWindow.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+                view.Arrow.gameObject.SetActive(true);
+                view.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
             }
 
-            await GetOnClickObservable(messageWindow).ToUniTask(true, cancellationToken);
+            await GetOnClickObservable(view).ToUniTask(true, cancellationToken);
 
             if (AutoArrow)
             {
-                messageWindow.Arrow.gameObject.SetActive(false);
+                view.Arrow.gameObject.SetActive(false);
             }
         }
 
         /// <summary>
         /// クリック監視取得
         /// </summary>
-        protected virtual IObservable<Unit> GetOnClickObservable(MessageWindow messageWindow)
+        protected virtual IObservable<Unit> GetOnClickObservable(MessageWindowView view)
         {
-            return messageWindow.OnClick;
+            return view.OnClick;
         }
     }
 }

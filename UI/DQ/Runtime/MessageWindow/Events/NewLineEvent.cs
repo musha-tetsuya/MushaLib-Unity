@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.UI.DQ.MessageWindowEvents
+namespace MushaLib.UI.DQ.MessageWindow.Events
 {
     /// <summary>
     /// メッセージウィンドウ改行イベント

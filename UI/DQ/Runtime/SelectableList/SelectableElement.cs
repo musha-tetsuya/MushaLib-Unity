@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MushaLib.UI.DQ
+namespace MushaLib.UI.DQ.SelectableList
 {
     /// <summary>
     /// 選択可能要素

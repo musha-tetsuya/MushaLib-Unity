@@ -5,7 +5,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.Localization;
 
-namespace MushaLib.UI.DQ.MessageWindowEvents
+namespace MushaLib.UI.DQ.MessageWindow.Events
 {
     /// <summary>
     /// メッセージウィンドウローカライズ文字列イベント

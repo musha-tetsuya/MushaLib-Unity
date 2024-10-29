@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace MushaLib.UI.DQ.MessageWindowEvents
+namespace MushaLib.UI.DQ.MessageWindow.Events
 {
     /// <summary>
     /// メッセージウィンドウ文字列イベント

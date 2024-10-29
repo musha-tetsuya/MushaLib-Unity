@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace MushaLib.UI.DQ.MessageWindowEvents
+namespace MushaLib.UI.DQ.MessageWindow.Events
 {
     /// <summary>
     /// メッセージウィンドウイベントインターフェース
@@ -14,6 +14,6 @@ namespace MushaLib.UI.DQ.MessageWindowEvents
         /// <summary>
         /// 実行
         /// </summary>
-        UniTask Run(MessageWindow messageWindow, CancellationToken cancellationToken);
+        UniTask Run(MessageWindowView view, CancellationToken cancellationToken);
     }
 }

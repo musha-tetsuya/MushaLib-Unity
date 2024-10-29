@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MushaLib.UI.DQ
+namespace MushaLib.UI.DQ.SelectableList
 {
     /// <summary>
     /// 選択可能リスト
@@ -208,29 +208,29 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// パッド操作時
         /// </summary>
-        public void OnPadPressed(SelectableListButtonType buttonType)
+        public void OnPadPressed(ButtonType buttonType)
         {
             if (m_CanvasGroup.interactable)
             {
                 switch (buttonType)
                 {
-                    case SelectableListButtonType.Up:
+                    case ButtonType.Up:
                         MoveCurrentIndex(0, -1);
                         break;
 
-                    case SelectableListButtonType.Down:
+                    case ButtonType.Down:
                         MoveCurrentIndex(0, 1);
                         break;
 
-                    case SelectableListButtonType.Left:
+                    case ButtonType.Left:
                         MoveCurrentIndex(-1, 0);
                         break;
 
-                    case SelectableListButtonType.Right:
+                    case ButtonType.Right:
                         MoveCurrentIndex(1, 0);
                         break;
 
-                    case SelectableListButtonType.Submit:
+                    case ButtonType.Submit:
                         m_OnSelected.OnNext(GetElement(m_CurrentIndex));
                         break;
                 }
