@@ -7,7 +7,7 @@ namespace MushaLib.UI.DQ.SelectableList
     /// <summary>
     /// 選択可能リストボタンタイプ
     /// </summary>
-    public enum ButtonType
+    public enum SelectableListButtonType
     {
         None,
         Up,

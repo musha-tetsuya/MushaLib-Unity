@@ -208,29 +208,29 @@ namespace MushaLib.UI.DQ.SelectableList
         /// <summary>
         /// パッド操作時
         /// </summary>
-        public void OnPadPressed(ButtonType buttonType)
+        public void OnPadPressed(SelectableListButtonType buttonType)
         {
             if (m_CanvasGroup.interactable)
             {
                 switch (buttonType)
                 {
-                    case ButtonType.Up:
+                    case SelectableListButtonType.Up:
                         MoveCurrentIndex(0, -1);
                         break;
 
-                    case ButtonType.Down:
+                    case SelectableListButtonType.Down:
                         MoveCurrentIndex(0, 1);
                         break;
 
-                    case ButtonType.Left:
+                    case SelectableListButtonType.Left:
                         MoveCurrentIndex(-1, 0);
                         break;
 
-                    case ButtonType.Right:
+                    case SelectableListButtonType.Right:
                         MoveCurrentIndex(1, 0);
                         break;
 
-                    case ButtonType.Submit:
+                    case SelectableListButtonType.Submit:
                         m_OnSelected.OnNext(GetElement(m_CurrentIndex));
                         break;
                 }
