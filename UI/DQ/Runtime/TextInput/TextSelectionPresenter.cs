@@ -22,7 +22,7 @@ namespace MushaLib.UI.DQ.TextInput
         /// <summary>
         /// ビュー
         /// </summary>
-        private readonly ITextInputView m_View;
+        private readonly TextInputView m_View;
 
         /// <summary>
         /// テキスト選択処理の破棄
@@ -32,7 +32,7 @@ namespace MushaLib.UI.DQ.TextInput
         /// <summary>
         /// construct
         /// </summary>
-        public TextSelectionPresenter(TextInputModel model, ITextInputView view)
+        public TextSelectionPresenter(TextInputModel model, TextInputView view)
         {
             m_Model = model;
             m_View = view;
@@ -51,7 +51,7 @@ namespace MushaLib.UI.DQ.TextInput
         /// <summary>
         /// テキスト選択時
         /// </summary>
-        private void OnSelected(SelectableTextElement element)
+        private void OnSelected(SelectableElement element)
         {
             var elementIndex = element.transform.GetSiblingIndex();
 
@@ -148,7 +148,7 @@ namespace MushaLib.UI.DQ.TextInput
                             currentText = currentText.Substring(0, currentText.Length - 1);
                         }
 
-                        m_Model.UpdateText(currentText + element.TextMesh.text);
+                        m_Model.UpdateText(currentText + (element as SelectableTextElement).TextMesh.text);
                     }
                     break;
             }
