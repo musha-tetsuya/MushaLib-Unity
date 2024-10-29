@@ -90,7 +90,7 @@ namespace MushaLib.UI.DQ
         /// <summary>
         /// 初期化
         /// </summary>
-        public void Initialize(int startIndex = 0, IObservable<SelectableListButtonType> onPress = null)
+        public void Initialize()
         {
             if (m_Content == null)
             {
@@ -183,13 +183,58 @@ namespace MushaLib.UI.DQ
                     .Subscribe(_ => OnClickElement(index))
                     .AddTo(m_OnClickDisposable);
             }
+        }
 
-            // パッド操作の購読
-            m_PadDisposable?.Dispose();
-            m_PadDisposable = onPress?.Where(x => m_CanvasGroup.interactable).Subscribe(OnPadPressed);
+        /// <summary>
+        /// 選択インデックスの変更
+        /// </summary>
+        public void SetCurrentIndex(int index, bool force = false)
+        {
+            index = (int)Mathf.Repeat(index, m_Elements.Length);
 
-            // 初期要素を選択状態に
-            SetCurrentIndex(startIndex, true);
+            if (index != m_CurrentIndex || force)
+            {
+                // 選択中要素の矢印を非表示に
+                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
+
+                // インデックス変更
+                m_CurrentIndex = index;
+
+                // 新しく選択した要素の矢印を点滅表示
+                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+            }
+        }
+
+        /// <summary>
+        /// パッド操作時
+        /// </summary>
+        public void OnPadPressed(SelectableListButtonType buttonType)
+        {
+            if (m_CanvasGroup.interactable)
+            {
+                switch (buttonType)
+                {
+                    case SelectableListButtonType.Up:
+                        MoveCurrentIndex(0, -1);
+                        break;
+
+                    case SelectableListButtonType.Down:
+                        MoveCurrentIndex(0, 1);
+                        break;
+
+                    case SelectableListButtonType.Left:
+                        MoveCurrentIndex(-1, 0);
+                        break;
+
+                    case SelectableListButtonType.Right:
+                        MoveCurrentIndex(1, 0);
+                        break;
+
+                    case SelectableListButtonType.Submit:
+                        m_OnSelected.OnNext(GetElement(m_CurrentIndex));
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -204,26 +249,6 @@ namespace MushaLib.UI.DQ
             else
             {
                 return null;
-            }
-        }
-
-        /// <summary>
-        /// 選択インデックスの変更
-        /// </summary>
-        private void SetCurrentIndex(int index, bool force = false)
-        {
-            index = (int)Mathf.Repeat(index, m_Elements.Length);
-
-            if (index != m_CurrentIndex || force)
-            {
-                // 選択中要素の矢印を非表示に
-                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
-
-                // インデックス変更
-                m_CurrentIndex = index;
-
-                // 新しく選択した要素の矢印を点滅表示
-                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
             }
         }
 
@@ -292,35 +317,6 @@ namespace MushaLib.UI.DQ
             {
                 // 選択決定を通知
                 m_OnSelected.OnNext(GetElement(index));
-            }
-        }
-
-        /// <summary>
-        /// パッド操作時
-        /// </summary>
-        private void OnPadPressed(SelectableListButtonType buttonType)
-        {
-            switch (buttonType)
-            {
-                case SelectableListButtonType.Up:
-                    MoveCurrentIndex(0, -1);
-                    break;
-
-                case SelectableListButtonType.Down:
-                    MoveCurrentIndex(0, 1);
-                    break;
-
-                case SelectableListButtonType.Left:
-                    MoveCurrentIndex(-1, 0);
-                    break;
-
-                case SelectableListButtonType.Right:
-                    MoveCurrentIndex(1, 0);
-                    break;
-
-                case SelectableListButtonType.Submit:
-                    m_OnSelected.OnNext(GetElement(m_CurrentIndex));
-                    break;
             }
         }
 
