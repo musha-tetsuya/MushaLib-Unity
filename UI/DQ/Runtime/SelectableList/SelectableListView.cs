@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -101,7 +102,7 @@ namespace MushaLib.UI.DQ.SelectableList
             // LayoutGroupが付いているなら、LayoutGroupの設定に合わせてセル数と軸を決める
             if (m_Content.TryGetComponent<LayoutGroup>(out var layoutGroup))
             {
-                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>();
+                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>().OrderBy(x => x.transform.GetSiblingIndex()).ToArray();
 
                 if (layoutGroup is GridLayoutGroup gridLayoutGroup)
                 {
@@ -164,7 +165,7 @@ namespace MushaLib.UI.DQ.SelectableList
             }
             else
             {
-                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>(true);
+                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>(true).OrderBy(x => x.transform.GetSiblingIndex()).ToArray();
 
                 m_CellCount.x = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.x, 1));
                 m_CellCount.y = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.y, 1));
