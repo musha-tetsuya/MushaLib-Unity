@@ -15,5 +15,6 @@ namespace MushaLib.UI.DQ.SelectableList
         Left,
         Right,
         Submit,
+        Cancel,
     }
 }

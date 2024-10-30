@@ -209,7 +209,7 @@ namespace MushaLib.UI.DQ.SelectableList
         /// <summary>
         /// パッド操作時
         /// </summary>
-        public void OnPadPressed(SelectableListButtonType buttonType)
+        public virtual void OnPadPressed(SelectableListButtonType buttonType)
         {
             if (m_CanvasGroup.interactable)
             {
