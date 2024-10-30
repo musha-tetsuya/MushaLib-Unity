@@ -232,7 +232,7 @@ namespace MushaLib.UI.DQ.SelectableList
                         break;
 
                     case SelectableListButtonType.Submit:
-                        m_OnSelected.OnNext(GetElement(m_CurrentIndex));
+                        InvokeOnSelected();
                         break;
                 }
             }
@@ -317,8 +317,16 @@ namespace MushaLib.UI.DQ.SelectableList
             else
             {
                 // 選択決定を通知
-                m_OnSelected.OnNext(GetElement(index));
+                InvokeOnSelected();
             }
+        }
+
+        /// <summary>
+        /// 選択決定の通知
+        /// </summary>
+        protected void InvokeOnSelected()
+        {
+            m_OnSelected.OnNext(GetElement(m_CurrentIndex));
         }
 
         /// <summary>
