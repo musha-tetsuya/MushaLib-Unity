@@ -4,15 +4,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UniRx;
 using UnityEngine;
 
 namespace MushaLib.UI.DQ.TextInput
 {
     /// <summary>
-    /// テキスト選択処理の制御
+    /// テキスト入力の制御
     /// </summary>
-    public class TextSelectionPresenter : IDisposable
+    public class TextInputPresenter : SelectableListPresenter
     {
         /// <summary>
         /// モデル
@@ -25,68 +26,55 @@ namespace MushaLib.UI.DQ.TextInput
         private readonly TextInputView m_View;
 
         /// <summary>
-        /// テキスト選択処理の破棄
+        /// 決定時
         /// </summary>
-        private IDisposable m_SelectedDisposable;
+        private Subject<Unit> m_OnSubmit = new();
+
+        /// <summary>
+        /// 決定時
+        /// </summary>
+        public IObservable<Unit> OnSubmit => m_OnSubmit;
 
         /// <summary>
         /// construct
         /// </summary>
-        public TextSelectionPresenter(TextInputModel model, TextInputView view)
+        public TextInputPresenter(TextInputModel model, TextInputView view)
+            : base(model, view)
         {
             m_Model = model;
             m_View = view;
-            m_SelectedDisposable = m_View.OnSelected.Subscribe(OnSelected);
         }
 
         /// <summary>
         /// Dispose
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
-            m_SelectedDisposable?.Dispose();
-            m_SelectedDisposable = null;
+            base.Dispose();
+
+            m_OnSubmit.Dispose();
+        }
+
+        /// <summary>
+        /// 開始
+        /// </summary>
+        public override void Start(CancellationToken cancellationToken = default)
+        {
+            m_View.SetTextTable(m_Model.TextTableProvider.GetTextTable());
+
+            base.Start(cancellationToken);
         }
 
         /// <summary>
         /// テキスト選択時
         /// </summary>
-        private void OnSelected(SelectableElement element)
+        protected override void InvokeOnSelected()
         {
+            var element = m_View.Elements[m_Model.CurrentIndex];
             var elementIndex = element.transform.GetSiblingIndex();
 
             switch (elementIndex)
             {
-                // 濁点
-                case 67:
-                    {
-                        if (m_Model.TextTableProvider.CurrentMode != TextInputMode.Alphabet)
-                        {
-                            var currentText = m_Model.Text.Value ?? "";
-
-                            if (currentText.Length > 0 && KanaConverter.DakutenTable.TryGetValue(currentText.Last().ToString(), out var dakuten))
-                            {
-                                m_Model.UpdateText(currentText.Substring(0, currentText.Length - 1) + dakuten);
-                            }
-                        }
-                    }
-                    break;
-
-                // 半濁点
-                case 69:
-                    {
-                        if (m_Model.TextTableProvider.CurrentMode != TextInputMode.Alphabet)
-                        {
-                            var currentText = m_Model.Text.Value ?? "";
-
-                            if (currentText.Length > 0 && KanaConverter.HandakutenTable.TryGetValue(currentText.Last().ToString(), out var handakuten))
-                            {
-                                m_Model.UpdateText(currentText.Substring(0, currentText.Length - 1) + handakuten);
-                            }
-                        }
-                    }
-                    break;
-
                 // ひらがな or カタカナ
                 case 71:
                     {
@@ -105,8 +93,38 @@ namespace MushaLib.UI.DQ.TextInput
                     }
                     break;
 
-                // もどる
+                // 濁点
                 case 75:
+                    {
+                        if (m_Model.TextTableProvider.CurrentMode != TextInputMode.Alphabet)
+                        {
+                            var currentText = m_Model.Text.Value ?? "";
+
+                            if (currentText.Length > 0 && KanaConverter.DakutenTable.TryGetValue(currentText.Last().ToString(), out var dakuten))
+                            {
+                                m_Model.UpdateText(currentText.Substring(0, currentText.Length - 1) + dakuten);
+                            }
+                        }
+                    }
+                    break;
+
+                // 半濁点
+                case 76:
+                    {
+                        if (m_Model.TextTableProvider.CurrentMode != TextInputMode.Alphabet)
+                        {
+                            var currentText = m_Model.Text.Value ?? "";
+
+                            if (currentText.Length > 0 && KanaConverter.HandakutenTable.TryGetValue(currentText.Last().ToString(), out var handakuten))
+                            {
+                                m_Model.UpdateText(currentText.Substring(0, currentText.Length - 1) + handakuten);
+                            }
+                        }
+                    }
+                    break;
+
+                // もどる
+                case 77:
                     {
                         var currentText = m_Model.Text.Value ?? "";
 
@@ -118,7 +136,7 @@ namespace MushaLib.UI.DQ.TextInput
                     break;
 
                 // すすむ
-                case 77:
+                case 78:
                     {
                         var currentText = m_Model.Text.Value ?? "";
 
@@ -134,7 +152,7 @@ namespace MushaLib.UI.DQ.TextInput
                 // OK
                 case 79:
                     {
-                        m_Model.InvokeOnSubmit();
+                        m_OnSubmit.OnNext(Unit.Default);
                     }
                     break;
 

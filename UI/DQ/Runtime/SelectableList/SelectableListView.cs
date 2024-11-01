@@ -2,7 +2,9 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -40,29 +42,23 @@ namespace MushaLib.UI.DQ.SelectableList
         private GridLayoutGroup.Axis m_StartAxis;
 
         /// <summary>
-        /// クリック処理キャンセル
+        /// 要素クリック購読のキャンセル
         /// </summary>
-        private CompositeDisposable m_OnClickDisposable;
+        private CancellationTokenSource m_OnClickCancellation;
 
         /// <summary>
-        /// パッド処理キャンセル
+        /// 要素クリック時
         /// </summary>
-        private IDisposable m_PadDisposable;
+        private Subject<SelectableElement> m_OnClick = new();
 
         /// <summary>
-        /// 要素選択決定時
+        /// 操作可不可
         /// </summary>
-        private Subject<SelectableElement> m_OnSelected = new();
-
-        /// <summary>
-        /// 要素リスト
-        /// </summary>
-        private SelectableElement[] m_Elements = Array.Empty<SelectableElement>();
-
-        /// <summary>
-        /// 現在選択中のインデックス
-        /// </summary>
-        private int m_CurrentIndex;
+        public bool Interactable
+        {
+            get => m_CanvasGroup.interactable;
+            set => m_CanvasGroup.interactable = value;
+        }
 
         /// <summary>
         /// コンテンツ
@@ -70,22 +66,33 @@ namespace MushaLib.UI.DQ.SelectableList
         public RectTransform Content => m_Content;
 
         /// <summary>
-        /// 要素選択決定時
+        /// セル数
         /// </summary>
-        public IObservable<SelectableElement> OnSelected => m_OnSelected;
+        public Vector2Int CellCount => m_CellCount;
+
+        /// <summary>
+        /// 軸
+        /// </summary>
+        public GridLayoutGroup.Axis StartAxis => m_StartAxis;
+
+        /// <summary>
+        /// 要素リスト
+        /// </summary>
+        public ReadOnlyCollection<SelectableElement> Elements { get; private set; }
+
+        /// <summary>
+        /// 要素クリック時
+        /// </summary>
+        public IObservable<SelectableElement> OnClick => m_OnClick;
 
         /// <summary>
         /// OnDestroy
         /// </summary>
         private void OnDestroy()
         {
-            m_OnClickDisposable?.Dispose();
-            m_OnClickDisposable = null;
-
-            m_PadDisposable?.Dispose();
-            m_PadDisposable = null;
-
-            m_OnSelected.Dispose();
+            m_OnClickCancellation?.Cancel();
+            m_OnClickCancellation?.Dispose();
+            m_OnClickCancellation = null;
         }
 
         /// <summary>
@@ -93,16 +100,10 @@ namespace MushaLib.UI.DQ.SelectableList
         /// </summary>
         public void Initialize()
         {
-            if (m_Content == null)
-            {
-                Debug.LogError($"{GetType()}: m_Content is null.");
-                return;
-            }
-
             // LayoutGroupが付いているなら、LayoutGroupの設定に合わせてセル数と軸を決める
             if (m_Content.TryGetComponent<LayoutGroup>(out var layoutGroup))
             {
-                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>().OrderBy(x => x.transform.GetSiblingIndex()).ToArray();
+                Elements = Array.AsReadOnly(m_Content.GetComponentsInChildren<SelectableElement>().OrderBy(x => x.transform.GetSiblingIndex()).ToArray());
 
                 if (layoutGroup is GridLayoutGroup gridLayoutGroup)
                 {
@@ -118,8 +119,8 @@ namespace MushaLib.UI.DQ.SelectableList
                                 m_CellCount.x += (int)(remainWidth / (gridLayoutGroup.cellSize.x + gridLayoutGroup.spacing.x));
                             }
 
-                            m_CellCount.x = Mathf.Min(m_Elements.Length, m_CellCount.x);
-                            m_CellCount.y = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.x);
+                            m_CellCount.x = Mathf.Min(Elements.Count, m_CellCount.x);
+                            m_CellCount.y = Mathf.CeilToInt((float)Elements.Count / m_CellCount.x);
                         }
                         else
                         {
@@ -131,26 +132,26 @@ namespace MushaLib.UI.DQ.SelectableList
                                 m_CellCount.y += (int)(remainHeight / (gridLayoutGroup.cellSize.y + gridLayoutGroup.spacing.y));
                             }
 
-                            m_CellCount.y = Mathf.Min(m_Elements.Length, m_CellCount.y);
-                            m_CellCount.x = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.y);
+                            m_CellCount.y = Mathf.Min(Elements.Count, m_CellCount.y);
+                            m_CellCount.x = Mathf.CeilToInt((float)Elements.Count / m_CellCount.y);
                         }
                     }
                     else if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.FixedColumnCount)
                     {
-                        m_CellCount.x = Mathf.Min(m_Elements.Length, gridLayoutGroup.constraintCount);
-                        m_CellCount.y = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.x);
+                        m_CellCount.x = Mathf.Min(Elements.Count, gridLayoutGroup.constraintCount);
+                        m_CellCount.y = Mathf.CeilToInt((float)Elements.Count / m_CellCount.x);
                     }
                     else if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.FixedRowCount)
                     {
-                        m_CellCount.y = Mathf.Min(m_Elements.Length, gridLayoutGroup.constraintCount);
-                        m_CellCount.x = Mathf.CeilToInt((float)m_Elements.Length / m_CellCount.y);
+                        m_CellCount.y = Mathf.Min(Elements.Count, gridLayoutGroup.constraintCount);
+                        m_CellCount.x = Mathf.CeilToInt((float)Elements.Count / m_CellCount.y);
                     }
 
                     m_StartAxis = gridLayoutGroup.startAxis;
                 }
                 else if (layoutGroup is HorizontalLayoutGroup)
                 {
-                    m_CellCount.x = m_Elements.Length;
+                    m_CellCount.x = Elements.Count;
                     m_CellCount.y = 1;
 
                     m_StartAxis = GridLayoutGroup.Axis.Horizontal;
@@ -158,206 +159,35 @@ namespace MushaLib.UI.DQ.SelectableList
                 else if (layoutGroup is VerticalLayoutGroup)
                 {
                     m_CellCount.x = 1;
-                    m_CellCount.y = m_Elements.Length;
+                    m_CellCount.y = Elements.Count;
 
                     m_StartAxis = GridLayoutGroup.Axis.Vertical;
                 }
             }
             else
             {
-                m_Elements = m_Content.GetComponentsInChildren<SelectableElement>(true).OrderBy(x => x.transform.GetSiblingIndex()).ToArray();
+                Elements = Array.AsReadOnly(m_Content.GetComponentsInChildren<SelectableElement>(true).OrderBy(x => x.transform.GetSiblingIndex()).ToArray());
 
-                m_CellCount.x = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.x, 1));
-                m_CellCount.y = Mathf.Min(m_Elements.Length, Mathf.Max(m_CellCount.y, 1));
+                m_CellCount.x = Mathf.Min(Elements.Count, Mathf.Max(m_CellCount.x, 1));
+                m_CellCount.y = Mathf.Min(Elements.Count, Mathf.Max(m_CellCount.y, 1));
             }
 
             // 要素クリック時処理の登録
-            m_OnClickDisposable?.Dispose();
-            m_OnClickDisposable = new CompositeDisposable();
+            m_OnClickCancellation?.Cancel();
+            m_OnClickCancellation?.Dispose();
+            m_OnClickCancellation = new CancellationTokenSource();
 
-            for (int i = 0; i < m_Elements.Length; i++)
+            for (int i = 0; i < Elements.Count; i++)
             {
                 int index = i;
 
-                m_Elements[i].Button
+                Elements[i].Button
                     .OnClickAsObservable()
-                    .Subscribe(_ => OnClickElement(index))
-                    .AddTo(m_OnClickDisposable);
-            }
-        }
-
-        /// <summary>
-        /// 選択インデックスの変更
-        /// </summary>
-        public void SetCurrentIndex(int index, bool force = false)
-        {
-            index = (int)Mathf.Repeat(index, m_Elements.Length);
-
-            if (index != m_CurrentIndex || force)
-            {
-                // 選択中要素の矢印を非表示に
-                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Hide);
-
-                // インデックス変更
-                m_CurrentIndex = index;
-
-                // 新しく選択した要素の矢印を点滅表示
-                GetElement(m_CurrentIndex)?.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
-            }
-        }
-
-        /// <summary>
-        /// パッド操作時
-        /// </summary>
-        public virtual void OnPadPressed(SelectableListButtonType buttonType)
-        {
-            if (m_CanvasGroup.interactable)
-            {
-                switch (buttonType)
-                {
-                    case SelectableListButtonType.Up:
-                        MoveCurrentIndex(0, -1);
-                        break;
-
-                    case SelectableListButtonType.Down:
-                        MoveCurrentIndex(0, 1);
-                        break;
-
-                    case SelectableListButtonType.Left:
-                        MoveCurrentIndex(-1, 0);
-                        break;
-
-                    case SelectableListButtonType.Right:
-                        MoveCurrentIndex(1, 0);
-                        break;
-
-                    case SelectableListButtonType.Submit:
-                        InvokeOnSelected();
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 要素取得
-        /// </summary>
-        private SelectableElement GetElement(int index)
-        {
-            if (0 <= index && index < m_Elements.Length)
-            {
-                return m_Elements[index];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 選択インデックスの移動
-        /// </summary>
-        private void MoveCurrentIndex(int moveX, int moveY)
-        {
-            var pos = Vector2Int.zero;
-            var delta = Vector2Int.zero;
-
-            if (m_StartAxis == GridLayoutGroup.Axis.Horizontal)
-            {
-                if (m_CellCount.x > 0)
-                {
-                    pos.x = m_CurrentIndex % m_CellCount.x;
-                    pos.y = m_CurrentIndex / m_CellCount.x;
-
-                    delta.x = 1;
-                    delta.y = m_CellCount.x;
-                }
-            }
-            else
-            {
-                if (m_CellCount.y > 0)
-                {
-                    pos.x = m_CurrentIndex / m_CellCount.y;
-                    pos.y = m_CurrentIndex % m_CellCount.y;
-
-                    delta.x = m_CellCount.y;
-                    delta.y = 1;
-                }
-            }
-
-            while (true)
-            {
-                pos.x = (int)Mathf.Repeat(pos.x + moveX, m_CellCount.x);
-                pos.y = (int)Mathf.Repeat(pos.y + moveY, m_CellCount.y);
-
-                var nextIndex = pos.x * delta.x + pos.y * delta.y;
-                if (nextIndex == m_CurrentIndex)
-                {
-                    break;
-                }
-
-                var nextElement = GetElement(nextIndex);
-                if (nextElement != null && nextElement.gameObject.activeInHierarchy)
-                {
-                    SetCurrentIndex(nextIndex);
-                    break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// クリック時
-        /// </summary>
-        private void OnClickElement(int index)
-        {
-            if (index != m_CurrentIndex)
-            {
-                // 選択インデックスを変更
-                SetCurrentIndex(index);
-            }
-            else
-            {
-                // 選択決定を通知
-                InvokeOnSelected();
-            }
-        }
-
-        /// <summary>
-        /// 選択決定の通知
-        /// </summary>
-        protected void InvokeOnSelected()
-        {
-            m_OnSelected.OnNext(GetElement(m_CurrentIndex));
-        }
-
-        /// <summary>
-        /// 選択決定
-        /// </summary>
-        public void Select()
-        {
-            var element = GetElement(m_CurrentIndex);
-            if (element != null)
-            {
-                // 選択中要素の矢印の点滅を解除
-                element.Arrow.SetAnimationType(Arrow.AnimationType.Show);
-
-                // リストに触れなくする
-                m_CanvasGroup.interactable = false;
-            }
-        }
-
-        /// <summary>
-        /// 選択解除
-        /// </summary>
-        public void Deselect()
-        {
-            var element = GetElement(m_CurrentIndex);
-            if (element != null)
-            {
-                // 選択中要素の矢印を点滅表示
-                element.Arrow.SetAnimationType(Arrow.AnimationType.Blink);
-
-                // リストに触れるようにする
-                m_CanvasGroup.interactable = true;
+                    .Subscribe(_ =>
+                    {
+                        m_OnClick.OnNext(Elements[index]);
+                    })
+                    .AddTo(m_OnClickCancellation.Token);
             }
         }
 
