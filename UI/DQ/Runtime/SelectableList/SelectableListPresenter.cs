@@ -131,7 +131,7 @@ namespace MushaLib.UI.DQ.SelectableList
         /// <summary>
         /// 選択インデックスの変更
         /// </summary>
-        private void SetCurrentIndex(int index)
+        protected void SetCurrentIndex(int index)
         {
             index = (int)Mathf.Repeat(index, m_View.Elements.Count);
 
