@@ -196,5 +196,29 @@ namespace MushaLib.UI.DQ.SelectableList
         {
             m_OnSelected.OnNext(m_View.Elements[m_Model.CurrentIndex]);
         }
+
+        /// <summary>
+        /// 選択決定
+        /// </summary>
+        public void Select()
+        {
+            // 選択中要素の矢印の点滅を解除
+            m_View.Elements[m_Model.CurrentIndex].Arrow.SetAnimationType(Arrow.AnimationType.Show);
+
+            // リストに触れなくする
+            m_View.Interactable = false;
+        }
+
+        /// <summary>
+        /// 選択解除
+        /// </summary>
+        public void Deselect()
+        {
+            // 選択中要素の矢印を点滅表示
+            m_View.Elements[m_Model.CurrentIndex].Arrow.SetAnimationType(Arrow.AnimationType.Blink);
+
+            // リストに触れるようにする
+            m_View.Interactable = true;
+        }
     }
 }
