@@ -66,6 +66,31 @@ namespace MushaLib.UI.DQ.TextInput
         }
 
         /// <summary>
+        /// パッド操作時
+        /// </summary>
+        public override void OnPadPressed(SelectableListButtonType buttonType)
+        {
+            base.OnPadPressed(buttonType);
+
+            if (m_View.Interactable)
+            {
+                switch (buttonType)
+                {
+                    case SelectableListButtonType.Cancel:
+                        {
+                            var currentText = m_Model.Text.Value ?? "";
+
+                            if (currentText.Length > 0)
+                            {
+                                m_Model.UpdateText(currentText.Substring(0, currentText.Length - 1));
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
         /// テキスト選択時
         /// </summary>
         protected override void InvokeOnSelected()
