@@ -20,6 +20,12 @@ namespace MushaLib.UI.DQ.MessageWindow
     public class MessageWindowView : MonoBehaviour
     {
         /// <summary>
+        /// ウィンドウボタン
+        /// </summary>
+        [SerializeField]
+        private Button m_WindowButton;
+
+        /// <summary>
         /// テキスト表示範囲
         /// </summary>
         [SerializeField]
@@ -70,11 +76,6 @@ namespace MushaLib.UI.DQ.MessageWindow
         private List<Events.IStringEvent> m_CompletedStringEvents = new();
 
         /// <summary>
-        /// クリック時
-        /// </summary>
-        private Subject<Unit> onClick = new();
-
-        /// <summary>
         /// 言語切り替えによるキャンセルトークン
         /// </summary>
         private CancellationTokenSource m_LocaleCancellation = new();
@@ -101,7 +102,7 @@ namespace MushaLib.UI.DQ.MessageWindow
         /// <summary>
         /// クリック時
         /// </summary>
-        public IObservable<Unit> OnClick => onClick;
+        public IObservable<Unit> OnClick => m_WindowButton.OnClickAsObservable();
 
         /// <summary>
         /// OnDestroy
@@ -109,8 +110,6 @@ namespace MushaLib.UI.DQ.MessageWindow
         private void OnDestroy()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnSelectedLocaleChanged;
-
-            onClick.Dispose();
 
             m_LocaleCancellation?.Cancel();
             m_LocaleCancellation?.Dispose();
@@ -194,14 +193,6 @@ namespace MushaLib.UI.DQ.MessageWindow
                     m_IsWaitingLocaleChange = false;
                 }
             });
-        }
-
-        /// <summary>
-        /// ウィンドウクリック時
-        /// </summary>
-        public void OnClickWindow()
-        {
-            onClick.OnNext(Unit.Default);
         }
 
         /// <summary>
