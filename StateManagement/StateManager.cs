@@ -20,12 +20,12 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// ステートのスタック
         /// </summary>
-        private Stack<(StateBase<StateManager> state, Action onPop)> m_StateStack = new();
+        private Stack<(IStateBase state, Action onPop)> m_StateStack = new();
 
         /// <summary>
         /// 現在のステート
         /// </summary>
-        public StateBase<StateManager> CurrentState { get; private set; }
+        public IStateBase CurrentState { get; private set; }
 
         /// <summary>
         /// 破棄
@@ -50,10 +50,10 @@ namespace MushaLib.StateManagement
             this.m_StateStack.Push((this.CurrentState, onPop));
             this.CurrentState = nextState;
 
-            if (this.CurrentState != null)
+            if (nextState != null)
             {
-                this.CurrentState.SetStateManager(this);
-                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
+                nextState.SetStateManager(this);
+                await nextState.Start(this.m_CancellationTokenSource.Token);
             }
         }
 
@@ -65,10 +65,10 @@ namespace MushaLib.StateManagement
             this.CurrentState?.End();
             this.CurrentState = nextState;
 
-            if (this.CurrentState != null)
+            if (nextState != null)
             {
-                this.CurrentState.SetStateManager(this);
-                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
+                nextState.SetStateManager(this);
+                await nextState.Start(this.m_CancellationTokenSource.Token);
             }
         }
 

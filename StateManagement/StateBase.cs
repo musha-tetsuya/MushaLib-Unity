@@ -7,9 +7,25 @@ using UnityEngine;
 namespace MushaLib.StateManagement
 {
     /// <summary>
+    /// ステートインターフェース
+    /// </summary>
+    public interface IStateBase
+    {
+        /// <summary>
+        /// ステート開始時
+        /// </summary>
+        UniTask Start(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// ステート終了時
+        /// </summary>
+        void End();
+    }
+
+    /// <summary>
     /// ステート基底
     /// </summary>
-    public abstract class StateBase<TStateManager> where TStateManager : StateManager
+    public abstract class StateBase<TStateManager> : IStateBase where TStateManager : StateManager
     {
         /// <summary>
         /// ステート管理
