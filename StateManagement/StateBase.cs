@@ -43,7 +43,7 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// 値付きステート基底
     /// </summary>
-    public abstract class ValueStateBase<TStateManager, TValue> : StateBase<TStateManager> where TStateManager : ValueStateManager<TValue>
+    public abstract class ValueStateBase<TValue> : StateBase<ValueStateManager<TValue>>
     {
         /// <summary>
         /// 値
@@ -53,7 +53,7 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// StateManagerのセット
         /// </summary>
-        public override void SetStateManager(TStateManager stateManager)
+        public override void SetStateManager(ValueStateManager<TValue> stateManager)
         {
             base.SetStateManager(stateManager);
             Value = stateManager.Value;
