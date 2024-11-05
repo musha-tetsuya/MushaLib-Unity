@@ -7,35 +7,19 @@ using UnityEngine;
 namespace MushaLib.StateManagement
 {
     /// <summary>
-    /// ステートインターフェース
-    /// </summary>
-    public interface IStateBase
-    {
-        /// <summary>
-        /// ステート開始時
-        /// </summary>
-        UniTask Start(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// ステート終了時
-        /// </summary>
-        void End();
-    }
-
-    /// <summary>
     /// ステート基底
     /// </summary>
-    public abstract class StateBase<TStateManager> : IStateBase where TStateManager : StateManager
+    public abstract class StateBase
     {
         /// <summary>
         /// ステート管理
         /// </summary>
-        public TStateManager StateManager { get; private set; }
+        public StateManager StateManager { get; private set; }
 
         /// <summary>
         /// StateManagerのセット
         /// </summary>
-        public virtual void SetStateManager(TStateManager stateManager)
+        public virtual void SetStateManager(StateManager stateManager)
         {
             this.StateManager = stateManager;
         }
@@ -59,20 +43,24 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// 値付きステート基底
     /// </summary>
-    public abstract class ValueStateBase<TValue> : StateBase<ValueStateManager<TValue>>
+    public abstract class ValueStateBase<T> : StateBase
     {
         /// <summary>
         /// 値
         /// </summary>
-        public TValue Value { get; private set; }
+        public T Value { get; private set; }
 
         /// <summary>
         /// StateManagerのセット
         /// </summary>
-        public override void SetStateManager(ValueStateManager<TValue> stateManager)
+        public override void SetStateManager(StateManager stateManager)
         {
             base.SetStateManager(stateManager);
-            Value = stateManager.Value;
+
+            if (stateManager is ValueStateManager<T> valueStateManager)
+            {
+                Value = valueStateManager.Value;
+            }
         }
     }
 }

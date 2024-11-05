@@ -20,12 +20,12 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// ステートのスタック
         /// </summary>
-        private Stack<(IStateBase state, Action onPop)> m_StateStack = new();
+        private Stack<(StateBase state, Action onPop)> m_StateStack = new();
 
         /// <summary>
         /// 現在のステート
         /// </summary>
-        public IStateBase CurrentState { get; private set; }
+        public StateBase CurrentState { get; private set; }
 
         /// <summary>
         /// 破棄
@@ -45,30 +45,30 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// 次のステートに遷移する
         /// </summary>
-        public virtual async UniTask PushState(StateBase<StateManager> nextState, Action onPop = null)
+        public virtual async UniTask PushState(StateBase nextState, Action onPop = null)
         {
             this.m_StateStack.Push((this.CurrentState, onPop));
             this.CurrentState = nextState;
 
-            if (nextState != null)
+            if (this.CurrentState != null)
             {
-                nextState.SetStateManager(this);
-                await nextState.Start(this.m_CancellationTokenSource.Token);
+                this.CurrentState.SetStateManager(this);
+                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
             }
         }
 
         /// <summary>
         /// 現在のステートを終了させて、次のステートに遷移する
         /// </summary>
-        public virtual async UniTask ChangeState(StateBase<StateManager> nextState) 
+        public virtual async UniTask ChangeState(StateBase nextState) 
         {
             this.CurrentState?.End();
             this.CurrentState = nextState;
 
-            if (nextState != null)
+            if (this.CurrentState != null)
             {
-                nextState.SetStateManager(this);
-                await nextState.Start(this.m_CancellationTokenSource.Token);
+                this.CurrentState.SetStateManager(this);
+                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
             }
         }
 
@@ -91,17 +91,17 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// 値付きステート管理
     /// </summary>
-    public class ValueStateManager<TValue> : StateManager
+    public class ValueStateManager<T> : StateManager
     {
         /// <summary>
         /// 値
         /// </summary>
-        public TValue Value { get; }
+        public T Value { get; }
 
         /// <summary>
         /// construct
         /// </summary>
-        public ValueStateManager(TValue value)
+        public ValueStateManager(T value)
         {
             Value = value;
         }
