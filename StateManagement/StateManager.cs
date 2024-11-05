@@ -1,6 +1,8 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace MushaLib.StateManagement
@@ -8,39 +10,66 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// ステート管理
     /// </summary>
-    public class StateManager
+    public class StateManager : IDisposable
     {
         /// <summary>
-        /// 現在のステート
+        /// キャンセルトークン
         /// </summary>
-        public StateBase CurrentState { get; private set; }
+        private CancellationTokenSource m_CancellationTokenSource = new();
 
         /// <summary>
         /// ステートのスタック
         /// </summary>
-        private Stack<(StateBase state, Action onPop)> m_StateStack = new();
+        private Stack<(StateBase<StateManager> state, Action onPop)> m_StateStack = new();
+
+        /// <summary>
+        /// 現在のステート
+        /// </summary>
+        public StateBase<StateManager> CurrentState { get; private set; }
+
+        /// <summary>
+        /// 破棄
+        /// </summary>
+        public virtual void Dispose()
+        {
+            this.m_CancellationTokenSource?.Cancel();
+            this.m_CancellationTokenSource?.Dispose();
+            this.m_CancellationTokenSource = null;
+
+            while (this.m_StateStack.TryPop(out var item))
+            {
+                item.state?.End();
+            }
+        }
 
         /// <summary>
         /// 次のステートに遷移する
         /// </summary>
-        public virtual void PushState(StateBase nextState, Action onPop = null)
+        public virtual async UniTask PushState(StateBase<StateManager> nextState, Action onPop = null)
         {
             this.m_StateStack.Push((this.CurrentState, onPop));
-
             this.CurrentState = nextState;
-            this.CurrentState?.SetStateManager(this);
-            this.CurrentState?.Start();
+
+            if (this.CurrentState != null)
+            {
+                this.CurrentState.SetStateManager(this);
+                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
+            }
         }
 
         /// <summary>
         /// 現在のステートを終了させて、次のステートに遷移する
         /// </summary>
-        public virtual void ChangeState(StateBase nextState) 
+        public virtual async UniTask ChangeState(StateBase<StateManager> nextState) 
         {
             this.CurrentState?.End();
             this.CurrentState = nextState;
-            this.CurrentState?.SetStateManager(this);
-            this.CurrentState?.Start();
+
+            if (this.CurrentState != null)
+            {
+                this.CurrentState.SetStateManager(this);
+                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
+            }
         }
 
         /// <summary>
@@ -62,17 +91,17 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// 値付きステート管理
     /// </summary>
-    public class StateManager<T> : StateManager
+    public class ValueStateManager<TValue> : StateManager
     {
         /// <summary>
         /// 値
         /// </summary>
-        public T Value { get; }
+        public TValue Value { get; }
 
         /// <summary>
         /// construct
         /// </summary>
-        public StateManager(T value)
+        public ValueStateManager(TValue value)
         {
             Value = value;
         }
