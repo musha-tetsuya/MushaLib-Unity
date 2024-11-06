@@ -26,7 +26,7 @@ namespace MushaLib.MasterData.Editor
         /// <summary>
         /// 型のデフォルト値辞書
         /// </summary>
-        public static Dictionary<string, JToken> DefaultValueList { get; } = new()
+        public static IReadOnlyDictionary<string, JToken> DefaultValueList { get; } = new Dictionary<string, JToken>
         {
             { "byte",   default(byte)   },
             { "sbyte",  default(sbyte)  },
@@ -45,7 +45,7 @@ namespace MushaLib.MasterData.Editor
         /// <summary>
         /// 型のJTokenパーサー辞書
         /// </summary>
-        public static Dictionary<string, Func<string, JToken>> ParserList { get; } = new()
+        public static IReadOnlyDictionary<string, Func<string, JToken>> ParserList { get; } = new Dictionary<string, Func<string,JToken>>
         {
             { "byte",    _ => byte.Parse(_)   },
             { "sbyte",   _ => sbyte.Parse(_)  },
@@ -454,6 +454,11 @@ namespace MushaLib.MasterData.Editor
         }
 
         /// <summary>
+        /// EditorUserSettingsのキー
+        /// </summary>
+        private static readonly string EditorUserSettingsKey = typeof(MasterDataConverter).FullName;
+
+        /// <summary>
         /// 変換対象xlsxのパス
         /// </summary>
         private string xlsxPath;
@@ -472,6 +477,28 @@ namespace MushaLib.MasterData.Editor
         /// csv出力先
         /// </summary>
         private string csvOutputDirectory;
+
+        /// <summary>
+        /// OnEnable
+        /// </summary>
+        private void OnEnable()
+        {
+            xlsxPath = EditorUserSettings.GetConfigValue($"{EditorUserSettingsKey}.xlsxPath");
+            csOutputDirectory = EditorUserSettings.GetConfigValue($"{EditorUserSettingsKey}.csOutputDirectory");
+            jsonOutputDirectory = EditorUserSettings.GetConfigValue($"{EditorUserSettingsKey}.jsonOutputDirectory");
+            csvOutputDirectory = EditorUserSettings.GetConfigValue($"{EditorUserSettingsKey}.csvOutputDirectory");
+        }
+
+        /// <summary>
+        /// OnDisable
+        /// </summary>
+        private void OnDisable()
+        {
+            EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.xlsxPath", xlsxPath);
+            EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.csOutputDirectory", csOutputDirectory);
+            EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.jsonOutputDirectory", jsonOutputDirectory);
+            EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.csvOutputDirectory", csvOutputDirectory);
+        }
 
         /// <summary>
         /// OnGUI
