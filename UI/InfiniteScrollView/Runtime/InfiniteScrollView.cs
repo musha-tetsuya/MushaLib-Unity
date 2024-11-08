@@ -570,7 +570,7 @@ namespace MushaLib.UI.InfiniteScrollView
             // Viewportから見たcontentの左上角の座標
             m_ContentTopLeftInViewport = m_ScrollRect.content.localPosition;
             m_ContentTopLeftInViewport.x -= m_ScrollRect.content.rect.width * m_ScrollRect.content.pivot.x;
-            m_ContentTopLeftInViewport.y += m_ScrollRect.content.rect.height * m_ScrollRect.content.pivot.y;
+            m_ContentTopLeftInViewport.y += m_ScrollRect.content.rect.height * (1f - m_ScrollRect.content.pivot.y);
 
             // 横スクロール時
             if (m_ScrollRect.horizontal && !Mathf.Approximately(delta.x, 0f))
