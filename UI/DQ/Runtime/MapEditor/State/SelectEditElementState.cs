@@ -133,6 +133,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                         // 上書き保存
                         oldMapData.Size = m_MapData.Size;
                         oldMapData.Sprites = m_MapData.Sprites;
+                        AssetDatabase.SaveAssetIfDirty(oldMapData);
                     }
 
                     EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.path", path);
