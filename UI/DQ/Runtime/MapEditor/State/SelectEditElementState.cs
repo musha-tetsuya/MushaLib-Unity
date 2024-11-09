@@ -3,6 +3,7 @@ using MushaLib.StateManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UniRx;
 using UnityEditor;
@@ -44,12 +45,20 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// </summary>
         public override UniTask Start(CancellationToken cancellationToken)
         {
-            // 新規作成
             if (m_MapData == null)
             {
+                // 新規作成
                 m_MapData = ScriptableObject.CreateInstance<MapData>();
                 m_MapData.Size = Value.Size;
                 m_MapData.Sprites = new AssetReferenceSprite[Value.Size.x * Value.Size.y];
+            }
+            else
+            {
+                // 上書きされないよう複製
+                var oldMapData = m_MapData;
+                m_MapData = ScriptableObject.CreateInstance<MapData>();
+                m_MapData.Size = oldMapData.Size;
+                m_MapData.Sprites = oldMapData.Sprites.ToArray();
             }
 
             // スクロールビュー要素数設定
@@ -113,9 +122,26 @@ namespace MushaLib.UI.DQ.MapEditor.State
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    AssetDatabase.CreateAsset(m_MapData, path);
+                    var oldMapData = AssetDatabase.LoadAssetAtPath<MapData>(path);
+                    if (oldMapData == null)
+                    {
+                        // 新規保存
+                        AssetDatabase.CreateAsset(m_MapData, path);
+                    }
+                    else
+                    {
+                        // 上書き保存
+                        oldMapData.Size = m_MapData.Size;
+                        oldMapData.Sprites = m_MapData.Sprites;
+                    }
 
                     EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.path", path);
+
+                    // 上書きされないよう新規インスタンスに
+                    oldMapData = m_MapData;
+                    m_MapData = ScriptableObject.CreateInstance<MapData>();
+                    m_MapData.Size = oldMapData.Size;
+                    m_MapData.Sprites = oldMapData.Sprites.ToArray();
                 }
             }
         }
