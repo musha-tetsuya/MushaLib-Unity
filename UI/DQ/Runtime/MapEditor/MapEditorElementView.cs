@@ -6,16 +6,31 @@ using UnityEngine.UI;
 
 namespace MushaLib.UI.DQ.MapEditor
 {
-    public class MapEditorElementView : ScrollElement
+    /// <summary>
+    /// マップエディタ要素
+    /// </summary>
+    internal class MapEditorElementView : ScrollElement
     {
+        /// <summary>
+        /// イメージ
+        /// </summary>
         [SerializeField]
         private Image m_Image;
 
+        /// <summary>
+        /// ボタン
+        /// </summary>
         [SerializeField]
         private Button m_Button;
 
+        /// <summary>
+        /// イメージ
+        /// </summary>
         public Image Image => m_Image;
 
+        /// <summary>
+        /// ボタン
+        /// </summary>
         public Button Button => m_Button;
     }
 }
