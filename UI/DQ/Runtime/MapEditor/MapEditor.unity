@@ -578,6 +578,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Size: {x: 16, y: 16}
   m_ScrollView: {fileID: 1264851161}
+  m_SaveDirectory: {fileID: 0}
 --- !u!4 &1841462553
 Transform:
   m_ObjectHideFlags: 0

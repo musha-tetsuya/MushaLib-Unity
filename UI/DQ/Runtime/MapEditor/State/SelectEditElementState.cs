@@ -18,11 +18,6 @@ namespace MushaLib.UI.DQ.MapEditor.State
     internal class SelectEditElementState : ValueStateBase<MapEditor>, IGUIState
     {
         /// <summary>
-        /// EditorUserSettingsのキー
-        /// </summary>
-        private static readonly string EditorUserSettingsKey = typeof(SelectEditElementState).FullName;
-
-        /// <summary>
         /// マップデータ
         /// </summary>
         private MapData m_MapData;
@@ -118,7 +113,8 @@ namespace MushaLib.UI.DQ.MapEditor.State
         {
             if (GUILayout.Button("Save"))
             {
-                var path = EditorUtility.SaveFilePanelInProject("Save MapData", "", "asset", "", EditorUserSettings.GetConfigValue($"{EditorUserSettingsKey}.path"));
+                var directory = Value.SaveDirectory != null ? AssetDatabase.GetAssetPath(Value.SaveDirectory) : "";
+                var path = EditorUtility.SaveFilePanelInProject("Save MapData", "", "asset", "", directory);
 
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -133,10 +129,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
                         // 上書き保存
                         oldMapData.Size = m_MapData.Size;
                         oldMapData.Sprites = m_MapData.Sprites;
+                        EditorUtility.SetDirty(oldMapData);
                         AssetDatabase.SaveAssetIfDirty(oldMapData);
                     }
-
-                    EditorUserSettings.SetConfigValue($"{EditorUserSettingsKey}.path", path);
 
                     // 上書きされないよう新規インスタンスに
                     oldMapData = m_MapData;

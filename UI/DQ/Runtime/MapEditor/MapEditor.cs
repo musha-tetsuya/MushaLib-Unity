@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using MushaLib.StateManagement;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace MushaLib.UI.DQ.MapEditor
@@ -24,6 +25,12 @@ namespace MushaLib.UI.DQ.MapEditor
         private InfiniteScrollView.InfiniteScrollView m_ScrollView;
 
         /// <summary>
+        /// 保存先ディレクトリ
+        /// </summary>
+        [SerializeField]
+        private DefaultAsset m_SaveDirectory;
+
+        /// <summary>
         /// ステート管理
         /// </summary>
         private ValueStateManager<MapEditor> m_StateManager;
@@ -37,6 +44,11 @@ namespace MushaLib.UI.DQ.MapEditor
         /// 無限スクロールビュー
         /// </summary>
         public InfiniteScrollView.InfiniteScrollView ScrollView => m_ScrollView;
+
+        /// <summary>
+        /// 保存先ディレクトリ
+        /// </summary>
+        public DefaultAsset SaveDirectory => m_SaveDirectory;
 
         /// <summary>
         /// Start
