@@ -1,25 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace MushaLib.UI.DQ.MapEditor
 {
     /// <summary>
     /// マップデータ
     /// </summary>
-    public class MapData : ScriptableObject
+    public class MapData
     {
         /// <summary>
-        /// マップサイズ
+        /// サイズX
         /// </summary>
-        [SerializeField]
-        public Vector2Int Size = new(16, 16);
+        public int SizeX { get; set; }
 
         /// <summary>
-        /// スプライト
+        /// サイズY
         /// </summary>
-        [SerializeField]
-        public AssetReferenceSprite[] Sprites;
+        public int SizeY { get; set; }
+
+        /// <summary>
+        /// 使用しているアトラスのguidリスト
+        /// </summary>
+        public List<string> AtlasKeys { get; set; }
+
+        /// <summary>
+        /// マップチップデータ群
+        /// </summary>
+        public MapChipData[] ChipDatas { get; set; }
     }
 }

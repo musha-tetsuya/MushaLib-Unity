@@ -32,10 +32,10 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     .PushState(selectLoadDataState, () =>
                     {
                         // データが選択された？
-                        if (selectLoadDataState.SelectedMapData != null)
+                        if (selectLoadDataState.SelectedEditorData != null)
                         {
                             // 編集する要素の選択ステートへ
-                            StateManager.ChangeState(new SelectEditElementState(selectLoadDataState.SelectedMapData)).Forget();
+                            StateManager.ChangeState(new SelectEditElementState(selectLoadDataState.SelectedEditorData)).Forget();
                         }
                     })
                     .Forget();

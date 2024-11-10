@@ -17,9 +17,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
         private int? m_ObjectPickerControlId;
 
         /// <summary>
-        /// 選択したマップデータ
+        /// 選択したマップ編集データ
         /// </summary>
-        public MapData SelectedMapData { get; private set; }
+        public MapEditorData SelectedEditorData { get; private set; }
 
         /// <summary>
         /// OnGUI
@@ -30,7 +30,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
             {
                 m_ObjectPickerControlId = GUIUtility.GetControlID(FocusType.Passive);
 
-                EditorGUIUtility.ShowObjectPicker<MapData>(null, false, "", m_ObjectPickerControlId.Value);
+                EditorGUIUtility.ShowObjectPicker<MapEditorData>(null, false, "", m_ObjectPickerControlId.Value);
             }
             else
             {
@@ -40,7 +40,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                         {
                             if (EditorGUIUtility.GetObjectPickerControlID() == m_ObjectPickerControlId)
                             {
-                                SelectedMapData = (MapData)EditorGUIUtility.GetObjectPickerObject();
+                                SelectedEditorData = (MapEditorData)EditorGUIUtility.GetObjectPickerObject();
                             }
                         }
                         break;

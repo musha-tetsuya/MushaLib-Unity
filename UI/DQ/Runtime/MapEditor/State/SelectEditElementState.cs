@@ -18,9 +18,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
     internal class SelectEditElementState : ValueStateBase<MapEditor>, IGUIState
     {
         /// <summary>
-        /// マップデータ
+        /// マップ編集データ
         /// </summary>
-        private MapData m_MapData;
+        private MapEditorData m_EditorData;
 
         /// <summary>
         /// クリック処理の破棄テーブル
@@ -30,9 +30,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// <summary>
         /// construct
         /// </summary>
-        public SelectEditElementState(MapData mapData)
+        public SelectEditElementState(MapEditorData editorData)
         {
-            m_MapData = mapData;
+            m_EditorData = editorData;
         }
 
         /// <summary>
@@ -40,24 +40,24 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// </summary>
         public override UniTask Start(CancellationToken cancellationToken)
         {
-            if (m_MapData == null)
+            if (m_EditorData == null)
             {
                 // 新規作成
-                m_MapData = ScriptableObject.CreateInstance<MapData>();
-                m_MapData.Size = Value.Size;
-                m_MapData.Sprites = new AssetReferenceSprite[Value.Size.x * Value.Size.y];
+                m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
+                m_EditorData.Size = Value.Size;
+                m_EditorData.Sprites = new Sprite[Value.Size.x * Value.Size.y];
             }
             else
             {
                 // 上書きされないよう複製
-                var oldMapData = m_MapData;
-                m_MapData = ScriptableObject.CreateInstance<MapData>();
-                m_MapData.Size = oldMapData.Size;
-                m_MapData.Sprites = oldMapData.Sprites.ToArray();
+                var oldEditorData = m_EditorData;
+                m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
+                m_EditorData.Size = oldEditorData.Size;
+                m_EditorData.Sprites = oldEditorData.Sprites.ToArray();
             }
 
             // スクロールビュー要素数設定
-            Value.ScrollView.ElementCount = m_MapData.Sprites.Length;
+            Value.ScrollView.ElementCount = m_EditorData.Sprites.Length;
 
             // スクロールビュー要素更新時
             Value.ScrollView.OnUpdateElement += (element, index) =>
@@ -65,7 +65,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                 var view = element as MapEditorElementView;
 
                 // スプライト設定
-                view.Image.sprite = m_MapData.Sprites[index]?.editorAsset as Sprite;
+                view.Image.sprite = m_EditorData.Sprites[index];
 
                 // クリック時
                 m_OnClickDisposableTable[view] = view.Button
@@ -77,16 +77,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                         StateManager
                             .PushState(selectSpriteState, () =>
                             {
-                                view.Image.sprite = selectSpriteState.SelectedSprite;
-
-                                if (selectSpriteState.SelectedSprite == null)
-                                {
-                                    m_MapData.Sprites[index] = null;
-                                }
-                                else if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(selectSpriteState.SelectedSprite, out string guid, out long localId))
-                                {
-                                    m_MapData.Sprites[index] = new(guid);
-                                }
+                                m_EditorData.Sprites[index] = view.Image.sprite = selectSpriteState.SelectedSprite;
                             })
                             .Forget();
                     });
@@ -118,26 +109,26 @@ namespace MushaLib.UI.DQ.MapEditor.State
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    var oldMapData = AssetDatabase.LoadAssetAtPath<MapData>(path);
-                    if (oldMapData == null)
+                    var oldEditorData = AssetDatabase.LoadAssetAtPath<MapEditorData>(path);
+                    if (oldEditorData == null)
                     {
                         // 新規保存
-                        AssetDatabase.CreateAsset(m_MapData, path);
+                        AssetDatabase.CreateAsset(m_EditorData, path);
                     }
                     else
                     {
                         // 上書き保存
-                        oldMapData.Size = m_MapData.Size;
-                        oldMapData.Sprites = m_MapData.Sprites;
-                        EditorUtility.SetDirty(oldMapData);
-                        AssetDatabase.SaveAssetIfDirty(oldMapData);
+                        oldEditorData.Size = m_EditorData.Size;
+                        oldEditorData.Sprites = m_EditorData.Sprites;
+                        EditorUtility.SetDirty(oldEditorData);
+                        AssetDatabase.SaveAssetIfDirty(oldEditorData);
                     }
 
                     // 上書きされないよう新規インスタンスに
-                    oldMapData = m_MapData;
-                    m_MapData = ScriptableObject.CreateInstance<MapData>();
-                    m_MapData.Size = oldMapData.Size;
-                    m_MapData.Sprites = oldMapData.Sprites.ToArray();
+                    oldEditorData = m_EditorData;
+                    m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
+                    m_EditorData.Size = oldEditorData.Size;
+                    m_EditorData.Sprites = oldEditorData.Sprites.ToArray();
                 }
             }
         }
