@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace MushaLib.UI
     /// <summary>
     /// アトラスのスプライトをキャッシュするクラス
     /// </summary>
-    public class SpriteAtlasCache
+    public class SpriteAtlasCache : IDisposable
     {
         /// <summary>
         /// アトラス
@@ -19,7 +20,7 @@ namespace MushaLib.UI
         /// スプライトのテーブル
         /// </summary>
         private Dictionary<string, Sprite> m_SpriteTable = new();
-        
+
         /// <summary>
         /// アトラス
         /// </summary>
@@ -30,10 +31,22 @@ namespace MushaLib.UI
             {
                 if (m_Atlas != value)
                 {
-                    Clear();
+                    Dispose();
                     m_Atlas = value;
                 }
             }
+        }
+
+        /// <summary>
+        /// 破棄
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var sprite in m_SpriteTable.Values)
+            {
+                UnityEngine.Object.Destroy(sprite);
+            }
+            m_SpriteTable.Clear();
         }
 
         /// <summary>
@@ -49,14 +62,6 @@ namespace MushaLib.UI
                 }
             }
             return sprite;
-        }
-
-        /// <summary>
-        /// クリア
-        /// </summary>
-        public void Clear()
-        {
-            m_SpriteTable.Clear();
         }
     }
 }
