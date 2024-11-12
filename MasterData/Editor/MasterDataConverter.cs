@@ -513,12 +513,14 @@ namespace MushaLib.MasterData.Editor
                 {
                     if (GUILayout.Button("Select File"))
                     {
-                        xlsxPath = EditorUtility.OpenFilePanel("Select MasterData File", "", "xlsx");
+                        var xlsxDirectory = string.IsNullOrEmpty(xlsxPath) ? "" : Path.GetDirectoryName(xlsxPath);
+                        xlsxPath = EditorUtility.OpenFilePanel("Select MasterData File", xlsxDirectory, "xlsx");
                     }
 
                     if (GUILayout.Button("Select Folder"))
                     {
-                        xlsxPath = EditorUtility.OpenFolderPanel("Select MasterData Folder", "", "");
+                        var xlsxDirectory = string.IsNullOrEmpty(xlsxPath) ? "" : Path.GetDirectoryName(xlsxPath);
+                        xlsxPath = EditorUtility.OpenFolderPanel("Select MasterData Folder", xlsxDirectory, "");
                     }
                 }
                 GUILayout.EndVertical();
@@ -531,7 +533,7 @@ namespace MushaLib.MasterData.Editor
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                 {
-                    csOutputDirectory = EditorUtility.SaveFolderPanel("cs出力先の選択", "", "");
+                    csOutputDirectory = EditorUtility.SaveFolderPanel("cs出力先の選択", csOutputDirectory, "");
                 }
             }
             GUILayout.EndHorizontal();
@@ -542,7 +544,7 @@ namespace MushaLib.MasterData.Editor
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                 {
-                    jsonOutputDirectory = EditorUtility.SaveFolderPanel("json出力先の選択", "", "");
+                    jsonOutputDirectory = EditorUtility.SaveFolderPanel("json出力先の選択", jsonOutputDirectory, "");
                 }
             }
             GUILayout.EndHorizontal();
@@ -553,7 +555,7 @@ namespace MushaLib.MasterData.Editor
 
                 if (GUILayout.Button("Select", GUILayout.Width(100)))
                 {
-                    csvOutputDirectory = EditorUtility.SaveFolderPanel("csv出力先の選択", "", "");
+                    csvOutputDirectory = EditorUtility.SaveFolderPanel("csv出力先の選択", csvOutputDirectory, "");
                 }
             }
             GUILayout.EndHorizontal();

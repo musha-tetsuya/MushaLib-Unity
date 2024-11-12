@@ -76,7 +76,7 @@ namespace MushaLib.UI.DQ.MapEditor
                 if (GUILayout.Button("Convert to JSON(MapData)"))
                 {
                     // 出力先
-                    var path = EditorUtility.SaveFilePanelInProject("Save JSON(MapData)", "", "json", "", jsonOutputDirectory);
+                    var path = EditorUtility.SaveFilePanelInProject("Save JSON(MapData)", target.name, "json", "", jsonOutputDirectory);
 
                     if (!string.IsNullOrEmpty(path))
                     {
