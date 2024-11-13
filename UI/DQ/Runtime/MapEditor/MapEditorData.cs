@@ -1,4 +1,6 @@
+using MushaLib.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +22,18 @@ namespace MushaLib.UI.DQ.MapEditor
         /// </summary>
         [SerializeField]
         public Vector2Int Size = new(16, 16);
+
+        /// <summary>
+        /// ページ内セルサイズ
+        /// </summary>
+        [SerializeField]
+        public Vector2 PageCellSize = new(16, 16);
+
+        /// <summary>
+        /// ページ内セル数
+        /// </summary>
+        [SerializeField]
+        public Vector2Int PageCellCount = new(16, 16);
 
         /// <summary>
         /// スプライト
@@ -92,8 +106,9 @@ namespace MushaLib.UI.DQ.MapEditor
 
                         var obj = target as MapEditorData;
                         var mapData = new MapData();
-                        mapData.SizeX = obj.Size.x;
-                        mapData.SizeY = obj.Size.y;
+                        mapData.Size = obj.Size;
+                        mapData.PageCellSize = obj.PageCellSize;
+                        mapData.PageCellCount = obj.PageCellCount;
                         mapData.AtlasKeys = new List<string>();
                         mapData.ChipDatas = obj.Sprites
                             .Select((sprite, i) =>
@@ -126,7 +141,11 @@ namespace MushaLib.UI.DQ.MapEditor
                             .ToArray();
 
                         // Json出力
-                        File.WriteAllText(path, JsonConvert.SerializeObject(mapData, Formatting.Indented).Replace("\r", null), Encoding.UTF8);
+                        var settings = new JsonSerializerSettings();
+                        settings.Converters.Add(new DelegateJsonConverter<Vector2> { OnWriteJson = (writer, value) => new JObject { { "x", value.x }, { "y", value.y } }.WriteTo(writer) });
+                        settings.Converters.Add(new DelegateJsonConverter<Vector2Int> { OnWriteJson = (writer, value) => new JObject { { "x", value.x }, { "y", value.y } }.WriteTo(writer) });
+                        settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        File.WriteAllText(path, JsonConvert.SerializeObject(mapData, Formatting.Indented, settings).Replace("\r", null), Encoding.UTF8);
 
                         // 出力先保存
                         jsonOutputDirectory = Path.GetDirectoryName(path);

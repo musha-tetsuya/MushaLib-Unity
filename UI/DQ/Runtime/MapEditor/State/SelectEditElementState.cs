@@ -44,8 +44,10 @@ namespace MushaLib.UI.DQ.MapEditor.State
             {
                 // 新規作成
                 m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
-                m_EditorData.Size = Value.Size;
-                m_EditorData.Sprites = new Sprite[Value.Size.x * Value.Size.y];
+                m_EditorData.Size = Value.NewMapSize;
+                m_EditorData.Sprites = new Sprite[Value.NewMapSize.x * Value.NewMapSize.y];
+                m_EditorData.PageCellSize = Value.NewMapPageCellSize;
+                m_EditorData.PageCellCount = Value.NewMapPageCellCount;
             }
             else
             {
@@ -54,10 +56,16 @@ namespace MushaLib.UI.DQ.MapEditor.State
                 m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
                 m_EditorData.Size = oldEditorData.Size;
                 m_EditorData.Sprites = oldEditorData.Sprites.ToArray();
+                m_EditorData.PageCellSize = oldEditorData.PageCellSize;
+                m_EditorData.PageCellCount = oldEditorData.PageCellCount;
             }
 
             // スクロールビュー要素数設定
             Value.ScrollView.ElementCount = m_EditorData.Sprites.Length;
+
+            // スクロールビューページレイアウト設定
+            Value.ScrollView.PageLayout.CellSize = m_EditorData.PageCellSize;
+            Value.ScrollView.PageLayout.CellCount = m_EditorData.PageCellCount;
 
             // スクロールビュー要素更新時
             Value.ScrollView.OnUpdateElement += (element, index) =>
@@ -120,6 +128,8 @@ namespace MushaLib.UI.DQ.MapEditor.State
                         // 上書き保存
                         oldEditorData.Size = m_EditorData.Size;
                         oldEditorData.Sprites = m_EditorData.Sprites;
+                        oldEditorData.PageCellSize = m_EditorData.PageCellSize;
+                        oldEditorData.PageCellCount = m_EditorData.PageCellCount;
                         EditorUtility.SetDirty(oldEditorData);
                         AssetDatabase.SaveAssetIfDirty(oldEditorData);
                     }
@@ -129,6 +139,8 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
                     m_EditorData.Size = oldEditorData.Size;
                     m_EditorData.Sprites = oldEditorData.Sprites.ToArray();
+                    m_EditorData.PageCellSize = oldEditorData.PageCellSize;
+                    m_EditorData.PageCellCount = oldEditorData.PageCellCount;
                 }
             }
         }

@@ -10,14 +10,19 @@ namespace MushaLib.UI.DQ.MapEditor
     public class MapData
     {
         /// <summary>
-        /// サイズX
+        /// サイズ
         /// </summary>
-        public int SizeX { get; set; }
+        public Vector2Int Size { get; set; }
 
         /// <summary>
-        /// サイズY
+        /// ページ内セルサイズ
         /// </summary>
-        public int SizeY { get; set; }
+        public Vector2 PageCellSize { get; set; }
+
+        /// <summary>
+        /// ページ内セル数
+        /// </summary>
+        public Vector2Int PageCellCount { get; set; }
 
         /// <summary>
         /// 使用しているアトラスのguidリスト

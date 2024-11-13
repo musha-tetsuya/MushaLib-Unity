@@ -576,7 +576,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78c0a93bdcc9c5742ba9307de0dbd8a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Size: {x: 16, y: 16}
+  m_NewMapSize: {x: 16, y: 16}
+  m_NewMapPageCellSize: {x: 16, y: 16}
+  m_NewMapPageCellCount: {x: 16, y: 16}
   m_ScrollView: {fileID: 1264851161}
   m_SaveDirectory: {fileID: 0}
 --- !u!4 &1841462553

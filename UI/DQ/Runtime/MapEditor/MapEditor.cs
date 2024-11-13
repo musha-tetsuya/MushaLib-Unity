@@ -13,10 +13,22 @@ namespace MushaLib.UI.DQ.MapEditor
     internal class MapEditor : MonoBehaviour
     {
         /// <summary>
-        /// マップサイズ
+        /// 新規マップのサイズ
         /// </summary>
         [SerializeField]
-        private Vector2Int m_Size = new(16, 16);
+        private Vector2Int m_NewMapSize = new(16, 16);
+
+        /// <summary>
+        /// 新規マップのページ内セルサイズ
+        /// </summary>
+        [SerializeField]
+        private Vector2 m_NewMapPageCellSize = new(16, 16);
+
+        /// <summary>
+        /// 新規マップのページ内セル数
+        /// </summary>
+        [SerializeField]
+        private Vector2Int m_NewMapPageCellCount = new(16, 16);
 
         /// <summary>
         /// 無限スクロールビュー
@@ -38,7 +50,17 @@ namespace MushaLib.UI.DQ.MapEditor
         /// <summary>
         /// マップサイズ
         /// </summary>
-        public Vector2Int Size => m_Size;
+        public Vector2Int NewMapSize => m_NewMapSize;
+
+        /// <summary>
+        /// 新規マップのページ内セルサイズ
+        /// </summary>
+        public Vector2 NewMapPageCellSize => m_NewMapPageCellSize;
+
+        /// <summary>
+        /// 新規マップのページ内セル数
+        /// </summary>
+        public Vector2Int NewMapPageCellCount => m_NewMapPageCellCount;
 
         /// <summary>
         /// 無限スクロールビュー
@@ -58,7 +80,6 @@ namespace MushaLib.UI.DQ.MapEditor
             m_StateManager = new(this);
             m_StateManager.AddTo(destroyCancellationToken);
             m_StateManager.ChangeState(new State.SelectNewOrLoadState()).Forget();
-            
         }
 
         /// <summary>
