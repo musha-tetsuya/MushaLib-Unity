@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MushaLib.UI.DQ.MapEditor
 {
@@ -37,6 +38,12 @@ namespace MushaLib.UI.DQ.MapEditor
         private InfiniteScrollView.InfiniteScrollView m_ScrollView;
 
         /// <summary>
+        /// 現在のスプライトイメージ
+        /// </summary>
+        [SerializeField]
+        private Image m_CurrentSpriteImage;
+
+        /// <summary>
         /// 保存先ディレクトリ
         /// </summary>
         [SerializeField]
@@ -66,6 +73,11 @@ namespace MushaLib.UI.DQ.MapEditor
         /// 無限スクロールビュー
         /// </summary>
         public InfiniteScrollView.InfiniteScrollView ScrollView => m_ScrollView;
+
+        /// <summary>
+        /// 現在のスプライトイメージ
+        /// </summary>
+        public Image CurrentSpriteImage => m_CurrentSpriteImage;
 
         /// <summary>
         /// 保存先ディレクトリ

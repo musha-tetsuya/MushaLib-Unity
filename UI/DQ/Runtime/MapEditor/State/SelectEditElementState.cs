@@ -80,14 +80,21 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     .OnClickAsObservable()
                     .Subscribe(_ =>
                     {
-                        var selectSpriteState = new SelectSpriteState();
+                        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        {
+                            m_EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite;
+                        }
+                        else
+                        {
+                            var selectSpriteState = new SelectSpriteState();
 
-                        StateManager
-                            .PushState(selectSpriteState, () =>
-                            {
-                                m_EditorData.Sprites[index] = view.Image.sprite = selectSpriteState.SelectedSprite;
-                            })
-                            .Forget();
+                            StateManager
+                                .PushState(selectSpriteState, () =>
+                                {
+                                    m_EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite = selectSpriteState.SelectedSprite;
+                                })
+                                .Forget();
+                        }
                     });
             };
 
@@ -110,7 +117,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// </summary>
         void IGUIState.OnGUI()
         {
-            if (GUILayout.Button("Save"))
+            GUILayout.Label("Ctrl押しながらクリックで、一つ前のスプライトを貼り付け");
+
+            if (GUILayout.Button("Save", GUILayout.ExpandWidth(false)))
             {
                 var directory = Value.SaveDirectory != null ? AssetDatabase.GetAssetPath(Value.SaveDirectory) : "";
                 var path = EditorUtility.SaveFilePanelInProject("Save MapData", "", "asset", "", directory);
