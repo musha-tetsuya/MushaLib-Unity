@@ -19,7 +19,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
             // 新規作成
             if (GUILayout.Button("New"))
             {
-                StateManager.ChangeState(new SelectEditElementState(null)).Forget();
+                StateManager.ChangeState(new SelectEditModeState(null)).Forget();
             }
 
             // データロード
@@ -35,7 +35,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                         if (selectLoadDataState.SelectedEditorData != null)
                         {
                             // 編集する要素の選択ステートへ
-                            StateManager.ChangeState(new SelectEditElementState(selectLoadDataState.SelectedEditorData)).Forget();
+                            StateManager.ChangeState(new SelectEditModeState(selectLoadDataState.SelectedEditorData)).Forget();
                         }
                     })
                     .Forget();

@@ -23,5 +23,10 @@ namespace MushaLib.UI.DQ.MapEditor
         /// スプライトキー：アトラスに含まれているならスプライト名、含まれていないならguid
         /// </summary>
         public string SpriteKey { get; set; }
+
+        /// <summary>
+        /// コリジョン
+        /// </summary>
+        public int CollisionNum { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 using MushaLib.UI.InfiniteScrollView;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,12 @@ namespace MushaLib.UI.DQ.MapEditor
         private Button m_Button;
 
         /// <summary>
+        /// テキスト
+        /// </summary>
+        [SerializeField]
+        private TextMeshProUGUI m_TextMesh;
+
+        /// <summary>
         /// イメージ
         /// </summary>
         public Image Image => m_Image;
@@ -32,5 +39,10 @@ namespace MushaLib.UI.DQ.MapEditor
         /// ボタン
         /// </summary>
         public Button Button => m_Button;
+
+        /// <summary>
+        /// テキスト
+        /// </summary>
+        public TextMeshProUGUI TextMesh => m_TextMesh;
     }
 }

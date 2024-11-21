@@ -8,24 +8,18 @@ using System.Threading;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace MushaLib.UI.DQ.MapEditor.State
 {
     /// <summary>
-    /// 編集する要素の選択
+    /// 編集モードの選択
     /// </summary>
-    internal class SelectEditElementState : ValueStateBase<MapEditor>, IGUIState
+    internal class SelectEditModeState : ValueStateBase<MapEditor>, IGUIState
     {
         /// <summary>
         /// マップ編集データ
         /// </summary>
         private MapEditorData m_EditorData;
-
-        /// <summary>
-        /// Ctrlキー入力の監視
-        /// </summary>
-        private InputAction m_CtrlAction;
 
         /// <summary>
         /// クリック処理の破棄テーブル
@@ -35,14 +29,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// <summary>
         /// construct
         /// </summary>
-        public SelectEditElementState(MapEditorData editorData)
+        public SelectEditModeState(MapEditorData editorData)
         {
             m_EditorData = editorData;
-
-            m_CtrlAction = new("Ctrl", InputActionType.Button);
-            m_CtrlAction.AddBinding("<Keyboard>/ctrl");
-            m_CtrlAction.AddBinding("<Keyboard>/ctrl+right");
-            m_CtrlAction.Enable();
         }
 
         /// <summary>
@@ -55,9 +44,14 @@ namespace MushaLib.UI.DQ.MapEditor.State
                 // 新規作成
                 m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
                 m_EditorData.Size = Value.NewMapSize;
-                m_EditorData.Sprites = new Sprite[Value.NewMapSize.x * Value.NewMapSize.y];
+                m_EditorData.ChipDatas = Enumerable.Range(0, Value.NewMapSize.x * Value.NewMapSize.y).Select(x => new MapChipEditorData()).ToArray();
                 m_EditorData.PageCellSize = Value.NewMapPageCellSize;
                 m_EditorData.PageCellCount = Value.NewMapPageCellCount;
+
+                for (int i = 0; i < m_EditorData.ChipDatas.Length; i++)
+                {
+                    m_EditorData.ChipDatas[i] = new();
+                }
             }
             else
             {
@@ -65,13 +59,13 @@ namespace MushaLib.UI.DQ.MapEditor.State
                 var oldEditorData = m_EditorData;
                 m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
                 m_EditorData.Size = oldEditorData.Size;
-                m_EditorData.Sprites = oldEditorData.Sprites.ToArray();
+                m_EditorData.ChipDatas = oldEditorData.ChipDatas.ToArray();
                 m_EditorData.PageCellSize = oldEditorData.PageCellSize;
                 m_EditorData.PageCellCount = oldEditorData.PageCellCount;
             }
 
             // スクロールビュー要素数設定
-            Value.ScrollView.ElementCount = m_EditorData.Sprites.Length;
+            Value.ScrollView.ElementCount = m_EditorData.ChipDatas.Length;
 
             // スクロールビューページレイアウト設定
             Value.ScrollView.PageLayout.CellSize = m_EditorData.PageCellSize;
@@ -83,28 +77,17 @@ namespace MushaLib.UI.DQ.MapEditor.State
                 var view = element as MapEditorElementView;
 
                 // スプライト設定
-                view.Image.sprite = m_EditorData.Sprites[index];
+                view.Image.sprite = m_EditorData.ChipDatas[index].Sprite;
+
+                // コリジョン設定
+                view.TextMesh.text = m_EditorData.ChipDatas[index].CollisionNum.ToString();
 
                 // クリック時
                 m_OnClickDisposableTable[view] = view.Button
                     .OnClickAsObservable()
                     .Subscribe(_ =>
                     {
-                        if (m_CtrlAction.ReadValue<float>() > 0)
-                        {
-                            m_EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite;
-                        }
-                        else
-                        {
-                            var selectSpriteState = new SelectSpriteState();
-
-                            StateManager
-                                .PushState(selectSpriteState, () =>
-                                {
-                                    m_EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite = selectSpriteState.SelectedSprite;
-                                })
-                                .Forget();
-                        }
+                        (StateManager.CurrentState as IElementClickHandler)?.OnClickElement(view, index);
                     });
             };
 
@@ -119,8 +102,6 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// </summary>
         public override void Dispose()
         {
-            m_CtrlAction.Disable();
-
             m_OnClickDisposableTable.Dispose();
         }
 
@@ -129,9 +110,17 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// </summary>
         void IGUIState.OnGUI()
         {
-            GUILayout.Label("Ctrl押しながらクリックで、一つ前のスプライトを貼り付け");
+            if (GUILayout.Button("スプライト編集"))
+            {
+                StateManager.PushState(new SpriteEditState(m_EditorData)).Forget();
+            }
 
-            if (GUILayout.Button("Save", GUILayout.ExpandWidth(false)))
+            if (GUILayout.Button("コリジョン編集"))
+            {
+                StateManager.PushState(new CollisionEditState(m_EditorData)).Forget();
+            }
+
+            if (GUILayout.Button("Save"))
             {
                 var directory = Value.SaveDirectory != null ? AssetDatabase.GetAssetPath(Value.SaveDirectory) : "";
                 var path = EditorUtility.SaveFilePanelInProject("Save MapData", "", "asset", "", directory);
@@ -148,7 +137,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     {
                         // 上書き保存
                         oldEditorData.Size = m_EditorData.Size;
-                        oldEditorData.Sprites = m_EditorData.Sprites;
+                        oldEditorData.ChipDatas = m_EditorData.ChipDatas;
                         oldEditorData.PageCellSize = m_EditorData.PageCellSize;
                         oldEditorData.PageCellCount = m_EditorData.PageCellCount;
                         EditorUtility.SetDirty(oldEditorData);
@@ -159,7 +148,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     oldEditorData = m_EditorData;
                     m_EditorData = ScriptableObject.CreateInstance<MapEditorData>();
                     m_EditorData.Size = oldEditorData.Size;
-                    m_EditorData.Sprites = oldEditorData.Sprites.ToArray();
+                    m_EditorData.ChipDatas = oldEditorData.ChipDatas.ToArray();
                     m_EditorData.PageCellSize = oldEditorData.PageCellSize;
                     m_EditorData.PageCellCount = oldEditorData.PageCellCount;
                 }

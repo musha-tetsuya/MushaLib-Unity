@@ -21,25 +21,61 @@ namespace MushaLib.UI.DQ.MapEditor
         /// マップサイズ
         /// </summary>
         [SerializeField]
-        public Vector2Int Size = new(16, 16);
+        private Vector2Int m_Size = new(16, 16);
 
         /// <summary>
         /// ページ内セルサイズ
         /// </summary>
         [SerializeField]
-        public Vector2 PageCellSize = new(16, 16);
+        private Vector2 m_PageCellSize = new(16, 16);
 
         /// <summary>
         /// ページ内セル数
         /// </summary>
         [SerializeField]
-        public Vector2Int PageCellCount = new(16, 16);
+        private Vector2Int m_PageCellCount = new(16, 16);
 
         /// <summary>
-        /// スプライト
+        /// マップチップデータ群
         /// </summary>
         [SerializeField]
-        public Sprite[] Sprites;
+        private MapChipEditorData[] m_ChipDatas;
+
+        /// <summary>
+        /// マップサイズ
+        /// </summary>
+        public Vector2Int Size
+        {
+            get => m_Size;
+            set => m_Size = value;
+        }
+
+        /// <summary>
+        /// ページ内セルサイズ
+        /// </summary>
+        public Vector2 PageCellSize
+        {
+            get => m_PageCellSize;
+            set => m_PageCellSize = value;
+        }
+
+        /// <summary>
+        /// ページ内セル数
+        /// </summary>
+        public Vector2Int PageCellCount
+        {
+            get => m_PageCellCount;
+            set => m_PageCellCount = value;
+        }
+
+        /// <summary>
+        /// マップチップデータ群
+        /// </summary>
+        public MapChipEditorData[] ChipDatas
+        {
+            get => m_ChipDatas;
+            set => m_ChipDatas = value;
+        }
 
 #if UNITY_EDITOR
         /// <summary>
@@ -110,22 +146,22 @@ namespace MushaLib.UI.DQ.MapEditor
                         mapData.PageCellSize = obj.PageCellSize;
                         mapData.PageCellCount = obj.PageCellCount;
                         mapData.AtlasKeys = new List<string>();
-                        mapData.ChipDatas = obj.Sprites
-                            .Select((sprite, i) =>
+                        mapData.ChipDatas = obj.ChipDatas
+                            .Select((chip, i) =>
                             {
-                                MapChipData chipData = null;
+                                var chipData = new MapChipData();
+                                chipData.Index = i;
+                                chipData.CollisionNum = chip.CollisionNum;
 
-                                if (sprite != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(sprite, out string guid, out long localId))
+                                if (chip.Sprite != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(chip.Sprite, out string guid, out long localId))
                                 {
-                                    chipData = new MapChipData();
-                                    chipData.Index = i;
                                     chipData.SpriteKey = guid;
 
                                     // アトラスに含まれているかどうかをチェック
-                                    var atlas = m_CachedAtlasses.FirstOrDefault(x => x.CanBindTo(sprite));
+                                    var atlas = m_CachedAtlasses.FirstOrDefault(x => x.CanBindTo(chip.Sprite));
                                     if (atlas != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(atlas, out guid, out localId))
                                     {
-                                        chipData.SpriteKey = sprite.name;
+                                        chipData.SpriteKey = chip.Sprite.name;
                                         chipData.AtlasId = mapData.AtlasKeys.IndexOf(guid);
                                         if (chipData.AtlasId < 0)
                                         {
@@ -137,7 +173,6 @@ namespace MushaLib.UI.DQ.MapEditor
 
                                 return chipData;
                             })
-                            .Where(x => x != null)
                             .ToArray();
 
                         // Json出力
