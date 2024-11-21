@@ -38,14 +38,14 @@ namespace MushaLib.StateManagement
 
             while (this.m_StateStack.TryPop(out var item))
             {
-                item.state?.End();
+                item.state?.Dispose();
             }
         }
 
         /// <summary>
         /// 次のステートに遷移する
         /// </summary>
-        public virtual async UniTask PushState(StateBase nextState, Action onPop = null)
+        public virtual async UniTask PushState(StateBase nextState, Action onPop = null, CancellationToken cancellationToken = default)
         {
             this.m_StateStack.Push((this.CurrentState, onPop));
             this.CurrentState = nextState;
@@ -53,22 +53,44 @@ namespace MushaLib.StateManagement
             if (this.CurrentState != null)
             {
                 this.CurrentState.SetStateManager(this);
-                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
+
+                try
+                {
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(this.m_CancellationTokenSource.Token, cancellationToken);
+                 
+                    await this.CurrentState.StartAsync(cts.Token);
+                }
+                catch (Exception ex)
+                {
+                    await ChangeState(null, cancellationToken);
+                    throw ex;
+                }
             }
         }
 
         /// <summary>
         /// 現在のステートを終了させて、次のステートに遷移する
         /// </summary>
-        public virtual async UniTask ChangeState(StateBase nextState) 
+        public virtual async UniTask ChangeState(StateBase nextState, CancellationToken cancellationToken = default) 
         {
-            this.CurrentState?.End();
+            this.CurrentState?.Dispose();
             this.CurrentState = nextState;
 
             if (this.CurrentState != null)
             {
                 this.CurrentState.SetStateManager(this);
-                await this.CurrentState.Start(this.m_CancellationTokenSource.Token);
+
+                try
+                {
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(this.m_CancellationTokenSource.Token, cancellationToken);
+
+                    await this.CurrentState.StartAsync(cts.Token);
+                }
+                catch (Exception ex)
+                {
+                    await ChangeState(null, cancellationToken);
+                    throw ex;
+                }
             }
         }
 
@@ -77,7 +99,7 @@ namespace MushaLib.StateManagement
         /// </summary>
         public void PopState()
         {
-            this.CurrentState?.End();
+            this.CurrentState?.Dispose();
             this.CurrentState = null;
 
             if (this.m_StateStack.TryPop(out var item))

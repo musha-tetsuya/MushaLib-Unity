@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace MushaLib.StateManagement
     /// <summary>
     /// ステート基底
     /// </summary>
-    public abstract class StateBase
+    public abstract class StateBase : IDisposable
     {
         /// <summary>
         /// ステート管理
@@ -27,7 +28,7 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// ステート開始時
         /// </summary>
-        public virtual UniTask Start(CancellationToken cancellationToken)
+        public virtual UniTask StartAsync(CancellationToken cancellationToken)
         {
             return UniTask.CompletedTask;
         }
@@ -35,7 +36,7 @@ namespace MushaLib.StateManagement
         /// <summary>
         /// ステート終了時
         /// </summary>
-        public virtual void End()
+        public virtual void Dispose()
         {
         }
     }

@@ -46,9 +46,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
         }
 
         /// <summary>
-        /// Start
+        /// 開始
         /// </summary>
-        public override UniTask Start(CancellationToken cancellationToken)
+        public override UniTask StartAsync(CancellationToken cancellationToken)
         {
             if (m_EditorData == null)
             {
@@ -115,9 +115,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
         }
 
         /// <summary>
-        /// End
+        /// 破棄
         /// </summary>
-        public override void End()
+        public override void Dispose()
         {
             m_CtrlAction.Disable();
 
