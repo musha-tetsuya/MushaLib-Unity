@@ -8,7 +8,7 @@ using System.Threading;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem;
 
 namespace MushaLib.UI.DQ.MapEditor.State
 {
@@ -23,6 +23,11 @@ namespace MushaLib.UI.DQ.MapEditor.State
         private MapEditorData m_EditorData;
 
         /// <summary>
+        /// Ctrlキー入力の監視
+        /// </summary>
+        private InputAction m_CtrlAction;
+
+        /// <summary>
         /// クリック処理の破棄テーブル
         /// </summary>
         private DictionaryDisposable<MapEditorElementView, IDisposable> m_OnClickDisposableTable = new();
@@ -33,6 +38,11 @@ namespace MushaLib.UI.DQ.MapEditor.State
         public SelectEditElementState(MapEditorData editorData)
         {
             m_EditorData = editorData;
+
+            m_CtrlAction = new("Ctrl", InputActionType.Button);
+            m_CtrlAction.AddBinding("<Keyboard>/ctrl");
+            m_CtrlAction.AddBinding("<Keyboard>/ctrl+right");
+            m_CtrlAction.Enable();
         }
 
         /// <summary>
@@ -80,7 +90,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     .OnClickAsObservable()
                     .Subscribe(_ =>
                     {
-                        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        if (m_CtrlAction.ReadValue<float>() > 0)
                         {
                             m_EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite;
                         }
@@ -109,6 +119,8 @@ namespace MushaLib.UI.DQ.MapEditor.State
         /// </summary>
         public override void End()
         {
+            m_CtrlAction.Disable();
+
             m_OnClickDisposableTable.Dispose();
         }
 
