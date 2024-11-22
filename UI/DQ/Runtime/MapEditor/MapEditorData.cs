@@ -36,10 +36,10 @@ namespace MushaLib.UI.DQ.MapEditor
         private Vector2Int m_PageCellCount = new(16, 16);
 
         /// <summary>
-        /// マップチップデータ群
+        /// スプライト
         /// </summary>
         [SerializeField]
-        private MapChipEditorData[] m_ChipDatas;
+        private Sprite[] m_Sprites;
 
         /// <summary>
         /// マップサイズ
@@ -69,12 +69,25 @@ namespace MushaLib.UI.DQ.MapEditor
         }
 
         /// <summary>
-        /// マップチップデータ群
+        /// スプライト
         /// </summary>
-        public MapChipEditorData[] ChipDatas
+        public Sprite[] Sprites
         {
-            get => m_ChipDatas;
-            set => m_ChipDatas = value;
+            get => m_Sprites;
+            set => m_Sprites = value;
+        }
+
+        /// <summary>
+        /// 複製
+        /// </summary>
+        public static MapEditorData Copy(MapEditorData source)
+        {
+            var data = CreateInstance<MapEditorData>();
+            data.Size = source.Size;
+            data.Sprites = source.Sprites.ToArray();
+            data.PageCellSize = source.PageCellSize;
+            data.PageCellCount = source.PageCellCount;
+            return data;
         }
 
 #if UNITY_EDITOR
@@ -146,22 +159,22 @@ namespace MushaLib.UI.DQ.MapEditor
                         mapData.PageCellSize = obj.PageCellSize;
                         mapData.PageCellCount = obj.PageCellCount;
                         mapData.AtlasKeys = new List<string>();
-                        mapData.ChipDatas = obj.ChipDatas
-                            .Select((chip, i) =>
+                        mapData.ChipDatas = obj.Sprites
+                            .Select((sprite, i) =>
                             {
-                                var chipData = new MapChipData();
-                                chipData.Index = i;
-                                chipData.CollisionNum = chip.CollisionNum;
+                                MapChipData chipData = null;
 
-                                if (chip.Sprite != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(chip.Sprite, out string guid, out long localId))
+                                if (sprite != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(sprite, out string guid, out long localId))
                                 {
+                                    chipData = new MapChipData();
+                                    chipData.Index = i;
                                     chipData.SpriteKey = guid;
 
                                     // アトラスに含まれているかどうかをチェック
-                                    var atlas = m_CachedAtlasses.FirstOrDefault(x => x.CanBindTo(chip.Sprite));
+                                    var atlas = m_CachedAtlasses.FirstOrDefault(x => x.CanBindTo(sprite));
                                     if (atlas != null && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(atlas, out guid, out localId))
                                     {
-                                        chipData.SpriteKey = chip.Sprite.name;
+                                        chipData.SpriteKey = sprite.name;
                                         chipData.AtlasId = mapData.AtlasKeys.IndexOf(guid);
                                         if (chipData.AtlasId < 0)
                                         {
@@ -173,6 +186,7 @@ namespace MushaLib.UI.DQ.MapEditor
 
                                 return chipData;
                             })
+                            .Where(x => x != null)
                             .ToArray();
 
                         // Json出力

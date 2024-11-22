@@ -658,6 +658,7 @@ MonoBehaviour:
   m_ScrollView: {fileID: 1264851161}
   m_CurrentSpriteImage: {fileID: 1011885123}
   m_SaveDirectory: {fileID: 0}
+  m_OptionDataDirectory: {fileID: 0}
 --- !u!4 &1841462553
 Transform:
   m_ObjectHideFlags: 0

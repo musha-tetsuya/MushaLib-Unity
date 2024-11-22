@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using MushaLib.StateManagement;
+using MushaLib.UI.DQ.MapEditor.State;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -50,24 +51,15 @@ namespace MushaLib.UI.DQ.MapEditor
         private DefaultAsset m_SaveDirectory;
 
         /// <summary>
+        /// オプションデータディレクトリ
+        /// </summary>
+        [SerializeField]
+        private DefaultAsset m_OptionDataDirectory;
+
+        /// <summary>
         /// ステート管理
         /// </summary>
         private ValueStateManager<MapEditor> m_StateManager;
-
-        /// <summary>
-        /// マップサイズ
-        /// </summary>
-        public Vector2Int NewMapSize => m_NewMapSize;
-
-        /// <summary>
-        /// 新規マップのページ内セルサイズ
-        /// </summary>
-        public Vector2 NewMapPageCellSize => m_NewMapPageCellSize;
-
-        /// <summary>
-        /// 新規マップのページ内セル数
-        /// </summary>
-        public Vector2Int NewMapPageCellCount => m_NewMapPageCellCount;
 
         /// <summary>
         /// 無限スクロールビュー
@@ -82,7 +74,22 @@ namespace MushaLib.UI.DQ.MapEditor
         /// <summary>
         /// 保存先ディレクトリ
         /// </summary>
-        public DefaultAsset SaveDirectory => m_SaveDirectory;
+        public string SaveDirectory => m_SaveDirectory != null ? AssetDatabase.GetAssetPath(m_SaveDirectory) : "";
+
+        /// <summary>
+        /// オプションデータディレクトリ
+        /// </summary>
+        public string OptionDataDirectory => m_OptionDataDirectory != null ? AssetDatabase.GetAssetPath(m_OptionDataDirectory) : "";
+
+        /// <summary>
+        /// 編集データ
+        /// </summary>
+        public MapEditorData EditorData { get; set; }
+
+        /// <summary>
+        /// オプションデータ
+        /// </summary>
+        public int[] OptionData { get; set; }
 
         /// <summary>
         /// Start
@@ -91,7 +98,41 @@ namespace MushaLib.UI.DQ.MapEditor
         {
             m_StateManager = new(this);
             m_StateManager.AddTo(destroyCancellationToken);
-            m_StateManager.ChangeState(new State.SelectNewOrLoadState()).Forget();
+
+            if (EditorUtility.DisplayDialog("MapEditor", "マップデータ編集", "Load", "New"))
+            {
+                var selectLoadDataState = new SelectLoadDataState();
+
+                // ロードするデータの選択ステートへ
+                m_StateManager
+                    .PushState(selectLoadDataState, () =>
+                    {
+                        // データが選択された？
+                        if (selectLoadDataState.SelectedEditorData != null)
+                        {
+                            EditorData = MapEditorData.Copy(selectLoadDataState.SelectedEditorData);
+
+                            OptionData = new int[EditorData.Sprites.Length];
+
+                            // 編集モード選択ステートへ
+                            m_StateManager.ChangeState(new SelectEditModeState()).Forget();
+                        }
+                    })
+                    .Forget();
+            }
+            else
+            {
+                // 新規作成
+                EditorData = ScriptableObject.CreateInstance<MapEditorData>();
+                EditorData.Size = m_NewMapSize;
+                EditorData.Sprites = new Sprite[m_NewMapSize.x * m_NewMapSize.y];
+                EditorData.PageCellSize = m_NewMapPageCellSize;
+                EditorData.PageCellCount = m_NewMapPageCellCount;
+
+                OptionData = new int[EditorData.Sprites.Length];
+
+                m_StateManager.ChangeState(new SelectEditModeState()).Forget();
+            }
         }
 
         /// <summary>

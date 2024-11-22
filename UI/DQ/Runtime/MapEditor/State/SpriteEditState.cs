@@ -3,6 +3,7 @@ using MushaLib.StateManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,22 +15,9 @@ namespace MushaLib.UI.DQ.MapEditor.State
     internal class SpriteEditState : ValueStateBase<MapEditor>, IGUIState, IElementClickHandler
     {
         /// <summary>
-        /// マップ編集データ
-        /// </summary>
-        private readonly MapEditorData m_EditorData;
-
-        /// <summary>
         /// Ctrlキー入力監視
         /// </summary>
         private InputAction m_CtrlAction;
-
-        /// <summary>
-        /// construct
-        /// </summary>
-        public SpriteEditState(MapEditorData editorData)
-        {
-            m_EditorData = editorData;
-        }
 
         /// <summary>
         /// 開始
@@ -64,6 +52,34 @@ namespace MushaLib.UI.DQ.MapEditor.State
             {
                 StateManager.PopState();
             }
+
+            if (GUILayout.Button("Save", GUILayout.ExpandWidth(false)))
+            {
+                var path = EditorUtility.SaveFilePanelInProject("Save MapData", "", "asset", "", Value.SaveDirectory);
+
+                if (!string.IsNullOrEmpty(path))
+                {
+                    var oldEditorData = AssetDatabase.LoadAssetAtPath<MapEditorData>(path);
+                    if (oldEditorData == null)
+                    {
+                        // 新規保存
+                        AssetDatabase.CreateAsset(Value.EditorData, path);
+                    }
+                    else
+                    {
+                        // 上書き保存
+                        oldEditorData.Size = Value.EditorData.Size;
+                        oldEditorData.Sprites = Value.EditorData.Sprites;
+                        oldEditorData.PageCellSize = Value.EditorData.PageCellSize;
+                        oldEditorData.PageCellCount = Value.EditorData.PageCellCount;
+                        EditorUtility.SetDirty(oldEditorData);
+                        AssetDatabase.SaveAssetIfDirty(oldEditorData);
+                    }
+
+                    // 上書きされないよう新規インスタンスに
+                    Value.EditorData = MapEditorData.Copy(Value.EditorData);
+                }
+            }
         }
 
         /// <summary>
@@ -74,7 +90,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
             if (m_CtrlAction.ReadValue<float>() > 0)
             {
                 // 一つ前のスプライトを貼り付け
-                m_EditorData.ChipDatas[index].Sprite = view.Image.sprite = Value.CurrentSpriteImage.sprite;
+                Value.EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite;
             }
             else
             {
@@ -87,7 +103,7 @@ namespace MushaLib.UI.DQ.MapEditor.State
                     .PushState(selectSpriteState, () =>
                     {
                         // 選択したスプライトを貼り付け
-                        m_EditorData.ChipDatas[index].Sprite = view.Image.sprite = Value.CurrentSpriteImage.sprite = selectSpriteState.SelectedSprite;
+                        Value.EditorData.Sprites[index] = view.Image.sprite = Value.CurrentSpriteImage.sprite = selectSpriteState.SelectedSprite;
 
                         m_CtrlAction.Enable();
                     })
