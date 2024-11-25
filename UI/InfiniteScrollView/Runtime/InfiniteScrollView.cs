@@ -1100,6 +1100,45 @@ namespace MushaLib.UI.InfiniteScrollView
         }
 
         /// <summary>
+        /// 指定ワールド座標が属する要素を取得
+        /// </summary>
+        public IScrollElement GetElementAtWorldPoint(Vector3 worldPoint)
+        {
+            if (m_ScrollElements != null)
+            {
+                var corners = new Vector3[4];
+
+                for (int y = 0; y < m_ScrollElementLength.y; y++)
+                {
+                    for (int x = 0; x < m_ScrollElementLength.x; x++)
+                    {
+                        m_ScrollElements[y, x].RectTransform.GetWorldCorners(corners);
+
+                        if (x == 0)
+                        {
+                            var minY = Mathf.Min(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+                            var maxY = Mathf.Max(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+
+                            if (worldPoint.y < minY || maxY < worldPoint.y)
+                            {
+                                break;
+                            }
+                        }
+
+                        var minX = Mathf.Min(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+                        var maxX = Mathf.Max(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+
+                        if (minX <= worldPoint.x && worldPoint.x <= maxX)
+                        {
+                            return m_ScrollElements[y, x];
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 指定座標にジャンプ
         /// </summary>
         public void JumpToPosition(Vector2 targetPosition)
