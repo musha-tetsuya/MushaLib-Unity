@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using MushaLib.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -136,7 +137,7 @@ namespace MushaLib.Localization
                 localizedString.TableReference = LocalizationSettings.StringDatabase.DefaultTable;
             }
 
-            m_StringBuilders.Add(() => localizedString.GetLocalizedStringAsync().ToUniTask(cancellationToken: cancellationToken));
+            m_StringBuilders.Add(() => localizedString.GetLocalizedStringAndReleaseAsync(cancellationToken));
         }
 
         /// <summary>

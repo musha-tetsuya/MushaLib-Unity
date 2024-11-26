@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using MushaLib.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -30,7 +31,7 @@ namespace MushaLib.DQ.MessageWindow.Events
         /// </summary>
         public override async UniTask<string> GetString(CancellationToken cancellationToken)
         {
-            return await m_LocalizedString.GetLocalizedStringAsync().ToUniTask(cancellationToken: cancellationToken);
+            return await m_LocalizedString.GetLocalizedStringAndReleaseAsync(cancellationToken);
         }
     }
 }

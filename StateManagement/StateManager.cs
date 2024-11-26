@@ -60,10 +60,10 @@ namespace MushaLib.StateManagement
                  
                     await this.CurrentState.StartAsync(cts.Token);
                 }
-                catch (Exception ex)
+                catch
                 {
                     await ChangeState(null, cancellationToken);
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -86,10 +86,10 @@ namespace MushaLib.StateManagement
 
                     await this.CurrentState.StartAsync(cts.Token);
                 }
-                catch (Exception ex)
+                catch
                 {
                     await ChangeState(null, cancellationToken);
-                    throw ex;
+                    throw;
                 }
             }
         }

@@ -235,7 +235,7 @@ namespace MushaLib.DQ.MessageWindow
                     // イベント実行
                     await m_UncompletedEvents[0].Run(this, runCancellation.Token);
                 }
-                catch (Exception ex)
+                catch
                 {
                     // 言語切り替えによってキャンセルされた？
                     if (localeCancelationToken.IsCancellationRequested)
@@ -251,7 +251,7 @@ namespace MushaLib.DQ.MessageWindow
                         continue;
                     }
 
-                    throw ex;
+                    throw;
                 }
 
                 if (m_UncompletedEvents[0] is Events.IStringEvent stringEvent)
