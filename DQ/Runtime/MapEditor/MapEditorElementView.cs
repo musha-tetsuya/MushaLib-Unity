@@ -1,4 +1,4 @@
-using MushaLib.UI.InfiniteScrollView;
+using MushaLib.UI.InfiniteScroll;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;

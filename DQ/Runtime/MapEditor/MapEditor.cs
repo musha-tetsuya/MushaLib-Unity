@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 using MushaLib.StateManagement;
-using MushaLib.UI.InfiniteScrollView;
+using MushaLib.UI.InfiniteScroll;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
