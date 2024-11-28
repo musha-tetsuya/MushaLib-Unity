@@ -10,8 +10,8 @@ namespace MushaLib.DQ.PlayerMovement
     public interface ICollisionDataProvider
     {
         /// <summary>
-        /// 指定ワールド座標のコリジョンデータ取得
+        /// 指定ローカル座標のコリジョンデータ取得
         /// </summary>
-        int GetCollisionDataAtWorldPoint(Vector3 worldPoint);
+        int GetCollisionDataAtLocalPoint(Vector2 localPoint);
     }
 }

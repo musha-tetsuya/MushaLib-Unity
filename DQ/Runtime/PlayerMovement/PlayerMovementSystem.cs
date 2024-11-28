@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using MushaLib.UI.VirtualPad;
+using MushaLib.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -76,11 +77,6 @@ namespace MushaLib.DQ.PlayerMovement
         private bool m_IsMoving;
 
         /// <summary>
-        /// 現在のコリジョンレベル
-        /// </summary>
-        private int m_CurrentCollisionLevel;
-
-        /// <summary>
         /// 移動通知
         /// </summary>
         public IObservable<Vector2> OnMove => m_OnMove;
@@ -104,8 +100,6 @@ namespace MushaLib.DQ.PlayerMovement
             m_PlayerWorldRectSize = corners[2] - corners[0];
             m_PlayerWorldPositionOffset.x = m_PlayerWorldRectSize.x * (0.5f - m_PlayerRectTransform.pivot.x);
             m_PlayerWorldPositionOffset.y = m_PlayerWorldRectSize.y * (0.5f - m_PlayerRectTransform.pivot.y);
-
-            m_CurrentCollisionLevel = m_CollisionDataProvider.GetCollisionDataAtWorldPoint(m_PlayerRectTransform.position + m_PlayerWorldPositionOffset);
         }
 
         /// <summary>
@@ -160,13 +154,16 @@ namespace MushaLib.DQ.PlayerMovement
                 var buttonType = m_PressedButtonTypes[0];
                 var direction = DirectionTable[buttonType];
 
-                // 移動先のコリジョンレベルを取得
-                var playerWorldPosition = m_PlayerRectTransform.position + m_PlayerWorldPositionOffset;
-                var worldStepDistance = Vector3.Scale(direction, m_PlayerWorldRectSize);
-                var nextCollisionLevel = m_CollisionDataProvider.GetCollisionDataAtWorldPoint(playerWorldPosition + worldStepDistance);
+                // 現在のローカル座標とコリジョンレベル
+                var currentLocalPoint = m_PlayerRectTransform.GetRectCenter();
+                var currentCollisionLevel = m_CollisionDataProvider.GetCollisionDataAtLocalPoint(currentLocalPoint);
+
+                // 移動先のローカル座標とコリジョンレベル
+                var nextLocalPoint = currentLocalPoint + direction * m_Settings.StepDistance;
+                var nextCollisionLevel = m_CollisionDataProvider.GetCollisionDataAtLocalPoint(nextLocalPoint);
 
                 // 移動不可なら待機後リトライ
-                if (Mathf.Abs(nextCollisionLevel - m_CurrentCollisionLevel) > m_Settings.CollisionThreshold)
+                if (Mathf.Abs(nextCollisionLevel - currentCollisionLevel) > m_Settings.CollisionThreshold)
                 {
                     // 移動失敗通知
                     m_OnFailed.OnNext(Unit.Default);
@@ -174,8 +171,6 @@ namespace MushaLib.DQ.PlayerMovement
                     await UniTask.Delay((int)(m_Settings.MoveRetryInterval * 1000), cancellationToken: cancellationToken);
                     continue;
                 }
-
-                m_CurrentCollisionLevel = nextCollisionLevel;
 
                 // 移動
                 var startPosition = m_PlayerRectTransform.anchoredPosition;
