@@ -1,9 +1,8 @@
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using System.Threading;
 using TMPro;
 using UniRx;
@@ -56,9 +55,10 @@ namespace MushaLib.DQ.MessageWindow
         private Arrow m_Arrow;
 
         /// <summary>
-        /// 言語切り替え中かどうか
+        /// クリック待ちイベント提供
         /// </summary>
-        private bool m_IsChangingLocale;
+        [SerializeField]
+        private Events.MessageWindowEventProvider m_WaitClickEventProvider;
 
         /// <summary>
         /// 言語切り替え待機中かどうか
@@ -66,14 +66,14 @@ namespace MushaLib.DQ.MessageWindow
         private bool m_IsWaitingLocaleChange;
 
         /// <summary>
+        /// 一行の高さ
+        /// </summary>
+        private float m_SingleLineHeight;
+
+        /// <summary>
         /// 未完了イベント
         /// </summary>
         private List<Events.IMessageWindowEvent> m_UncompletedEvents = new();
-
-        /// <summary>
-        /// 完了済文字列イベント
-        /// </summary>
-        private List<Events.IStringEvent> m_CompletedStringEvents = new();
 
         /// <summary>
         /// 言語切り替えによるキャンセルトークン
@@ -126,6 +126,9 @@ namespace MushaLib.DQ.MessageWindow
         private void Awake()
         {
             LocalizationSettings.SelectedLocaleChanged += OnSelectedLocaleChanged;
+
+            // 一行の高さ取得
+            m_SingleLineHeight = m_Text.GetPreferredValues("\n", m_TextArea.rect.width, m_TextArea.rect.height).y;
         }
 
         /// <summary>
@@ -139,38 +142,6 @@ namespace MushaLib.DQ.MessageWindow
 
             UniTask.Void(async () =>
             {
-                // 完了済文字列イベントがあるなら
-                if (m_CompletedStringEvents.Count > 0)
-                {
-                    m_IsChangingLocale = true;
-
-                    string[] messages = null;
-
-                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(m_LocaleCancellation.Token, m_UserCancellation.Token, destroyCancellationToken);
-
-                    try
-                    {
-                        // 完了済文字列イベントを再構築
-                        messages = await UniTask.WhenAll(m_CompletedStringEvents.Select(x => x.GetString(cts.Token)));
-                    }
-                    catch
-                    {
-                        return;
-                    }
-
-                    m_Text.text = messages.Aggregate((a, b) => a + b);
-
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(m_Text.rectTransform);
-
-                    // テキスト位置調整
-                    var textPos = m_Text.rectTransform.anchoredPosition;
-                    textPos.y = Mathf.Max(0f, m_Text.rectTransform.rect.height - m_TextArea.rect.height);
-                    m_Text.rectTransform.anchoredPosition = textPos;
-
-                    // 言語切り替え完了
-                    m_IsChangingLocale = false;
-                }
-
                 // 未完了イベントがあるなら
                 if (m_UncompletedEvents.Count > 0)
                 {
@@ -208,15 +179,6 @@ namespace MushaLib.DQ.MessageWindow
         /// </summary>
         public async UniTask RunEvent(IEnumerable<Events.IMessageWindowEvent> messageEvents, CancellationToken cancellationToken = default)
         {
-            // 言語切り替え中？
-            if (m_IsChangingLocale)
-            {
-                using var waitLocaleChangeCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, destroyCancellationToken);
-
-                // 言語切り替え完了を待つ
-                await UniTask.WaitUntil(() => !m_IsChangingLocale, cancellationToken: waitLocaleChangeCancellation.Token);
-            }
-
             m_UserCancellation?.Cancel();
             m_UserCancellation?.Dispose();
             m_UserCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -254,12 +216,6 @@ namespace MushaLib.DQ.MessageWindow
                     throw;
                 }
 
-                if (m_UncompletedEvents[0] is Events.IStringEvent stringEvent)
-                {
-                    // 完了した文字列イベントをリストに登録
-                    m_CompletedStringEvents.Add(stringEvent);
-                }
-
                 // イベント完了
                 m_UncompletedEvents.RemoveAt(0);
             }
@@ -270,38 +226,60 @@ namespace MushaLib.DQ.MessageWindow
         /// </summary>
         public async UniTask ShowMessage(string message, CancellationToken cancellationToken)
         {
-            int index = 0;
-            var textPos = m_Text.rectTransform.anchoredPosition;
+            // 現在のテキスト高
+            var textHeight = m_Text.GetPreferredValues().y;
 
-            while (index < message.Length)
+            // 現在のテキストがエリア外に出るまで一行ずつスクロール
+            while (Mathf.Abs(textHeight - m_Text.rectTransform.anchoredPosition.y) >= 1f)
             {
-                m_Text.text += message[index];
+                var startPos = m_Text.rectTransform.anchoredPosition;
+                var endPos = startPos + Vector2.up * m_SingleLineHeight;
+                var time = 0f;
+                    
+                while (time < m_ScrollDuration)
+                {
+                    m_Text.rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, time / m_ScrollDuration);
 
-                index++;
+                    time += Time.deltaTime;
+
+                    await UniTask.NextFrame(cancellationToken);
+                }
+
+                m_Text.rectTransform.anchoredPosition = endPos;
+            }
+
+            // テキストクリア
+            m_Text.text = null;
+            m_Text.rectTransform.anchoredPosition = Vector2.zero;
+
+            var sb = new StringBuilder(message.Length);
+
+            for (int i = 0; i < message.Length; i++)
+            {
+                // 一文字追加
+                sb.Append(message[i]);
+
+                // 一文字追加した場合のテキスト高
+                textHeight = m_Text.GetPreferredValues(sb.ToString(), m_TextArea.rect.width, m_TextArea.rect.height).y;
+
+                // エリアからはみ出しそう
+                if (textHeight > m_TextArea.rect.height)
+                {
+                    // クリック待ち
+                    await (m_WaitClickEventProvider?.GetEvent() ?? new Events.WaitClickEvent()).Run(this, cancellationToken);
+
+                    // 続きからメッセージ表示
+                    await ShowMessage(message[i..], cancellationToken);
+                    break;
+                }
+
+                // テキスト更新
+                m_Text.text = sb.ToString();
 
                 if (m_Interval > 0f)
                 {
+                    // 次の文字表示まで少し待機
                     await UniTask.Delay((int)(m_Interval * 1000), cancellationToken: cancellationToken);
-                }
-
-                // テキスト高が表示高を超えたらスクロールさせる
-                var textHeight = LayoutUtility.GetPreferredHeight(m_Text.rectTransform);
-                if (textHeight - textPos.y > m_TextArea.rect.height)
-                {
-                    var time = 0f;
-                    var endTextPos = textPos;
-                    endTextPos.y = textHeight - m_TextArea.rect.height;
-
-                    while (time < m_ScrollDuration)
-                    {
-                        time += Time.deltaTime;
-
-                        m_Text.rectTransform.anchoredPosition = Vector2.Lerp(textPos, endTextPos, time / m_ScrollDuration);
-
-                        await UniTask.Yield(cancellationToken);
-                    }
-
-                    textPos = endTextPos;
                 }
             }
         }
@@ -314,11 +292,9 @@ namespace MushaLib.DQ.MessageWindow
             m_Text.text = null;
             m_Text.rectTransform.anchoredPosition = Vector2.zero;
 
-            m_IsChangingLocale = false;
             m_IsWaitingLocaleChange = false;
 
             m_UncompletedEvents.Clear();
-            m_CompletedStringEvents.Clear();
 
             m_LocaleCancellation?.Cancel();
             m_LocaleCancellation?.Dispose();
