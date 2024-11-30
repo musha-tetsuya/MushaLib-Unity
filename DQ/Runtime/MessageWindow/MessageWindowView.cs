@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using TMPro;
@@ -226,55 +227,59 @@ namespace MushaLib.DQ.MessageWindow
         /// </summary>
         public async UniTask ShowMessage(string message, CancellationToken cancellationToken)
         {
-            // 現在のテキスト高
-            var textHeight = m_Text.GetPreferredValues().y;
+            // 旧テキスト高
+            var oldTextHeight = m_Text.GetPreferredValues().y - m_Text.rectTransform.anchoredPosition.y;
 
-            // 現在のテキストがエリア外に出るまで一行ずつスクロール
-            while (Mathf.Abs(textHeight - m_Text.rectTransform.anchoredPosition.y) >= 1f)
+            if (!string.IsNullOrEmpty(m_Text.text) && m_Text.text.Last() != '\n')
             {
-                var startPos = m_Text.rectTransform.anchoredPosition;
-                var endPos = startPos + Vector2.up * m_SingleLineHeight;
-                var time = 0f;
-                    
-                while (time < m_ScrollDuration)
-                {
-                    m_Text.rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, time / m_ScrollDuration);
-
-                    time += Time.deltaTime;
-
-                    await UniTask.NextFrame(cancellationToken);
-                }
-
-                m_Text.rectTransform.anchoredPosition = endPos;
+                // 改行しておく
+                m_Text.text += "\n";
             }
-
-            // テキストクリア
-            m_Text.text = null;
-            m_Text.rectTransform.anchoredPosition = Vector2.zero;
 
             var sb = new StringBuilder(message.Length);
 
+            // 一文字ずつ追加していく
             for (int i = 0; i < message.Length; i++)
             {
-                // 一文字追加
                 sb.Append(message[i]);
 
-                // 一文字追加した場合のテキスト高
-                textHeight = m_Text.GetPreferredValues(sb.ToString(), m_TextArea.rect.width, m_TextArea.rect.height).y;
+                // 追加テキスト高
+                var addTextHeight = m_Text.GetPreferredValues(sb.ToString(), m_TextArea.rect.width, m_TextArea.rect.height).y;
 
-                // エリアからはみ出しそう
-                if (textHeight > m_TextArea.rect.height)
+                // まだ旧テキストがエリア内に表示されている
+                if (oldTextHeight > 0f)
+                {
+                    // テキストが追加されることでエリアからはみ出しそう
+                    if (oldTextHeight + addTextHeight > m_TextArea.rect.height)
+                    {
+                        // 一行スクロール
+                        await ScrollToNextLine(cancellationToken);
+
+                        oldTextHeight -= m_SingleLineHeight;
+
+                        // 誤差1ピクセル未満になったら旧テキストは無くなったと見なす
+                        if (Mathf.Abs(oldTextHeight) < 1f)
+                        {
+                            oldTextHeight = 0f;
+                            m_Text.text = sb.ToString();
+                            m_Text.rectTransform.anchoredPosition = Vector2.zero;
+                            continue;
+                        }
+                    }
+                }
+                // 追加するテキストだけでエリアからはみ出しそう
+                else if (addTextHeight > m_TextArea.rect.height)
                 {
                     // クリック待ち
                     await (m_WaitClickEventProvider?.GetEvent() ?? new Events.WaitClickEvent()).Run(this, cancellationToken);
 
-                    // 続きからメッセージ表示
+                    // 続きから表示
                     await ShowMessage(message[i..], cancellationToken);
-                    break;
+                    return;
                 }
 
-                // テキスト更新
-                m_Text.text = sb.ToString();
+                // テキスト追加
+                m_Text.text += message[i];
 
                 if (m_Interval > 0f)
                 {
@@ -282,6 +287,41 @@ namespace MushaLib.DQ.MessageWindow
                     await UniTask.Delay((int)(m_Interval * 1000), cancellationToken: cancellationToken);
                 }
             }
+
+            // 旧テキストがまだエリア内に残っているなら
+            while (oldTextHeight > 0f)
+            {
+                // 一行スクロール
+                await ScrollToNextLine(cancellationToken);
+
+                oldTextHeight -= m_SingleLineHeight;
+
+                // 誤差1ピクセル未満になったら旧テキストは無くなったと見なす
+                if (Mathf.Abs(oldTextHeight) < 1f)
+                {
+                    oldTextHeight = 0f;
+                    m_Text.text = sb.ToString();
+                    m_Text.rectTransform.anchoredPosition = Vector2.zero;
+                }
+            }
+        }
+
+        private async UniTask ScrollToNextLine(CancellationToken cancellationToken)
+        {
+            var startPos = m_Text.rectTransform.anchoredPosition;
+            var endPos = startPos + Vector2.up * m_SingleLineHeight;
+            var time = 0f;
+
+            while (time < m_ScrollDuration)
+            {
+                m_Text.rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, time / m_ScrollDuration);
+
+                time += Time.deltaTime;
+
+                await UniTask.NextFrame(cancellationToken);
+            }
+
+            m_Text.rectTransform.anchoredPosition = endPos;
         }
 
         /// <summary>
