@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using MushaLib.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,6 +57,12 @@ namespace MushaLib.DQ.MessageWindow
         private Arrow m_Arrow;
 
         /// <summary>
+        /// 名前ウィンドウ
+        /// </summary>
+        [SerializeField]
+        private TextWidthFitter m_NameText;
+
+        /// <summary>
         /// クリック待ちイベント提供
         /// </summary>
         [SerializeField]
@@ -99,6 +106,11 @@ namespace MushaLib.DQ.MessageWindow
         /// 矢印
         /// </summary>
         public Arrow Arrow => m_Arrow;
+
+        /// <summary>
+        /// 名前ウィンドウ
+        /// </summary>
+        public TextWidthFitter NameText => m_NameText;
 
         /// <summary>
         /// クリック時
@@ -306,6 +318,9 @@ namespace MushaLib.DQ.MessageWindow
             }
         }
 
+        /// <summary>
+        /// 一行スクロール
+        /// </summary>
         private async UniTask ScrollToNextLine(CancellationToken cancellationToken)
         {
             var startPos = m_Text.rectTransform.anchoredPosition;
