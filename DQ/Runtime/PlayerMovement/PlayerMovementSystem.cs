@@ -59,7 +59,7 @@ namespace MushaLib.DQ.PlayerMovement
         /// <summary>
         /// 移動通知
         /// </summary>
-        private Subject<Vector2> m_OnMove = new();
+        private Subject<PlayerMovementData> m_OnMove = new();
 
         /// <summary>
         /// 移動失敗通知
@@ -77,9 +77,14 @@ namespace MushaLib.DQ.PlayerMovement
         private bool m_IsMoving;
 
         /// <summary>
+        /// 移動データ
+        /// </summary>
+        private PlayerMovementData m_PlayerMovementData = new();
+
+        /// <summary>
         /// 移動通知
         /// </summary>
-        public IObservable<Vector2> OnMove => m_OnMove;
+        public IObservable<PlayerMovementData> OnMove => m_OnMove;
 
         /// <summary>
         /// 移動失敗通知
@@ -178,22 +183,29 @@ namespace MushaLib.DQ.PlayerMovement
                 var duration = (endPosition - startPosition).magnitude / m_Settings.MoveSpeedPerSec;
                 var time = 0f;
 
+                // 移動開始通知
+                m_PlayerMovementData.State = PlayerMovementState.Started;
+                m_PlayerMovementData.StartPosition = startPosition;
+                m_PlayerMovementData.EndPosition = endPosition;
+                m_PlayerMovementData.CurrentPosition = m_PlayerRectTransform.anchoredPosition;
+                m_OnMove.OnNext(m_PlayerMovementData);
+
                 while (time < duration)
                 {
-                    m_PlayerRectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, time / duration);
-
                     // 移動通知
-                    m_OnMove.OnNext(m_PlayerRectTransform.anchoredPosition);
+                    m_PlayerMovementData.State = PlayerMovementState.Moving;
+                    m_PlayerMovementData.CurrentPosition = m_PlayerRectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, time / duration);
+                    m_OnMove.OnNext(m_PlayerMovementData);
 
                     time += Time.deltaTime;
 
                     await UniTask.NextFrame(cancellationToken);
                 }
 
-                m_PlayerRectTransform.anchoredPosition = endPosition;
-
-                // 移動通知
-                m_OnMove.OnNext(m_PlayerRectTransform.anchoredPosition);
+                // 移動完了通知
+                m_PlayerMovementData.State = PlayerMovementState.Finished;
+                m_PlayerMovementData.CurrentPosition = m_PlayerRectTransform.anchoredPosition = endPosition;
+                m_OnMove.OnNext(m_PlayerMovementData);
             }
 
             m_IsMoving = false;
