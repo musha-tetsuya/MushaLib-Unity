@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.DQ.PlayerMovement
+namespace MushaLib.DQ.CharacterMovement
 {
     /// <summary>
-    /// プレイヤー移動設定
+    /// キャラクター移動設定
     /// </summary>
-    public interface IPlayerMovementSettings
+    public interface ICharacterMovementSettings
     {
         /// <summary>
         /// 移動処理のリトライ間隔

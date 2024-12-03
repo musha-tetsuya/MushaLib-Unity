@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.DQ.PlayerMovement
+namespace MushaLib.DQ.CharacterMovement
 {
     /// <summary>
-    /// プレイヤー移動状態
+    /// キャラクター移動状態
     /// </summary>
-    public enum PlayerMovementState
+    public enum CharacterMovementState
     {
         /// <summary>
         /// 移動開始時

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.DQ.PlayerMovement
+namespace MushaLib.DQ.CharacterMovement
 {
     /// <summary>
     /// コリジョンデータ提供インターフェース

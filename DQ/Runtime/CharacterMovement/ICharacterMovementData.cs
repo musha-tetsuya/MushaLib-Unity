@@ -2,31 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MushaLib.DQ.PlayerMovement
+namespace MushaLib.DQ.CharacterMovement
 {
     /// <summary>
-    /// プレイヤー移動データ
+    /// キャラクター移動データインターフェース
     /// </summary>
-    public class PlayerMovementData
+    public interface ICharacterMovementData
     {
         /// <summary>
         /// 移動状況
         /// </summary>
-        public PlayerMovementState State { get; set; }
+        CharacterMovementState State { get; }
 
         /// <summary>
         /// 開始位置
         /// </summary>
-        public Vector2 StartPosition { get; set; }
+        Vector2 StartPosition { get; }
 
         /// <summary>
         /// 終了位置
         /// </summary>
-        public Vector2 EndPosition { get; set; }
+        Vector2 EndPosition { get; }
 
         /// <summary>
         /// 現在位置
         /// </summary>
-        public Vector2 CurrentPosition { get; set; }
+        Vector2 CurrentPosition { get; }
     }
 }
