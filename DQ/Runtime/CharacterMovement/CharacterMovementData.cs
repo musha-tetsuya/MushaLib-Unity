@@ -7,13 +7,8 @@ namespace MushaLib.DQ.CharacterMovement
     /// <summary>
     /// キャラクター移動データ
     /// </summary>
-    internal class CharacterMovementData : ICharacterMovementData
+    public struct CharacterMovementData
     {
-        /// <summary>
-        /// 移動状況
-        /// </summary>
-        public CharacterMovementState State { get; set; }
-
         /// <summary>
         /// 開始位置
         /// </summary>
@@ -25,8 +20,8 @@ namespace MushaLib.DQ.CharacterMovement
         public Vector2 EndPosition { get; set; }
 
         /// <summary>
-        /// 現在位置
+        /// 秒速
         /// </summary>
-        public Vector2 CurrentPosition { get; set; }
+        public float Speed { get; set; }
     }
 }

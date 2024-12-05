@@ -12,7 +12,7 @@ namespace MushaLib.Utilities
         /// <summary>
         /// 矩形の中心のローカル座標を取得
         /// </summary>
-        public static Vector2 GetRectCenter(this RectTransform rectTransform)
+        public static Vector2 GetLocalCenter(this RectTransform rectTransform)
         {
             var center = rectTransform.anchoredPosition;
             center.x += rectTransform.sizeDelta.x * (0.5f - rectTransform.pivot.x);
@@ -23,7 +23,7 @@ namespace MushaLib.Utilities
         /// <summary>
         /// 矩形の左上のローカル座標を取得
         /// </summary>
-        public static Vector2 GetRectLeftTop(this RectTransform rectTransform)
+        public static Vector2 GetLocalLeftTop(this RectTransform rectTransform)
         {
             var leftTop = rectTransform.anchoredPosition;
             leftTop.x += rectTransform.sizeDelta.x * (0f - rectTransform.pivot.x);
@@ -34,7 +34,7 @@ namespace MushaLib.Utilities
         /// <summary>
         /// 矩形の右下のローカル座標を取得
         /// </summary>
-        public static Vector2 GetRectRightBottom(this RectTransform rectTransform)
+        public static Vector2 GetLocalRightBottom(this RectTransform rectTransform)
         {
             var rightBottom = rectTransform.anchoredPosition;
             rightBottom.x += rectTransform.sizeDelta.x * (1f - rectTransform.pivot.x);
