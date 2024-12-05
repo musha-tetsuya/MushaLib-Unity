@@ -143,11 +143,8 @@ namespace MushaLib.DQ.CharacterMovement
                 var buttonType = m_PressedButtonTypes[0];
                 var direction = DirectionTable[buttonType];
 
-                // 現在のローカル座標系での中心位置
-                var currentLocalCenter = CharacterRectTransform.GetLocalCenter();
-
                 // 移動不可なら待機後リトライ
-                if (!m_MovementEvaluator.EvaluateMovement(currentLocalCenter, direction, this, out var movementData))
+                if (!m_MovementEvaluator.EvaluateMovement(this, direction, out var movementData))
                 {
                     // 移動失敗通知
                     m_OnFailed.OnNext(Unit.Default);

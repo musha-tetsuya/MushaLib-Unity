@@ -10,8 +10,8 @@ namespace MushaLib.DQ.CharacterMovement
     public interface ICharacterMovementEvaluator
     {
         /// <summary>
-        /// 現在位置と移動方向を基に移動の可否を評価し、移動データを生成する
+        /// 移動の可否を評価し、移動データを生成する
         /// </summary>
-        bool EvaluateMovement(Vector2 currentLocalCenter, Vector2 direction, CharacterMovementSystem movementSystem, out CharacterMovementData movementData);
+        bool EvaluateMovement(CharacterMovementSystem movementSystem, Vector2 direction, out CharacterMovementData movementData);
     }
 }
