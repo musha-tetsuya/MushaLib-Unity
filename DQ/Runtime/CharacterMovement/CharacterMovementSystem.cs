@@ -44,7 +44,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動通知
         /// </summary>
-        private Subject<CharacterMovementStateData> m_OnMove = new();
+        private Subject<(CharacterMovementState state, CharacterMovementData movementData, Vector2 currentPosition)> m_OnMove = new();
 
         /// <summary>
         /// 移動失敗通知
@@ -62,19 +62,9 @@ namespace MushaLib.DQ.CharacterMovement
         private bool m_IsMoving;
 
         /// <summary>
-        /// 移動データ
-        /// </summary>
-        private CharacterMovementStateData m_MovementStateData = new();
-
-        /// <summary>
-        /// キャラクターのRectTransform
-        /// </summary>
-        public RectTransform CharacterRectTransform { get; }
-
-        /// <summary>
         /// 移動通知
         /// </summary>
-        public IObservable<CharacterMovementStateData> OnMove => m_OnMove;
+        public IObservable<(CharacterMovementState state, CharacterMovementData movementData, Vector2 currentPosition)> OnMove => m_OnMove;
 
         /// <summary>
         /// 移動失敗通知
@@ -84,9 +74,8 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// construct
         /// </summary>
-        public CharacterMovementSystem(RectTransform characterRectTransform, ICharacterMovementSettings settings, ICharacterMovementEvaluator movementEvaluator)
+        public CharacterMovementSystem(ICharacterMovementSettings settings, ICharacterMovementEvaluator movementEvaluator)
         {
-            CharacterRectTransform = characterRectTransform;
             m_Settings = settings;
             m_MovementEvaluator = movementEvaluator;
         }
@@ -158,18 +147,12 @@ namespace MushaLib.DQ.CharacterMovement
                 var time = 0f;
 
                 // 移動開始通知
-                m_MovementStateData.State = CharacterMovementState.Started;
-                m_MovementStateData.StartPosition = movementData.StartPosition;
-                m_MovementStateData.EndPosition = movementData.EndPosition;
-                m_MovementStateData.CurrentPosition = CharacterRectTransform.anchoredPosition;
-                m_OnMove.OnNext(m_MovementStateData);
+                m_OnMove.OnNext((CharacterMovementState.Started, movementData, movementData.StartPosition));
 
                 while (time < duration)
                 {
                     // 移動通知
-                    m_MovementStateData.State = CharacterMovementState.Moving;
-                    m_MovementStateData.CurrentPosition = CharacterRectTransform.anchoredPosition = Vector2.Lerp(movementData.StartPosition, movementData.EndPosition, time / duration);
-                    m_OnMove.OnNext(m_MovementStateData);
+                    m_OnMove.OnNext((CharacterMovementState.Moving, movementData, Vector2.Lerp(movementData.StartPosition, movementData.EndPosition, time / duration)));
 
                     time += Time.deltaTime;
 
@@ -177,9 +160,7 @@ namespace MushaLib.DQ.CharacterMovement
                 }
 
                 // 移動完了通知
-                m_MovementStateData.State = CharacterMovementState.Finished;
-                m_MovementStateData.CurrentPosition = CharacterRectTransform.anchoredPosition = movementData.EndPosition;
-                m_OnMove.OnNext(m_MovementStateData);
+                m_OnMove.OnNext((CharacterMovementState.Finished, movementData, movementData.EndPosition));
             }
 
             m_IsMoving = false;
