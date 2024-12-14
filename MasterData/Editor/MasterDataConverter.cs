@@ -398,15 +398,16 @@ namespace MushaLib.MasterData.Editor
                     // 変数型は小文字に
                     fi.type = fi.type.ToLower();
 
-                    // 変数名を先頭小文字に修正（idは全て小文字に）
-                    if (fi.name.Length == 1 || fi.name.Equals("id", StringComparison.OrdinalIgnoreCase))
-                    {
-                        fi.name = fi.name.ToLower();
-                    }
-                    else
-                    {
-                        fi.name = char.ToLower(fi.name[0]) + fi.name.Substring(1);
-                    }
+                }
+
+                // 変数名を先頭小文字に修正（idは全て小文字に）
+                if (fi.name.Length == 1 || fi.name.Equals("id", StringComparison.OrdinalIgnoreCase))
+                {
+                    fi.name = fi.name.ToLower();
+                }
+                else
+                {
+                    fi.name = char.ToLower(fi.name[0]) + fi.name.Substring(1);
                 }
 
                 fi.posX = x;
