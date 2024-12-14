@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UniRx;
 using UnityEngine;
 
@@ -47,7 +46,7 @@ namespace MushaLib.DQ.TextInput
         }
 
         /// <summary>
-        /// Dispose
+        /// 解放
         /// </summary>
         public override void Dispose()
         {
@@ -57,13 +56,13 @@ namespace MushaLib.DQ.TextInput
         }
 
         /// <summary>
-        /// 開始
+        /// 初期化
         /// </summary>
-        public override void Start(CancellationToken cancellationToken = default)
+        public override void Initialize()
         {
             m_View.SetTextTable(m_Model.TextTableProvider.GetTextTable());
 
-            base.Start(cancellationToken);
+            base.Initialize();
         }
 
         /// <summary>

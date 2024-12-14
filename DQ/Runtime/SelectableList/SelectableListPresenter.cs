@@ -1,9 +1,7 @@
-using Cysharp.Threading.Tasks;
 using MushaLib.UI.VirtualPad;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,9 +24,9 @@ namespace MushaLib.DQ.SelectableList
         private readonly SelectableListView m_View;
 
         /// <summary>
-        /// クリック購読のキャンセル
+        /// クリック購読の破棄
         /// </summary>
-        private CancellationTokenSource m_OnClickCancellation;
+        private IDisposable m_OnClickDisposable;
 
         /// <summary>
         /// 選択決定時
@@ -50,31 +48,27 @@ namespace MushaLib.DQ.SelectableList
         }
 
         /// <summary>
-        /// Dispose
+        /// 解放
         /// </summary>
         public virtual void Dispose()
         {
-            m_OnClickCancellation?.Cancel();
-            m_OnClickCancellation?.Dispose();
-            m_OnClickCancellation = null;
+            m_OnClickDisposable?.Dispose();
+            m_OnClickDisposable = null;
 
             m_OnSelected.Dispose();
         }
 
         /// <summary>
-        /// 開始
+        /// 初期化
         /// </summary>
-        public virtual void Start(CancellationToken cancellationToken = default)
+        public virtual void Initialize()
         {
-            m_OnClickCancellation?.Cancel();
-            m_OnClickCancellation?.Dispose();
-            m_OnClickCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-
             // ビュー初期化
             m_View.Initialize();
 
             // 要素クリック時
-            m_View.OnClick
+            m_OnClickDisposable?.Dispose();
+            m_OnClickDisposable = m_View.OnClick
                 .Subscribe(element =>
                 {
                     int index = m_View.Elements.IndexOf(element);
@@ -88,8 +82,7 @@ namespace MushaLib.DQ.SelectableList
                         // 選択決定を通知
                         InvokeOnSelected();
                     }
-                })
-                .AddTo(m_OnClickCancellation.Token);
+                });
 
             // 初期選択
             SetCurrentIndex(m_Model.StartIndex);
