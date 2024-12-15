@@ -47,7 +47,10 @@ namespace MushaLib.AddressableAssets
         /// </summary>
         public void Dispose()
         {
-            Addressables.Release(m_Handle);
+            if (m_Handle.IsValid())
+            {
+                Addressables.Release(m_Handle);
+            }
         }
 
         /// <summary>
