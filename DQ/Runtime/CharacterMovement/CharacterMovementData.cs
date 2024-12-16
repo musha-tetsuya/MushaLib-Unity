@@ -1,3 +1,4 @@
+using MushaLib.UI.VirtualPad;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,5 +24,10 @@ namespace MushaLib.DQ.CharacterMovement
         /// 秒速
         /// </summary>
         public float Speed { get; set; }
+
+        /// <summary>
+        /// 押されたボタンのタイプ
+        /// </summary>
+        public ButtonType PressedButtonType { get; set; }
     }
 }

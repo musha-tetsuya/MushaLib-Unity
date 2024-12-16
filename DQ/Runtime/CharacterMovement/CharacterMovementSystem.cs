@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using MushaLib.UI.VirtualPad;
-using MushaLib.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,17 +14,6 @@ namespace MushaLib.DQ.CharacterMovement
     /// </summary>
     public class CharacterMovementSystem : IDisposable
     {
-        /// <summary>
-        /// 入力方向から移動方向へのテーブル
-        /// </summary>
-        private static readonly IReadOnlyDictionary<ButtonType, Vector2> DirectionTable = new Dictionary<ButtonType, Vector2>
-        {
-            { ButtonType.Up, Vector2.up },
-            { ButtonType.Down, Vector2.down },
-            { ButtonType.Left, Vector2.left },
-            { ButtonType.Right, Vector2.right },
-        };
-
         /// <summary>
         /// 移動設定
         /// </summary>
@@ -49,7 +37,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動失敗通知
         /// </summary>
-        private Subject<(ButtonType buttonType, Vector2 direction)> m_OnFailed = new();
+        private Subject<CharacterMovementData> m_OnFailed = new();
 
         /// <summary>
         /// 押下中のボタンタイプリスト
@@ -69,7 +57,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動失敗通知
         /// </summary>
-        public IObservable<(ButtonType buttonType, Vector2 direction)> OnFailed => m_OnFailed;
+        public IObservable<CharacterMovementData> OnFailed => m_OnFailed;
 
         /// <summary>
         /// construct
@@ -98,7 +86,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// </summary>
         public void OnPadPress(ButtonType buttonType)
         {
-            if (DirectionTable.ContainsKey(buttonType))
+            if (buttonType is ButtonType.Up or ButtonType.Down or ButtonType.Left or ButtonType.Right)
             {
                 if (!m_PressedButtonTypes.Contains(buttonType))
                 {
@@ -130,13 +118,12 @@ namespace MushaLib.DQ.CharacterMovement
             while (m_PressedButtonTypes.Count > 0)
             {
                 var buttonType = m_PressedButtonTypes[0];
-                var direction = DirectionTable[buttonType];
 
                 // 移動不可なら待機後リトライ
-                if (!m_MovementEvaluator.EvaluateMovement(this, direction, out var movementData))
+                if (!m_MovementEvaluator.EvaluateMovement(this, buttonType, out var movementData))
                 {
                     // 移動失敗通知
-                    m_OnFailed.OnNext((buttonType, direction));
+                    m_OnFailed.OnNext(movementData);
 
                     await UniTask.Delay((int)(m_Settings.MoveRetryInterval * 1000), cancellationToken: cancellationToken);
                     continue;

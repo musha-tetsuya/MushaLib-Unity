@@ -1,3 +1,4 @@
+using MushaLib.UI.VirtualPad;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,6 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動の可否を評価し、移動データを生成する
         /// </summary>
-        bool EvaluateMovement(CharacterMovementSystem movementSystem, Vector2 direction, out CharacterMovementData movementData);
+        bool EvaluateMovement(CharacterMovementSystem movementSystem, ButtonType buttonType, out CharacterMovementData movementData);
     }
 }
