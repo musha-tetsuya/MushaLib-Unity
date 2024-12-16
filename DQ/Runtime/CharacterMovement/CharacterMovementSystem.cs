@@ -15,6 +15,17 @@ namespace MushaLib.DQ.CharacterMovement
     public class CharacterMovementSystem : IDisposable
     {
         /// <summary>
+        /// 入力方向から移動方向へのテーブル
+        /// </summary>
+        private static readonly IReadOnlyDictionary<ButtonType, Vector2> DirectionTable = new Dictionary<ButtonType, Vector2>
+        {
+            { ButtonType.Up, Vector2.up },
+            { ButtonType.Down, Vector2.down },
+            { ButtonType.Left, Vector2.left },
+            { ButtonType.Right, Vector2.right },
+        };
+
+        /// <summary>
         /// 移動設定
         /// </summary>
         private readonly ICharacterMovementSettings m_Settings;
@@ -37,7 +48,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動失敗通知
         /// </summary>
-        private Subject<CharacterMovementData> m_OnFailed = new();
+        private Subject<Unit> m_OnFailed = new();
 
         /// <summary>
         /// 押下中のボタンタイプリスト
@@ -57,7 +68,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動失敗通知
         /// </summary>
-        public IObservable<CharacterMovementData> OnFailed => m_OnFailed;
+        public IObservable<Unit> OnFailed => m_OnFailed;
 
         /// <summary>
         /// construct
@@ -86,7 +97,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// </summary>
         public void OnPadPress(ButtonType buttonType)
         {
-            if (buttonType is ButtonType.Up or ButtonType.Down or ButtonType.Left or ButtonType.Right)
+            if (DirectionTable.ContainsKey(buttonType))
             {
                 if (!m_PressedButtonTypes.Contains(buttonType))
                 {
@@ -118,12 +129,13 @@ namespace MushaLib.DQ.CharacterMovement
             while (m_PressedButtonTypes.Count > 0)
             {
                 var buttonType = m_PressedButtonTypes[0];
+                var direction = DirectionTable[buttonType];
 
                 // 移動不可なら待機後リトライ
-                if (!m_MovementEvaluator.EvaluateMovement(this, buttonType, out var movementData))
+                if (!m_MovementEvaluator.EvaluateMovement(this, direction, out var movementData))
                 {
                     // 移動失敗通知
-                    m_OnFailed.OnNext(movementData);
+                    m_OnFailed.OnNext(Unit.Default);
 
                     await UniTask.Delay((int)(m_Settings.MoveRetryInterval * 1000), cancellationToken: cancellationToken);
                     continue;
