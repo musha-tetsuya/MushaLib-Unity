@@ -49,7 +49,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動失敗通知
         /// </summary>
-        private Subject<Unit> m_OnFailed = new();
+        private Subject<(ButtonType buttonType, Vector2 direction)> m_OnFailed = new();
 
         /// <summary>
         /// 押下中のボタンタイプリスト
@@ -69,7 +69,7 @@ namespace MushaLib.DQ.CharacterMovement
         /// <summary>
         /// 移動失敗通知
         /// </summary>
-        public IObservable<Unit> OnFailed => m_OnFailed;
+        public IObservable<(ButtonType buttonType, Vector2 direction)> OnFailed => m_OnFailed;
 
         /// <summary>
         /// construct
@@ -136,7 +136,7 @@ namespace MushaLib.DQ.CharacterMovement
                 if (!m_MovementEvaluator.EvaluateMovement(this, direction, out var movementData))
                 {
                     // 移動失敗通知
-                    m_OnFailed.OnNext(Unit.Default);
+                    m_OnFailed.OnNext((buttonType, direction));
 
                     await UniTask.Delay((int)(m_Settings.MoveRetryInterval * 1000), cancellationToken: cancellationToken);
                     continue;
