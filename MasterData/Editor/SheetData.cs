@@ -60,7 +60,7 @@ namespace MushaLib.MasterData.Editor
             sb.AppendLine($"// これはMasterDataConverterで自動生成されたファイルです。直接編集しないで下さい。");
             sb.AppendLine($"using System.Collections;");
             sb.AppendLine($"using System.Collections.Generic;");
-            sb.AppendLine($"");
+            sb.AppendLine();
             sb.AppendLine($"namespace MasterData.{xlsxName}");
             sb.AppendLine($"{{");
             sb.AppendLine($"    /// <summary>");
@@ -69,8 +69,13 @@ namespace MushaLib.MasterData.Editor
                 sb.AppendLine($"    /// {description}");
             }
             sb.AppendLine($"    /// </summary>");
-            sb.AppendLine($"    public partial class {name} : MushaLib.MasterData.ModelBase<{idType}>");
+            sb.AppendLine($"    public class {name} : MushaLib.MasterData.ModelBase<{idType}>");
             sb.AppendLine($"    {{");
+            sb.AppendLine($"        /// <summary>");
+            sb.AppendLine($"        /// テーブル");
+            sb.AppendLine($"        /// </summary>");
+            sb.AppendLine($"        public static {name}Table Table {{ get; }} = new();");
+            sb.AppendLine();
             foreach (var fi in fields.Where(_ => !_.name.Equals("id", StringComparison.Ordinal)))
             {
                 sb.AppendLine($"        /// <summary>");
@@ -80,14 +85,15 @@ namespace MushaLib.MasterData.Editor
                 }
                 sb.AppendLine($"        /// </summary>");
                 sb.AppendLine($"        public {fi.type} {fi.name};");
-                sb.AppendLine($"");
+                sb.AppendLine();
             }
-            sb.AppendLine($"        /// <summary>");
-            sb.AppendLine($"        /// {name}テーブル");
-            sb.AppendLine($"        /// <summary>");
-            sb.AppendLine($"        public partial class Table : MushaLib.MasterData.TableBase<Table, {idType}, {name}>");
-            sb.AppendLine($"        {{");
-            sb.AppendLine($"        }}");
+            sb.AppendLine($"    }}");
+            sb.AppendLine();
+            sb.AppendLine($"    /// <summary>");
+            sb.AppendLine($"    /// {name}テーブル");
+            sb.AppendLine($"    /// </summary>");
+            sb.AppendLine($"    public partial class {name}Table : MushaLib.MasterData.TableBase<{idType}, {name}>");
+            sb.AppendLine($"    {{");
             sb.AppendLine($"    }}");
             sb.AppendLine($"}}");
 
