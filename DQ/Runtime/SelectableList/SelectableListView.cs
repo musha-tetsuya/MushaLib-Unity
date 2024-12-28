@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using UniRx;
 using UnityEditor;
@@ -209,6 +210,11 @@ namespace MushaLib.DQ.SelectableList
             private LayoutGroup m_LayoutGroup;
 
             /// <summary>
+            /// 変数名リスト
+            /// </summary>
+            private List<string> m_FieldNames = new();
+
+            /// <summary>
             /// ターゲット
             /// </summary>
             private SelectableListView Target => m_Target ??= target as SelectableListView;
@@ -222,6 +228,22 @@ namespace MushaLib.DQ.SelectableList
                 {
                     m_LayoutGroup = Target.Content.GetComponent<LayoutGroup>();
                 }
+
+                var currentType = target.GetType();
+
+                while (currentType != null)
+                {
+                    m_FieldNames.AddRange(currentType
+                        .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                        .Where(x => x.IsDefined(typeof(SerializeField), false))
+                        .Where(x => !x.IsDefined(typeof(HideInInspector), false))
+                        .Select(x => x.Name));
+
+                    currentType = currentType.BaseType;
+                }
+
+                m_FieldNames.Remove("m_CellCount");
+                m_FieldNames.Remove("m_StartAxis");
             }
 
             /// <summary>
@@ -237,8 +259,10 @@ namespace MushaLib.DQ.SelectableList
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
                 EditorGUI.EndDisabledGroup();
 
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_CanvasGroup"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Content"));
+                foreach (var fieldName in m_FieldNames)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty(fieldName));
+                }
 
                 if (m_LayoutGroup == null)
                 {
