@@ -31,6 +31,12 @@ namespace MushaLib.DQ.SelectableList
         private RectTransform m_Content;
 
         /// <summary>
+        /// コンテンツのレイアウトグループ
+        /// </summary>
+        [SerializeField]
+        private LayoutGroup m_ContentLayoutGroup;
+
+        /// <summary>
         /// セル数
         /// </summary>
         [SerializeField]
@@ -99,14 +105,14 @@ namespace MushaLib.DQ.SelectableList
         /// <summary>
         /// 初期化
         /// </summary>
-        public void Initialize()
+        public virtual void Initialize()
         {
             // LayoutGroupが付いているなら、LayoutGroupの設定に合わせてセル数と軸を決める
-            if (m_Content.TryGetComponent<LayoutGroup>(out var layoutGroup))
+            if (m_ContentLayoutGroup != null)
             {
                 Elements = Array.AsReadOnly(m_Content.GetComponentsInChildren<SelectableElement>().OrderBy(x => x.transform.GetSiblingIndex()).ToArray());
 
-                if (layoutGroup is GridLayoutGroup gridLayoutGroup)
+                if (m_ContentLayoutGroup is GridLayoutGroup gridLayoutGroup)
                 {
                     if (gridLayoutGroup.constraint == GridLayoutGroup.Constraint.Flexible)
                     {
@@ -150,14 +156,14 @@ namespace MushaLib.DQ.SelectableList
 
                     m_StartAxis = gridLayoutGroup.startAxis;
                 }
-                else if (layoutGroup is HorizontalLayoutGroup)
+                else if (m_ContentLayoutGroup is HorizontalLayoutGroup)
                 {
                     m_CellCount.x = Elements.Count;
                     m_CellCount.y = 1;
 
                     m_StartAxis = GridLayoutGroup.Axis.Horizontal;
                 }
-                else if (layoutGroup is VerticalLayoutGroup)
+                else if (m_ContentLayoutGroup is VerticalLayoutGroup)
                 {
                     m_CellCount.x = 1;
                     m_CellCount.y = Elements.Count;
@@ -205,11 +211,6 @@ namespace MushaLib.DQ.SelectableList
             private SelectableListView m_Target;
 
             /// <summary>
-            /// LayoutGroup
-            /// </summary>
-            private LayoutGroup m_LayoutGroup;
-
-            /// <summary>
             /// 変数名リスト
             /// </summary>
             private List<string> m_FieldNames = new();
@@ -224,11 +225,6 @@ namespace MushaLib.DQ.SelectableList
             /// </summary>
             protected virtual void OnEnable()
             {
-                if (Target.Content != null)
-                {
-                    m_LayoutGroup = Target.Content.GetComponent<LayoutGroup>();
-                }
-
                 var currentType = target.GetType();
 
                 while (currentType != null)
@@ -251,8 +247,6 @@ namespace MushaLib.DQ.SelectableList
             /// </summary>
             public override void OnInspectorGUI()
             {
-                var content = Target.Content;
-
                 serializedObject.Update();
 
                 EditorGUI.BeginDisabledGroup(true);
@@ -264,25 +258,13 @@ namespace MushaLib.DQ.SelectableList
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(fieldName));
                 }
 
-                if (m_LayoutGroup == null)
+                if (Target.m_ContentLayoutGroup == null)
                 {
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("m_CellCount"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("m_StartAxis"));
                 }
 
                 serializedObject.ApplyModifiedProperties();
-
-                if (Target.Content != content)
-                {
-                    if (Target.Content != null)
-                    { 
-                        m_LayoutGroup = Target.Content.GetComponent<LayoutGroup>();
-                    }
-                    else
-                    {
-                        m_LayoutGroup = null;
-                    }
-                }
             }
         }
 #endif
