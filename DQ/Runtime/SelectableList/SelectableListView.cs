@@ -73,6 +73,11 @@ namespace MushaLib.DQ.SelectableList
         public RectTransform Content => m_Content;
 
         /// <summary>
+        /// コンテンツのレイアウトグループ
+        /// </summary>
+        public LayoutGroup ContentLayoutGroup => m_ContentLayoutGroup;
+
+        /// <summary>
         /// セル数
         /// </summary>
         public Vector2Int CellCount => m_CellCount;
