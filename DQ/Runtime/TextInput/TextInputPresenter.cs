@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using MushaLib.DQ.SelectableList;
 using MushaLib.UI.VirtualPad;
 using MushaLib.Utilities;
@@ -5,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UniRx;
 using UnityEngine;
 
@@ -58,11 +60,11 @@ namespace MushaLib.DQ.TextInput
         /// <summary>
         /// 初期化
         /// </summary>
-        public override void Initialize()
+        public override UniTask InitializeAsync(CancellationToken cancellationToken = default)
         {
             m_View.SetTextTable(m_Model.TextTableProvider.GetTextTable());
 
-            base.Initialize();
+            return base.InitializeAsync(cancellationToken);
         }
 
         /// <summary>

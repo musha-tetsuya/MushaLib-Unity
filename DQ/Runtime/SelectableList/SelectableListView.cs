@@ -68,6 +68,11 @@ namespace MushaLib.DQ.SelectableList
         }
 
         /// <summary>
+        /// キャンバスグループ
+        /// </summary>
+        public CanvasGroup CanvasGroup => m_CanvasGroup;
+
+        /// <summary>
         /// コンテンツ
         /// </summary>
         public RectTransform Content => m_Content;

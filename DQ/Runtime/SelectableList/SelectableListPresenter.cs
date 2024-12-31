@@ -1,7 +1,9 @@
+using Cysharp.Threading.Tasks;
 using MushaLib.UI.VirtualPad;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,7 +63,7 @@ namespace MushaLib.DQ.SelectableList
         /// <summary>
         /// 初期化
         /// </summary>
-        public virtual void Initialize()
+        public virtual UniTask InitializeAsync(CancellationToken cancellationToken = default)
         {
             // ビュー初期化
             m_View.Initialize();
@@ -86,6 +88,8 @@ namespace MushaLib.DQ.SelectableList
 
             // 初期選択
             SetCurrentIndex(m_Model.StartIndex);
+
+            return UniTask.CompletedTask;
         }
 
         /// <summary>
