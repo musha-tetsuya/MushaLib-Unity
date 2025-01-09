@@ -16,5 +16,16 @@ namespace MushaLib.Utilities
         {
             return new(rectTransform.sizeDelta.x * (pivot.x - rectTransform.pivot.x), rectTransform.sizeDelta.y * (pivot.y - rectTransform.pivot.y));
         }
+
+        /// <summary>
+        /// アンカーと座標を設定する
+        /// </summary>
+        public static void SetAnchorAndPosition(this RectTransform rectTransform, Vector2 anchor, Vector2 position)
+        {
+            rectTransform.anchorMin =
+            rectTransform.anchorMax =
+            rectTransform.pivot = anchor;
+            rectTransform.anchoredPosition = position;
+        }
     }
 }
