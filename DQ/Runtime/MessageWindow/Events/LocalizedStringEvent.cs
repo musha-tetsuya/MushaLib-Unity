@@ -52,13 +52,12 @@ namespace MushaLib.DQ.MessageWindow.Events
         /// </summary>
         public override async UniTask<string> GetString(CancellationToken cancellationToken)
         {
-            m_LocalizedString.Arguments = null;
-            m_LocalizedString.Clear();
-
             var tasks = new List<UniTask>();
 
             if (m_VariableProviders.Count > 0)
             {
+                m_LocalizedString.Arguments = null;
+
                 tasks.Add(UniTask.Create(async () =>
                 {
                     var results = await UniTask.WhenAll(m_VariableProviders.Select(async (x, i) => (variable: await x.GetVariableAsync(cancellationToken), index: i)));
@@ -69,6 +68,8 @@ namespace MushaLib.DQ.MessageWindow.Events
 
             if (m_VariableProviderTable.Count > 0)
             {
+                m_LocalizedString.Clear();
+
                 tasks.AddRange(m_VariableProviderTable.Select(async x =>
                 {
                     var variable = await x.Value.GetVariableAsync(cancellationToken);
