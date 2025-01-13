@@ -90,14 +90,14 @@ namespace MushaLib.DQ.SelectableList
             {
                 // ヘッダーのテキスト設定
                 tasks.Add(m_View.HeaderLocalizeStringEvent.OnUpdateString.AsObservable().ToUniTask(true, cancellationToken));
-                m_View.HeaderLocalizeStringEvent.gameObject.SetActive(true);
+                m_View.HeaderContent.SetActive(true);
                 m_View.HeaderLocalizeStringEvent.StringReference = m_Model.HeaderLocalizedString;
 
-                viewSize.y += (m_View.HeaderLocalizeStringEvent.transform as RectTransform).rect.height;
+                viewSize.y += (m_View.HeaderContent.transform as RectTransform).rect.height;
             }
             else
             {
-                m_View.HeaderLocalizeStringEvent.gameObject.SetActive(false);
+                m_View.HeaderContent.SetActive(false);
                 m_View.Content.anchoredPosition = Vector2.zero;
             }
 

@@ -24,6 +24,12 @@ namespace MushaLib.DQ.SelectableList
         private Button m_CloseButton;
 
         /// <summary>
+        /// ヘッダーコンテンツ
+        /// </summary>
+        [SerializeField]
+        private GameObject m_HeaderContent;
+
+        /// <summary>
         /// ヘッダーテキスト
         /// </summary>
         [SerializeField]
@@ -44,6 +50,11 @@ namespace MushaLib.DQ.SelectableList
         /// 閉じるボタン
         /// </summary>
         public Button CloseButton => m_CloseButton;
+
+        /// <summary>
+        /// ヘッダーコンテンツ
+        /// </summary>
+        public GameObject HeaderContent => m_HeaderContent;
 
         /// <summary>
         /// ヘッダーテキスト
