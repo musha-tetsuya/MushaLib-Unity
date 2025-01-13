@@ -26,7 +26,7 @@ namespace MushaLib.UI.LayerManagement
         /// </summary>
         protected virtual void OnDestroy()
         {
-            LayerManager<T>.AddContainer(this);
+            LayerManager<T>.RemoveContainer(this);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace MushaLib.UI.LayerManagement
         /// </summary>
         protected virtual void Awake()
         {
-            LayerManager<T>.RemoveContainer(this);
+            LayerManager<T>.AddContainer(this);
         }
 
         /// <summary>
